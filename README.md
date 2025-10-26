@@ -9,7 +9,7 @@ Install and load Anthropic SKILL.md format skills in any AI coding agent.
 ```bash
 npm i -g openskills
 openskills install anthropics/skills/pdf-editor
-openskills load pdf-editor
+openskills read pdf-editor
 ```
 
 > **Found this useful?** Follow me on [X @nummanthinks](https://x.com/nummanthinks) for updates and more AI tooling projects!
@@ -57,15 +57,15 @@ openskills install anthropics/skills/pdf-editor
 openskills install anthropics/skills/pdf-editor --project
 ```
 
-### 2. Load in AI Agent
+### 2. Read in AI Agent
 
 In Claude Code, Cursor, Windsurf, or Aider:
 
 ```bash
-openskills load pdf-editor
+openskills read pdf-editor
 ```
 
-The skill loads into agent's context with base directory for resource resolution.
+The skill content outputs to stdout with base directory for resource resolution.
 
 ### 3. List Installed Skills
 
@@ -108,23 +108,44 @@ Shows skills from:
 - `.claude/skills/` (project-local)
 - `~/.claude/skills/` (global)
 
-### load
+### read
 
-Load skill to stdout (for AI agents):
+Read skill to stdout (for AI agents):
 
 ```bash
-openskills load pdf-editor
+openskills read pdf-editor
 ```
 
 Output format matching Claude Code:
 ```
-Loading: pdf-editor
+Reading: pdf-editor
 Base directory: ~/.claude/skills/pdf-editor
 
 [SKILL.md content with YAML frontmatter]
 
-Skill loaded: pdf-editor
+Skill read: pdf-editor
 ```
+
+### sync
+
+Update AGENTS.md with installed skills:
+
+```bash
+openskills sync
+```
+
+Scans .claude/skills/ and generates XML section in AGENTS.md between markers.
+If no AGENTS.md found: outputs "No AGENTS.md to update"
+
+### unsync
+
+Remove skills section from AGENTS.md:
+
+```bash
+openskills unsync
+```
+
+Removes auto-generated skills section from AGENTS.md.
 
 ### remove
 
@@ -184,14 +205,24 @@ openskills install your-username/my-skill
 
 ## Integration with AGENTS.md
 
-Add skills metadata to your project's AGENTS.md:
+Add skills to your AGENTS.md automatically:
+
+```bash
+# Install skills
+openskills install anthropics/skills/pdf-editor
+
+# Sync to AGENTS.md (auto-generates XML section)
+openskills sync
+```
+
+This generates:
 
 ```xml
 <skills_system priority="1">
 
 <usage>
 Skills provide specialized procedural guidance for complex tasks.
-Load: openskills load <skill-name>
+Load: openskills read <skill-name>
 </usage>
 
 <available_skills>
@@ -204,6 +235,12 @@ Load: openskills load <skill-name>
 </available_skills>
 
 </skills_system>
+```
+
+Remove skills section:
+
+```bash
+openskills unsync
 ```
 
 ## Examples

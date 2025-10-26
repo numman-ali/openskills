@@ -3,8 +3,10 @@
 import { Command } from 'commander';
 import { listSkills } from './commands/list.js';
 import { installSkill } from './commands/install.js';
-import { loadSkill } from './commands/load.js';
+import { readSkill } from './commands/read.js';
 import { removeSkill } from './commands/remove.js';
+import { syncAgentsMd } from './commands/sync.js';
+import { unsyncAgentsMd } from './commands/unsync.js';
 
 const program = new Command();
 
@@ -25,9 +27,19 @@ program
   .action(installSkill);
 
 program
-  .command('load <skill-name>')
-  .description('Load skill to stdout (for AI agents)')
-  .action(loadSkill);
+  .command('read <skill-name>')
+  .description('Read skill to stdout (for AI agents)')
+  .action(readSkill);
+
+program
+  .command('sync')
+  .description('Update AGENTS.md with installed skills')
+  .action(syncAgentsMd);
+
+program
+  .command('unsync')
+  .description('Remove skills section from AGENTS.md')
+  .action(unsyncAgentsMd);
 
 program
   .command('remove <skill-name>')

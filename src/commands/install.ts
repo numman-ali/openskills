@@ -63,7 +63,7 @@ export function installSkill(source: string, options: InstallOptions): void {
     rmSync(tempDir, { recursive: true, force: true });
   }
 
-  console.log('\nLoad skill: openskills load <skill-name>');
+  console.log('\nRead skill: openskills read <skill-name>');
 }
 
 /**

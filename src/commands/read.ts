@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 import { findSkill } from '../utils/skills.js';
 
 /**
- * Load skill to stdout (for AI agents)
+ * Read skill to stdout (for AI agents)
  */
-export function loadSkill(skillName: string): void {
+export function readSkill(skillName: string): void {
   const skill = findSkill(skillName);
 
   if (!skill) {
@@ -19,10 +19,10 @@ export function loadSkill(skillName: string): void {
   const content = readFileSync(skill.path, 'utf-8');
 
   // Output in Claude Code format
-  console.log(`Loading: ${skillName}`);
+  console.log(`Reading: ${skillName}`);
   console.log(`Base directory: ${skill.baseDir}`);
   console.log('');
   console.log(content);
   console.log('');
-  console.log(`Skill loaded: ${skillName}`);
+  console.log(`Skill read: ${skillName}`);
 }
