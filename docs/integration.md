@@ -13,11 +13,11 @@ npm i -g openskills
 ### 2. Install Skills
 
 ```bash
-# Install to global directory
-openskills get anthropics/skills/pdf-editor
+# Recommended: Install to project (conflict-free)
+openskills install anthropics/skills/pdf-editor --project
 
-# OR install to project
-openskills get anthropics/skills/pdf-editor --target .agent/skills
+# OR install globally (advanced)
+openskills install my-org/unique-skill
 ```
 
 ### 3. Add to AGENTS.md

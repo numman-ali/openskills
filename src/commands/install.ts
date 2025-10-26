@@ -3,6 +3,7 @@ import { join, basename } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
 import { hasValidFrontmatter } from '../utils/yaml.js';
+import { ANTHROPIC_MARKETPLACE_SKILLS } from '../utils/marketplace-skills.js';
 import type { InstallOptions } from '../types.js';
 
 /**
@@ -88,6 +89,9 @@ function installSpecificSkill(repoDir: string, skillSubpath: string, targetDir: 
   const skillName = basename(skillSubpath);
   const targetPath = join(targetDir, skillName);
 
+  // Warn about potential conflicts
+  warnIfConflict(skillName, targetPath, options.project || false);
+
   mkdirSync(targetDir, { recursive: true });
   cpSync(skillDir, targetPath, { recursive: true });
 
@@ -139,6 +143,10 @@ function installAllSkills(repoDir: string, targetDir: string): void {
     const skillName = basename(skillDir);
     const targetPath = join(targetDir, skillName);
 
+    // Warn about potential conflicts (pass options.project, defaulting to false)
+    const isProject = (targetDir === join(process.cwd(), '.claude/skills'));
+    warnIfConflict(skillName, targetPath, isProject);
+
     mkdirSync(targetDir, { recursive: true });
     cpSync(skillDir, targetPath, { recursive: true });
 
@@ -147,4 +155,22 @@ function installAllSkills(repoDir: string, targetDir: string): void {
   }
 
   console.log(`\n✅ Installation complete: ${installedCount} skill(s) installed`);
+}
+
+/**
+ * Warn if installing could conflict with Claude Code marketplace
+ */
+function warnIfConflict(skillName: string, targetPath: string, isProject: boolean): void {
+  // Check if overwriting existing skill
+  if (existsSync(targetPath)) {
+    console.warn(`⚠️  Overwriting existing skill at ${targetPath}`);
+  }
+
+  // Warn about marketplace conflicts (global install only)
+  if (!isProject && ANTHROPIC_MARKETPLACE_SKILLS.includes(skillName)) {
+    console.warn(`\n⚠️  Warning: '${skillName}' matches an Anthropic marketplace skill`);
+    console.warn('   Installing globally may conflict with Claude Code plugins.');
+    console.warn('   If you re-enable Claude plugins, this will be overwritten.');
+    console.warn('   Recommend: Use --project flag for conflict-free installation.\n');
+  }
 }

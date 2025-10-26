@@ -11,8 +11,8 @@ export function listSkills(): void {
   if (skills.length === 0) {
     console.log('No skills installed.\n');
     console.log('Install skills:');
-    console.log('  openskills install anthropics/skills              # Global');
-    console.log('  openskills install anthropics/skills --project    # Project-local');
+    console.log('  openskills install anthropics/skills --project    # Recommended (conflict-free)');
+    console.log('  openskills install owner/unique-skill             # Global (advanced)');
     return;
   }
 

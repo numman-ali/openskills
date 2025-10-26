@@ -50,11 +50,11 @@ npm i -g openskills
 ### 1. Install a Skill
 
 ```bash
-# Install globally (available in all projects)
-openskills install anthropics/skills/pdf-editor
-
-# Install to current project
+# Recommended: Install to project (conflict-free with Claude Code)
 openskills install anthropics/skills/pdf-editor --project
+
+# Advanced: Install globally (only for unique custom skills)
+openskills install my-org/custom-skill
 ```
 
 ### 2. Read in AI Agent
@@ -80,20 +80,18 @@ openskills list
 Install skills from GitHub:
 
 ```bash
-# Install all skills from repository (global)
-openskills install anthropics/skills
+# Recommended: Install to project (conflict-free)
+openskills install anthropics/skills --project
+openskills install anthropics/skills/pdf-editor --project
 
-# Install specific skill (global)
-openskills install anthropics/skills/pdf-editor
-
-# Install to current project (.claude/skills/)
-openskills install owner/repo --project
+# Advanced: Install globally (only for unique custom skills)
+openskills install my-org/unique-skill
 
 # Install from Git URL
-openskills install https://github.com/owner/repo
+openskills install https://github.com/owner/repo --project
 
 # Supports nested paths (plugin groupings)
-openskills install anthropics/skills/document-skills/xlsx
+openskills install anthropics/skills/document-skills/xlsx --project
 ```
 
 ### list
@@ -131,11 +129,15 @@ Skill read: pdf-editor
 Update AGENTS.md with installed skills:
 
 ```bash
+# Sync all skills
 openskills sync
+
+# Interactive mode (select which skills to sync)
+openskills sync --interactive
 ```
 
-Scans .claude/skills/ and generates XML section in AGENTS.md between markers.
-If no AGENTS.md found: outputs "No AGENTS.md to update"
+Scans .claude/skills/ and generates XML section in AGENTS.md.
+Interactive mode shows checkboxes with (global) vs (project) labels.
 
 ### unsync
 
@@ -161,13 +163,43 @@ openskills rm pdf-editor  # alias
 OpenSkills uses `.claude/skills/` - Claude Code's standard location:
 
 - `~/.claude/skills/` - Global (available in all projects)
-- `.claude/skills/` - Project-local (current directory only)
+- `.claude/skills/` - Project-local (current directory only, **recommended**)
 
 **Why `.claude/skills/`?**
 - ✅ Claude Code native location (zero friction)
 - ✅ No directory confusion
 - ✅ Works with Claude Code's native plugin system
 - ✅ Community standard emerging
+
+## Claude Code Compatibility
+
+OpenSkills and Claude Code work together seamlessly:
+
+**Coexistence:**
+- ✅ Both read from `.claude/skills/` (same location)
+- ✅ Project-local (`.claude/skills/`) has priority over global
+- ✅ Claude Code leaves skills in place when plugins disabled
+- ✅ openskills can read Claude Code marketplace skills
+
+**Recommended Approach:**
+
+**For custom/community skills:**
+```bash
+# Install to project (conflict-free)
+openskills install owner/custom-skill --project
+git add .claude/skills/
+git commit -m "Add custom skills"
+```
+
+**For Anthropic official skills:**
+- **Option A:** Use Claude Code natively: `/plugin install document-skills@anthropic-agent-skills`
+- **Option B:** Use openskills: `openskills install anthropics/skills --project`
+
+**Global Install Warning:**
+
+If you install globally and the skill name matches an Anthropic marketplace skill (xlsx, pdf, docx, etc.), re-enabling that Claude Code plugin may overwrite your custom version.
+
+**Solution:** Use `--project` flag for all custom skills to avoid conflicts.
 
 ## Creating Your Own Skills
 

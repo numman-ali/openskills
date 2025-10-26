@@ -34,6 +34,7 @@ program
 program
   .command('sync')
   .description('Update AGENTS.md with installed skills')
+  .option('-i, --interactive', 'Interactively select skills to sync')
   .action(syncAgentsMd);
 
 program

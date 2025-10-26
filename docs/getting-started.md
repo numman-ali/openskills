@@ -33,19 +33,21 @@ openskills install owner/skills-collection/specific-skill
 
 ### Install Locations
 
-**Global (default):**
-```bash
-openskills install owner/repo
-# → Installs to ~/.claude/skills/
-# → Available in all projects
-```
-
-**Project-local:**
+**Project-local (recommended):**
 ```bash
 openskills install owner/repo --project
 # → Installs to .claude/skills/ (current directory)
-# → Only available in this project
+# → Conflict-free with Claude Code plugins
 # → Commit to git for team sharing
+# → Only available in this project
+```
+
+**Global (advanced):**
+```bash
+openskills install owner/unique-skill
+# → Installs to ~/.claude/skills/
+# → Available in all projects
+# → ⚠️ May conflict with Claude Code marketplace skills
 ```
 
 ## Using Skills
