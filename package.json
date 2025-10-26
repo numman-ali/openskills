@@ -24,13 +24,17 @@
   "keywords": [
     "anthropic",
     "claude",
+    "claude-code",
     "skills",
     "ai",
+    "agents",
     "coding-agent",
-    "claude-code",
     "cursor",
     "windsurf",
-    "aider"
+    "aider",
+    "progressive-disclosure",
+    "automation",
+    "developer-tools"
   ],
   "author": "OpenSkills Contributors",
   "license": "Apache-2.0",

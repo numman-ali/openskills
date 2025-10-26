@@ -13,5 +13,3 @@ tsup.config.ts
 vitest.config.ts
 .claude/
 AGENTS.md
-CONTRIBUTING.md
-SECURITY.md
