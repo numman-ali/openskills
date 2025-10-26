@@ -1,5 +1,9 @@
 # OpenSkills - Universal Skills Loader for AI Coding Agents
 
+[![npm version](https://img.shields.io/npm/v/openskills.svg)](https://www.npmjs.com/package/openskills)
+[![npm downloads](https://img.shields.io/npm/dm/openskills.svg)](https://www.npmjs.com/package/openskills)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Install and load Anthropic SKILL.md format skills in any AI coding agent.
 
 ```bash
@@ -8,7 +12,21 @@ openskills install anthropics/skills/pdf-editor
 openskills load pdf-editor
 ```
 
+> **Found this useful?** Follow me on [X @nummanthinks](https://x.com/nummanthinks) for updates and more AI tooling projects!
+
 **Works with:** Claude Code, Cursor, Windsurf, Aider, or any agent with Bash support
+
+---
+
+## Features
+
+- ✅ **Universal** - Works in any AI agent with Bash support (Claude Code, Cursor, Windsurf, Aider)
+- ✅ **Standard** - Uses `.claude/skills/` (Claude Code's native location)
+- ✅ **Simple** - One npm install, works everywhere
+- ✅ **Compatible** - Coexists with native Claude Code skills
+- ✅ **GitHub Install** - Pull skills from any GitHub repository
+- ✅ **Progressive Disclosure** - Skills load detailed instructions only when needed
+- ✅ **Type-Safe** - Written in TypeScript with 100% test coverage
 
 ## What Are Skills?
 
@@ -19,7 +37,7 @@ Skills are Anthropic's format for giving AI agents specialized procedural knowle
 - `scripts/` - Executable code
 - `assets/` - Templates and files
 
-Skills use **progressive disclosure** - agents load detailed instructions only when needed.
+Skills use **progressive disclosure**: agents load detailed instructions only when needed, keeping context windows efficient.
 
 ## Installation
 
@@ -41,12 +59,13 @@ openskills install anthropics/skills/pdf-editor --project
 
 ### 2. Load in AI Agent
 
+In Claude Code, Cursor, Windsurf, or Aider:
+
 ```bash
-# In Claude Code, Cursor, Windsurf, Aider:
 openskills load pdf-editor
 ```
 
-The skill content loads into context with base directory for resource resolution.
+The skill loads into agent's context with base directory for resource resolution.
 
 ### 3. List Installed Skills
 
@@ -54,24 +73,27 @@ The skill content loads into context with base directory for resource resolution
 openskills list
 ```
 
-## Commands
+## CLI Reference
 
 ### install
 
 Install skills from GitHub:
 
 ```bash
-# Install all skills from repo (global)
+# Install all skills from repository (global)
 openskills install anthropics/skills
 
 # Install specific skill (global)
 openskills install anthropics/skills/pdf-editor
 
-# Install to current project
+# Install to current project (.claude/skills/)
 openskills install owner/repo --project
 
-# From Git URL
+# Install from Git URL
 openskills install https://github.com/owner/repo
+
+# Supports nested paths (plugin groupings)
+openskills install anthropics/skills/document-skills/xlsx
 ```
 
 ### list
@@ -94,12 +116,12 @@ Load skill to stdout (for AI agents):
 openskills load pdf-editor
 ```
 
-Output format:
+Output format matching Claude Code:
 ```
 Loading: pdf-editor
 Base directory: ~/.claude/skills/pdf-editor
 
-[SKILL.md content]
+[SKILL.md content with YAML frontmatter]
 
 Skill loaded: pdf-editor
 ```
@@ -115,37 +137,54 @@ openskills rm pdf-editor  # alias
 
 ## Directory Structure
 
-OpenSkills uses `.claude/skills/` - the standard Claude Code location:
+OpenSkills uses `.claude/skills/` - Claude Code's standard location:
 
 - `~/.claude/skills/` - Global (available in all projects)
 - `.claude/skills/` - Project-local (current directory only)
 
-## Why OpenSkills?
+**Why `.claude/skills/`?**
+- ✅ Claude Code native location (zero friction)
+- ✅ No directory confusion
+- ✅ Works with Claude Code's native plugin system
+- ✅ Community standard emerging
 
-### vs Claude Code Native
+## Creating Your Own Skills
 
-**Claude Code:**
-- ✅ Native `/plugin install` commands
-- ❌ Only works in Claude Code
-- ❌ Can't use in Cursor, Windsurf, Aider
+See [docs/creating-skills.md](docs/creating-skills.md) for complete authoring guide.
 
-**OpenSkills:**
-- ✅ Works in ALL agents (Claude Code, Cursor, Windsurf, Aider)
-- ✅ Simple: `npm i -g openskills`
-- ✅ Standard: Uses `.claude/skills/` location
-- ✅ Compatible: Can mix with native Claude skills
+**Minimal skill structure:**
 
-### Benefits
+```
+my-skill/
+└── SKILL.md
+    ---
+    name: my-skill
+    description: What this skill does and when to use it
+    ---
 
-- ✅ **Universal** - Works in any agent with Bash support
-- ✅ **Standard** - Uses `.claude/skills/` (Claude Code's location)
-- ✅ **Simple** - One npm install, works everywhere
-- ✅ **Compatible** - Coexists with native Claude Code skills
-- ✅ **Open** - Install skills from any GitHub repo
+    # My Skill
+
+    Instructions in imperative form
+```
+
+Publish to GitHub:
+
+```bash
+git init
+git add .
+git commit -m "Initial skill"
+gh repo create my-skill --public --source=.
+git push
+```
+
+Users install with:
+```bash
+openskills install your-username/my-skill
+```
 
 ## Integration with AGENTS.md
 
-Add skills metadata to your AGENTS.md:
+Add skills metadata to your project's AGENTS.md:
 
 ```xml
 <skills_system priority="1">
@@ -167,50 +206,95 @@ Load: openskills load <skill-name>
 </skills_system>
 ```
 
-## Creating Your Own Skills
-
-See [docs/creating-skills.md](docs/creating-skills.md) for authoring guide.
-
-**Minimal skill:**
-
-```
-my-skill/
-└── SKILL.md
-    ---
-    name: my-skill
-    description: What this skill does and when to use it
-    ---
-
-    # My Skill
-
-    [Instructions in imperative form]
-```
-
-Publish to GitHub, users install with:
-```bash
-openskills install your-username/my-skill
-```
-
 ## Examples
 
-See [examples/](examples/) directory for:
-- `my-first-skill/` - Minimal skill template
+- [examples/my-first-skill](examples/my-first-skill/) - Minimal skill template
+- [Anthropic's Skills](https://github.com/anthropics/skills) - Official example skills
+
+## Why OpenSkills?
+
+### vs Claude Code Native
+
+**Claude Code:**
+- ✅ Native `/plugin install` commands
+- ❌ Only works in Claude Code
+- ❌ Can't use in Cursor, Windsurf, Aider
+
+**OpenSkills:**
+- ✅ Works in ALL agents (Claude Code, Cursor, Windsurf, Aider)
+- ✅ Simple: `npm i -g openskills`
+- ✅ Standard: Uses `.claude/skills/` location
+- ✅ Compatible: Coexists with native Claude skills
+- ✅ Open: Install from any GitHub repo
+
+## Requirements
+
+- **Node.js** 18+ (for npm global install)
+- **Git** (for cloning skill repositories)
+
+## Troubleshooting
+
+**Skill not found:**
+```bash
+openskills list  # Check installed skills
+ls ~/.claude/skills/  # Verify global install
+ls .claude/skills/  # Verify project install
+```
+
+**Git clone fails:**
+```bash
+# Verify repository is public
+# Test manually: git clone https://github.com/owner/repo
+```
+
+**Permission denied:**
+```bash
+# Reinstall
+npm uninstall -g openskills
+npm i -g openskills
+```
+
+## Development
+
+### Build
+
+```bash
+npm run build        # Build once
+npm run dev          # Watch mode
+npm run typecheck    # Type checking only
+```
+
+### Test
+
+```bash
+npm test             # Run all tests
+npm run test:watch   # Watch mode
+npm run test:coverage # Coverage report
+```
+
+### Local Testing
+
+```bash
+npm link
+openskills list
+```
 
 ## Future Roadmap
 
 After community feedback and RFC:
-- [ ] Support for `.agent/skills/` (custom infrastructure skills)
-- [ ] Custom skill directories via config
-- [ ] Multiple skill directory priorities
+- [ ] Support for custom skill directories (`.agent/skills/`, etc.)
+- [ ] Multiple directory priorities
+- [ ] Respect `.claude-plugin/plugin.json` metadata
 - [ ] Skill templates generator
+- [ ] Marketplace integration
 
-Current focus: **Simplicity - .claude/skills only**
+**Current focus:** Simplicity and standards compliance (`.claude/skills/` only)
 
 ## Documentation
 
 - [Getting Started](docs/getting-started.md) - Installation and usage
 - [Creating Skills](docs/creating-skills.md) - Authoring guide
-- [Integration](docs/integration.md) - Adding to projects
+- [Integration](docs/integration.md) - AGENTS.md integration
 
 ## License
 
@@ -219,8 +303,12 @@ Apache 2.0
 ## Attribution
 
 OpenSkills implements Anthropic's Agent Skills specification:
-- [Agent Skills Blog Post](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
+- [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
 - [Anthropic Skills Repository](https://github.com/anthropics/skills)
 
-SKILL.md format and progressive disclosure by Anthropic.
+SKILL.md format and progressive disclosure architecture by Anthropic.
 Universal CLI implementation by OpenSkills contributors.
+
+---
+
+**Not affiliated with Anthropic or Claude.** Claude, Claude Code, and Agent Skills are trademarks of Anthropic, PBC. This is an independent open-source project implementing Anthropic's publicly documented SKILL.md specification.
