@@ -1,21 +1,17 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { readFileSync, readdirSync, statSync, mkdirSync, rmSync, cpSync, existsSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync } from 'fs';
 import { join, dirname, basename } from 'path';
-import { homedir, platform } from 'os';
+import { homedir } from 'os';
 import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Default skill directories (priority order)
-const SKILL_DIRS = [
-  join(process.cwd(), '.agent/skills'),
-  join(process.cwd(), '.claude/skills'),
-  join(homedir(), '.openskills'),
-];
+// Default skill directories
+const getSkillsDir = (projectLocal = false) => {
+  return projectLocal
+    ? join(process.cwd(), '.claude/skills')
+    : join(homedir(), '.claude/skills');
+};
 
 // Helper: Extract YAML frontmatter field
 function extractYamlField(content, field) {
@@ -23,11 +19,15 @@ function extractYamlField(content, field) {
   return match ? match[1].trim() : '';
 }
 
-// Helper: Find all skills across directories
+// Helper: Find all skills
 function findAllSkills() {
   const skills = [];
+  const dirs = [
+    join(process.cwd(), '.claude/skills'),  // Project-local
+    join(homedir(), '.claude/skills'),       // Global
+  ];
 
-  for (const dir of SKILL_DIRS) {
+  for (const dir of dirs) {
     if (!existsSync(dir)) continue;
 
     const entries = readdirSync(dir, { withFileTypes: true });
@@ -37,11 +37,12 @@ function findAllSkills() {
         const skillPath = join(dir, entry.name, 'SKILL.md');
         if (existsSync(skillPath)) {
           const content = readFileSync(skillPath, 'utf-8');
+          const isProjectLocal = dir === join(process.cwd(), '.claude/skills');
+
           skills.push({
             name: entry.name,
             description: extractYamlField(content, 'description'),
-            context: extractYamlField(content, 'context') || 'general',
-            location: dir,
+            location: isProjectLocal ? 'project' : 'global',
             path: join(dir, entry.name),
           });
         }
@@ -54,7 +55,12 @@ function findAllSkills() {
 
 // Helper: Find specific skill
 function findSkill(skillName) {
-  for (const dir of SKILL_DIRS) {
+  const dirs = [
+    join(process.cwd(), '.claude/skills'),  // Project-local first
+    join(homedir(), '.claude/skills'),       // Global second
+  ];
+
+  for (const dir of dirs) {
     const skillPath = join(dir, skillName, 'SKILL.md');
     if (existsSync(skillPath)) {
       return {
@@ -71,59 +77,49 @@ function findSkill(skillName) {
 function listSkills() {
   console.log('Available Skills:\n');
 
-  const skillsByDir = {};
+  const skills = findAllSkills();
 
-  for (const dir of SKILL_DIRS) {
-    if (existsSync(dir)) {
-      skillsByDir[dir] = [];
-      const entries = readdirSync(dir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        if (entry.isDirectory()) {
-          const skillPath = join(dir, entry.name, 'SKILL.md');
-          if (existsSync(skillPath)) {
-            const content = readFileSync(skillPath, 'utf-8');
-            skillsByDir[dir].push({
-              name: entry.name,
-              description: extractYamlField(content, 'description'),
-              context: extractYamlField(content, 'context') || 'general',
-            });
-          }
-        }
-      }
-    }
+  if (skills.length === 0) {
+    console.log('No skills installed.\n');
+    console.log('Install skills:');
+    console.log('  openskills install anthropics/skills              # Global');
+    console.log('  openskills install anthropics/skills --project    # Project-local');
+    return;
   }
 
-  // Display grouped by directory
-  for (const [dir, skills] of Object.entries(skillsByDir)) {
-    if (skills.length === 0) continue;
+  // Group by location
+  const projectSkills = skills.filter(s => s.location === 'project');
+  const globalSkills = skills.filter(s => s.location === 'global');
 
-    const dirName = dir.includes('.agent') ? '.agent/skills' :
-                    dir.includes('.claude') ? '.claude/skills' :
-                    '~/.openskills';
-
-    console.log(`${dirName}:`);
-    for (const skill of skills) {
-      console.log(`  ${skill.name.padEnd(20)} [${skill.context}]`);
+  if (projectSkills.length > 0) {
+    console.log('.claude/skills/ (project):');
+    for (const skill of projectSkills) {
+      console.log(`  ${skill.name.padEnd(20)}`);
       console.log(`    ${skill.description}\n`);
     }
   }
 
-  const totalSkills = findAllSkills().length;
-  if (totalSkills === 0) {
-    console.log('No skills installed.\n');
-    console.log('Install skills: openskills get anthropics/skills');
-  } else {
-    console.log(`Total: ${totalSkills} skill(s)`);
+  if (globalSkills.length > 0) {
+    console.log('~/.claude/skills/ (global):');
+    for (const skill of globalSkills) {
+      console.log(`  ${skill.name.padEnd(20)}`);
+      console.log(`    ${skill.description}\n`);
+    }
   }
+
+  console.log(`Total: ${skills.length} skill(s)`);
 }
 
-// Command: get (install)
+// Command: install
 function installSkill(source, options) {
-  const targetDir = options.target || join(homedir(), '.openskills');
+  const targetDir = options.project
+    ? join(process.cwd(), '.claude/skills')
+    : join(homedir(), '.claude/skills');
+
+  const location = options.project ? 'project (.claude/skills)' : 'global (~/.claude/skills)';
 
   console.log(`Installing from: ${source}`);
-  console.log(`Target: ${targetDir}\n`);
+  console.log(`Location: ${location}\n`);
 
   // Parse source
   let repoUrl, skillSubpath;
@@ -132,7 +128,6 @@ function installSkill(source, options) {
     repoUrl = source;
     skillSubpath = '';
   } else {
-    // owner/repo or owner/repo/skill-name
     const parts = source.split('/');
     if (parts.length === 2) {
       repoUrl = `https://github.com/${source}`;
@@ -233,7 +228,7 @@ function installSkill(source, options) {
         installedCount++;
       }
 
-      console.log(`\n✅ Installation complete: ${installedCount} skill(s) installed to ${targetDir}`);
+      console.log(`\n✅ Installation complete: ${installedCount} skill(s) installed`);
     }
   } finally {
     // Cleanup
@@ -250,15 +245,13 @@ function loadSkill(skillName) {
   if (!skill) {
     console.error(`Error: Skill '${skillName}' not found`);
     console.error('\nSearched:');
-    for (const dir of SKILL_DIRS) {
-      console.error(`  ${dir}`);
-    }
-    console.error('\nInstall skills: openskills get owner/repo');
+    console.error('  .claude/skills/ (project)');
+    console.error('  ~/.claude/skills/ (global)');
+    console.error('\nInstall skills: openskills install owner/repo');
     process.exit(1);
   }
 
   const content = readFileSync(skill.path, 'utf-8');
-  const description = extractYamlField(content, 'description');
 
   // Output in Claude Code format
   console.log(`Loading: ${skillName}`);
@@ -270,7 +263,7 @@ function loadSkill(skillName) {
 }
 
 // Command: remove
-function removeSkill(skillName) {
+function removeSkill(skillName, options) {
   const skill = findSkill(skillName);
 
   if (!skill) {
@@ -279,8 +272,10 @@ function removeSkill(skillName) {
   }
 
   rmSync(skill.baseDir, { recursive: true, force: true });
+
+  const location = skill.source.includes(homedir()) ? 'global' : 'project';
   console.log(`✅ Removed: ${skillName}`);
-  console.log(`   From: ${skill.source}`);
+  console.log(`   From: ${location} (${skill.source})`);
 }
 
 // Setup CLI
@@ -297,9 +292,9 @@ program
   .action(listSkills);
 
 program
-  .command('get <source>')
+  .command('install <source>')
   .description('Install skill from GitHub or Git URL')
-  .option('-t, --target <dir>', 'Installation directory', join(homedir(), '.openskills'))
+  .option('-p, --project', 'Install to project .claude/skills/ (default: global ~/.claude/skills/)')
   .action(installSkill);
 
 program

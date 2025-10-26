@@ -2,23 +2,8 @@
 
 ## Installation
 
-### 1. Clone OpenSkills
-
 ```bash
-git clone https://github.com/numman-ali/openskills
-cd openskills
-chmod +x bin/*
-```
-
-### 2. Add to PATH (Optional)
-
-```bash
-# Add to ~/.bashrc or ~/.zshrc
-export PATH="$PATH:/path/to/openskills/bin"
-
-# Or create symlinks
-ln -s /path/to/openskills/bin/load-skill /usr/local/bin/load-skill
-ln -s /path/to/openskills/bin/install-skill /usr/local/bin/install-skill
+npm i -g openskills
 ```
 
 ## Installing Skills
@@ -27,40 +12,40 @@ ln -s /path/to/openskills/bin/install-skill /usr/local/bin/install-skill
 
 ```bash
 # Install all example skills
-install-skill anthropics/skills
+openskills install anthropics/skills
 
 # Install specific skill
-install-skill anthropics/skills/pdf-editor
+openskills install anthropics/skills/pdf-editor
+
+# Install from plugin group
+openskills install anthropics/skills/document-skills/xlsx
 ```
 
 ### From Community Repositories
 
 ```bash
 # Install from any GitHub repo
-install-skill owner/skill-repository
+openskills install owner/skill-repository
 
 # Install specific skill from monorepo
-install-skill owner/skills-collection/specific-skill
+openskills install owner/skills-collection/specific-skill
 ```
 
 ### Install Locations
 
 **Global (default):**
 ```bash
-install-skill owner/repo
-# → Installs to ~/.openskills/
+openskills install owner/repo
+# → Installs to ~/.claude/skills/
+# → Available in all projects
 ```
 
 **Project-local:**
 ```bash
-install-skill owner/repo --target .agent/skills
-# → Installs to .agent/skills/ in current project
-```
-
-**Claude Code native:**
-```bash
-install-skill owner/repo --target .claude/skills
-# → Installs to .claude/skills/ for Claude Code integration
+openskills install owner/repo --project
+# → Installs to .claude/skills/ (current directory)
+# → Only available in this project
+# → Commit to git for team sharing
 ```
 
 ## Using Skills
@@ -68,21 +53,37 @@ install-skill owner/repo --target .claude/skills
 ### List Available Skills
 
 ```bash
-load-skill
+openskills list
 ```
 
-Output shows skills from all locations:
-- `.agent/skills/` (project-local)
-- `.claude/skills/` (Claude Code native)
-- `~/.openskills/` (global)
+Output shows skills from both locations:
+- `.claude/skills/` (project-local) - shown first
+- `~/.claude/skills/` (global) - shown second
 
 ### Load a Skill
 
 ```bash
-load-skill <skill-name>
+openskills load <skill-name>
 ```
 
-The skill loads into your agent's context with base directory for resource resolution.
+The skill loads with base directory for resource resolution:
+
+```
+Loading: pdf-editor
+Base directory: ~/.claude/skills/pdf-editor
+
+[SKILL.md content with YAML frontmatter and instructions]
+
+Skill loaded: pdf-editor
+```
+
+### Remove a Skill
+
+```bash
+openskills remove <skill-name>
+```
+
+Removes from project-local if found there, otherwise global.
 
 ## Integration with AI Agents
 
@@ -90,38 +91,72 @@ OpenSkills works in any AI coding agent with Bash tool support:
 
 **Claude Code:**
 ```
-Bash("load-skill pdf-editor")
+Bash("openskills load pdf-editor")
 ```
 
 **Cursor, Windsurf, Aider:**
 ```
-Execute bash command: load-skill pdf-editor
+Execute: openskills load pdf-editor
 ```
+
+The output loads into agent's context with base directory for resolving references.
 
 ## Verification
 
 Test the installation:
 
 ```bash
-# Install example skill
-install-skill numman-ali/openskills/my-first-skill --target ~/.openskills
+# Install example skill from openskills
+openskills install numman-ali/openskills/my-first-skill
+
+# List it
+openskills list
 
 # Load it
-load-skill my-first-skill
+openskills load my-first-skill
 ```
 
-Expected output:
-```
-Loading: my-first-skill
-Base directory: ~/.openskills/my-first-skill
+## Global vs Project-Local
 
-[SKILL.md content]
+### Global Install (Recommended for personal skills)
 
-Skill loaded: my-first-skill
+```bash
+openskills install anthropics/skills/pdf-editor
 ```
+
+**Benefits:**
+- ✅ Install once, use everywhere
+- ✅ No per-project setup
+- ✅ Stored in `~/.claude/skills/`
+
+**Use when:**
+- Personal productivity skills
+- General-purpose utilities
+- Skills you use across many projects
+
+### Project Install (Recommended for team projects)
+
+```bash
+cd your-project/
+openskills install anthropics/skills/pdf-editor --project
+git add .claude/skills/
+git commit -m "Add PDF editing skill"
+```
+
+**Benefits:**
+- ✅ Version controlled with project
+- ✅ Team gets same skills on clone
+- ✅ Project-specific customizations
+- ✅ Stored in `.claude/skills/`
+
+**Use when:**
+- Team collaboration
+- Domain-specific skills
+- Company internal skills
+- Ensures consistency across team
 
 ## Next Steps
 
 - [Creating Skills](creating-skills.md) - Learn to author your own skills
 - [Integration](integration.md) - Add skills to your project's AGENTS.md
-- [Anthropic's Skills Repository](https://github.com/anthropics/skills) - Example skills
+- [Anthropic's Skills Repository](https://github.com/anthropics/skills) - Browse example skills
