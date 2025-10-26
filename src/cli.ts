@@ -6,7 +6,6 @@ import { installSkill } from './commands/install.js';
 import { readSkill } from './commands/read.js';
 import { removeSkill } from './commands/remove.js';
 import { syncAgentsMd } from './commands/sync.js';
-import { unsyncAgentsMd } from './commands/unsync.js';
 
 const program = new Command();
 
@@ -41,14 +40,9 @@ program
 
 program
   .command('sync')
-  .description('Update AGENTS.md with installed skills (interactive by default)')
+  .description('Update AGENTS.md with installed skills (interactive, pre-selects current state)')
   .option('-y, --yes', 'Skip interactive selection, sync all skills')
   .action(syncAgentsMd);
-
-program
-  .command('unsync')
-  .description('Remove skills section from AGENTS.md')
-  .action(unsyncAgentsMd);
 
 program
   .command('remove <skill-name>')

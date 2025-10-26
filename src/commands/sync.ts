@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
 import { findAllSkills } from '../utils/skills.js';
-import { generateSkillsXml, replaceSkillsSection } from '../utils/agents-md.js';
+import { generateSkillsXml, replaceSkillsSection, parseCurrentSkills, removeSkillsSection } from '../utils/agents-md.js';
 import type { Skill } from '../types.js';
 
 export interface SyncOptions {
@@ -30,6 +30,10 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
   // Interactive mode by default (unless -y flag)
   if (!options.yes) {
     try {
+      // Parse what's currently in AGENTS.md
+      const content = readFileSync('AGENTS.md', 'utf-8');
+      const currentSkills = parseCurrentSkills(content);
+
       // Sort: project first
       const sorted = skills.sort((a, b) => {
         if (a.location !== b.location) {
@@ -42,7 +46,8 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
         name: `${chalk.bold(skill.name.padEnd(25))} ${skill.location === 'project' ? chalk.blue('(project)') : chalk.dim('(global)')}`,
         value: skill.name,
         description: skill.description.slice(0, 70),
-        checked: skill.location === 'project', // Check project skills by default
+        // Pre-select if currently in AGENTS.md, otherwise default to project skills
+        checked: currentSkills.includes(skill.name) || (currentSkills.length === 0 && skill.location === 'project'),
       }));
 
       const selected = await checkbox({
@@ -52,7 +57,11 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
       });
 
       if (selected.length === 0) {
-        console.log(chalk.yellow('No skills selected. AGENTS.md not modified.'));
+        // User unchecked everything - remove skills section
+        const content = readFileSync('AGENTS.md', 'utf-8');
+        const updated = removeSkillsSection(content);
+        writeFileSync('AGENTS.md', updated);
+        console.log(chalk.green('✅ Removed all skills from AGENTS.md'));
         return;
       }
 

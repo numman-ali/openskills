@@ -1,6 +1,23 @@
 import type { Skill } from '../types.js';
 
 /**
+ * Parse skill names currently in AGENTS.md
+ */
+export function parseCurrentSkills(content: string): string[] {
+  const skillNames: string[] = [];
+
+  // Match <skill><name>skill-name</name>...</skill>
+  const skillRegex = /<skill>[\s\S]*?<name>([^<]+)<\/name>[\s\S]*?<\/skill>/g;
+
+  let match;
+  while ((match = skillRegex.exec(content)) !== null) {
+    skillNames.push(match[1].trim());
+  }
+
+  return skillNames;
+}
+
+/**
  * Generate skills XML section for AGENTS.md
  */
 export function generateSkillsXml(skills: Skill[]): string {

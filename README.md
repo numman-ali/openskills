@@ -136,10 +136,10 @@ Skill read: pdf-editor
 
 ### sync
 
-Update AGENTS.md with installed skills (interactive by default):
+Update AGENTS.md with installed skills (interactive, smart defaults):
 
 ```bash
-# Interactive mode (select which skills to sync)
+# Interactive mode (pre-selects skills currently in AGENTS.md)
 openskills sync
 
 # Skip interaction, sync all skills
@@ -147,21 +147,14 @@ openskills sync -y
 ```
 
 **Interactive mode (default):**
-- Shows checkbox list of all installed skills
+- Pre-selects skills already in AGENTS.md (maintains current state)
+- Check more skills to add them
+- Uncheck skills to remove them
+- Uncheck all to remove skills section entirely
 - Labels: (project) vs (global)
-- Project skills checked by default
-- Select which to include in AGENTS.md
 - Perfect for managing 15+ skills
 
-### unsync
-
-Remove skills section from AGENTS.md:
-
-```bash
-openskills unsync
-```
-
-Removes auto-generated skills section from AGENTS.md.
+**No separate unsync needed** - just uncheck everything in sync!
 
 ### remove
 
