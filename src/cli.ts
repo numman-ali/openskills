@@ -17,7 +17,7 @@ program
   .showHelpAfterError(false)
   .exitOverride((err) => {
     // Handle all commander errors gracefully (no stack traces)
-    if (err.code === 'commander.helpDisplayed' || err.code === 'commander.help') {
+    if (err.code === 'commander.helpDisplayed' || err.code === 'commander.help' || err.code === 'commander.version') {
       process.exit(0);
     }
     if (err.code === 'commander.missingArgument' || err.code === 'commander.missingMandatoryOptionValue') {
