@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# install-skill - Install skills from GitHub or Git URLs
+# Supports: owner/repo, owner/repo/skill-name, https://github.com/...
+
+set -euo pipefail
+
+SKILL_SOURCE="${1:-}"
+TARGET_DIR="${2:-$HOME/.openskills}"
+
+if [ -z "$SKILL_SOURCE" ]; then
+  echo "Usage: install-skill <source> [target-dir]"
+  echo ""
+  echo "Sources:"
+  echo "  owner/repo                   # GitHub repo (all skills)"
+  echo "  owner/repo/skill-name        # Specific skill from repo"
+  echo "  https://github.com/...       # Full GitHub URL"
+  echo "  https://git.../repo.git      # Any Git URL"
+  echo ""
+  echo "Target (optional):"
+  echo "  ~/.openskills                # Default (global)"
+  echo "  .agent/skills                # Project-local"
+  echo "  .claude/skills               # Claude Code native"
+  echo ""
+  echo "Examples:"
+  echo "  install-skill anthropics/skills"
+  echo "  install-skill anthropics/skills/pdf-editor"
+  echo "  install-skill owner/repo --target .agent/skills"
+  exit 1
+fi
+
+# Parse source and construct Git URL
+if [[ "$SKILL_SOURCE" =~ ^https?:// ]]; then
+  # Full URL provided
+  REPO_URL="$SKILL_SOURCE"
+  SKILL_SUBPATH=""
+elif [[ "$SKILL_SOURCE" =~ ^([^/]+)/([^/]+)/(.+)$ ]]; then
+  # owner/repo/skill-name format
+  OWNER="${BASH_REMATCH[1]}"
+  REPO="${BASH_REMATCH[2]}"
+  SKILL_SUBPATH="${BASH_REMATCH[3]}"
+  REPO_URL="https://github.com/$OWNER/$REPO"
+elif [[ "$SKILL_SOURCE" =~ ^([^/]+)/([^/]+)$ ]]; then
+  # owner/repo format
+  REPO_URL="https://github.com/$SKILL_SOURCE"
+  SKILL_SUBPATH=""
+else
+  echo "Error: Invalid source format"
+  echo "Expected: owner/repo or https://github.com/..."
+  exit 1
+fi
+
+echo "Installing skill(s) from: $REPO_URL"
+[ -n "$SKILL_SUBPATH" ] && echo "Subpath: $SKILL_SUBPATH"
+echo "Target: $TARGET_DIR"
+echo ""
+
+# Create temp directory
+TEMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TEMP_DIR"' EXIT
+
+# Clone repository (shallow, faster)
+echo "Cloning repository..."
+if ! git clone --depth 1 --quiet "$REPO_URL" "$TEMP_DIR/repo" 2>/dev/null; then
+  echo "Error: Failed to clone $REPO_URL"
+  exit 1
+fi
+
+# Determine what to install
+if [ -n "$SKILL_SUBPATH" ]; then
+  # Install specific skill
+  SKILL_DIR="$TEMP_DIR/repo/$SKILL_SUBPATH"
+
+  if [ ! -f "$SKILL_DIR/SKILL.md" ]; then
+    echo "Error: SKILL.md not found at $SKILL_SUBPATH"
+    exit 1
+  fi
+
+  SKILL_NAME=$(basename "$SKILL_SUBPATH")
+
+  # Validate YAML frontmatter
+  if ! grep -q "^---$" "$SKILL_DIR/SKILL.md"; then
+    echo "Error: Invalid SKILL.md (missing YAML frontmatter)"
+    exit 1
+  fi
+
+  # Install skill
+  mkdir -p "$TARGET_DIR"
+  cp -r "$SKILL_DIR" "$TARGET_DIR/$SKILL_NAME"
+
+  echo "✅ Installed: $SKILL_NAME"
+  echo "   Location: $TARGET_DIR/$SKILL_NAME"
+else
+  # Install all skills from repo
+  SKILL_DIRS=$(find "$TEMP_DIR/repo" -name "SKILL.md" -type f -exec dirname {} \;)
+
+  if [ -z "$SKILL_DIRS" ]; then
+    echo "Error: No SKILL.md files found in repository"
+    exit 1
+  fi
+
+  INSTALLED_COUNT=0
+
+  for skill_dir in $SKILL_DIRS; do
+    skill_name=$(basename "$skill_dir")
+
+    # Validate YAML frontmatter
+    if ! grep -q "^---$" "$skill_dir/SKILL.md"; then
+      echo "⚠️  Skipping $skill_name: Invalid SKILL.md (no YAML frontmatter)"
+      continue
+    fi
+
+    # Install skill
+    mkdir -p "$TARGET_DIR"
+    cp -r "$skill_dir" "$TARGET_DIR/$skill_name"
+
+    echo "✅ Installed: $skill_name"
+    ((INSTALLED_COUNT++))
+  done
+
+  echo ""
+  echo "✅ Installation complete: $INSTALLED_COUNT skill(s) installed to $TARGET_DIR"
+fi
+
+echo ""
+echo "Load skill: load-skill $SKILL_NAME"

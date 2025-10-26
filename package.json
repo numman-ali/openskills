@@ -1,0 +1,36 @@
+{
+  "name": "openskills",
+  "version": "1.0.0",
+  "description": "Universal skills loader for AI coding agents - install and load Anthropic SKILL.md format skills in any agent",
+  "type": "module",
+  "bin": {
+    "openskills": "./cli.js"
+  },
+  "scripts": {
+    "test": "node cli.js list"
+  },
+  "keywords": [
+    "anthropic",
+    "claude",
+    "skills",
+    "ai",
+    "coding-agent",
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "aider"
+  ],
+  "author": "OpenSkills Contributors",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/numman-ali/openskills.git"
+  },
+  "homepage": "https://github.com/numman-ali/openskills#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "commander": "^12.1.0"
+  }
+}
