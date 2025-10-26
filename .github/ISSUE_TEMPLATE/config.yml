@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Anthropic Skills Documentation
+    url: https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+    about: Learn about Anthropic's Agent Skills specification
+  - name: Anthropic Skills Repository
+    url: https://github.com/anthropics/skills
+    about: Browse official Anthropic example skills
+  - name: Discussions
+    url: https://github.com/numman-ali/openskills/discussions
+    about: Ask questions or discuss OpenSkills with the community

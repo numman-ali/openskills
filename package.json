@@ -10,8 +10,7 @@
   "files": [
     "dist",
     "examples",
-    "docs",
-    ".claude-plugin"
+    "docs"
   ],
   "scripts": {
     "build": "tsup",
