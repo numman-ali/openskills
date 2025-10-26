@@ -20,23 +20,16 @@ export function syncAgentsMd(): void {
   }
 
   const xml = generateSkillsXml(skills);
+  const content = readFileSync('AGENTS.md', 'utf-8');
+  const updated = replaceSkillsSection(content, xml);
 
-  try {
-    const content = readFileSync('AGENTS.md', 'utf-8');
-    const updated = replaceSkillsSection(content, xml);
+  writeFileSync('AGENTS.md', updated);
 
-    writeFileSync('AGENTS.md', updated);
+  const hadMarkers = content.includes('<skills_system') || content.includes('<!-- SKILLS_TABLE_START -->');
 
+  if (hadMarkers) {
     console.log(`✅ Synced ${skills.length} skill(s) to AGENTS.md`);
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Error: ${error.message}`);
-      console.error('\nAdd markers to AGENTS.md:');
-      console.error('  <skills_system priority="1">');
-      console.error('  <!-- SKILLS_TABLE_START -->');
-      console.error('  <!-- SKILLS_TABLE_END -->');
-      console.error('  </skills_system>');
-    }
-    process.exit(1);
+  } else {
+    console.log(`✅ Added skills section to AGENTS.md (${skills.length} skill(s))`);
   }
 }

@@ -49,7 +49,7 @@ ${skillTags}
 }
 
 /**
- * Replace skills section in AGENTS.md between markers
+ * Replace or add skills section in AGENTS.md
  */
 export function replaceSkillsSection(content: string, newSection: string): string {
   const startMarker = '<skills_system';
@@ -75,8 +75,8 @@ export function replaceSkillsSection(content: string, newSection: string): strin
     return content.replace(regex, `${htmlStartMarker}\n${innerContent}\n${htmlEndMarker}`);
   }
 
-  // No markers found
-  throw new Error('No skills section markers found in AGENTS.md');
+  // No markers found - append to end of file
+  return content.trimEnd() + '\n\n' + newSection + '\n';
 }
 
 /**
@@ -104,6 +104,6 @@ export function removeSkillsSection(content: string): string {
     return content.replace(regex, `${htmlStartMarker}\n<!-- Skills section removed -->\n${htmlEndMarker}`);
   }
 
-  // No markers found
-  throw new Error('No skills section markers found in AGENTS.md');
+  // No markers found - nothing to remove
+  return content;
 }
