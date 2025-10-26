@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 import chalk from 'chalk';
 import ora from 'ora';
 import { checkbox, confirm } from '@inquirer/prompts';
+import { ExitPromptError } from '@inquirer/core';
 import { hasValidFrontmatter, extractYamlField } from '../utils/yaml.js';
 import { ANTHROPIC_MARKETPLACE_SKILLS } from '../utils/marketplace-skills.js';
 import type { InstallOptions } from '../types.js';
@@ -186,25 +187,33 @@ async function installFromRepo(
   let skillsToInstall = skillInfos;
 
   if (!options.yes && skillInfos.length > 1) {
-    const choices = skillInfos.map((info) => ({
-      name: `${chalk.bold(info.skillName.padEnd(25))} ${chalk.dim(formatSize(info.size))}`,
-      value: info.skillName,
-      description: info.description.slice(0, 80),
-      checked: true, // Check all by default
-    }));
+    try {
+      const choices = skillInfos.map((info) => ({
+        name: `${chalk.bold(info.skillName.padEnd(25))} ${chalk.dim(formatSize(info.size))}`,
+        value: info.skillName,
+        description: info.description.slice(0, 80),
+        checked: true, // Check all by default
+      }));
 
-    const selected = await checkbox({
-      message: 'Select skills to install',
-      choices,
-      pageSize: 15,
-    });
+      const selected = await checkbox({
+        message: 'Select skills to install',
+        choices,
+        pageSize: 15,
+      });
 
-    if (selected.length === 0) {
-      console.log(chalk.yellow('No skills selected. Installation cancelled.'));
-      return;
+      if (selected.length === 0) {
+        console.log(chalk.yellow('No skills selected. Installation cancelled.'));
+        return;
+      }
+
+      skillsToInstall = skillInfos.filter((info) => selected.includes(info.skillName));
+    } catch (error) {
+      if (error instanceof ExitPromptError) {
+        console.log(chalk.yellow('\n\nCancelled by user'));
+        process.exit(0);
+      }
+      throw error;
     }
-
-    skillsToInstall = skillInfos.filter((info) => selected.includes(info.skillName));
   }
 
   // Install selected skills
@@ -231,14 +240,22 @@ async function installFromRepo(
 async function warnIfConflict(skillName: string, targetPath: string, isProject: boolean): Promise<void> {
   // Check if overwriting existing skill
   if (existsSync(targetPath)) {
-    const shouldOverwrite = await confirm({
-      message: chalk.yellow(`Skill '${skillName}' already exists. Overwrite?`),
-      default: false,
-    });
+    try {
+      const shouldOverwrite = await confirm({
+        message: chalk.yellow(`Skill '${skillName}' already exists. Overwrite?`),
+        default: false,
+      });
 
-    if (!shouldOverwrite) {
-      console.log(chalk.yellow(`Skipped: ${skillName}`));
-      process.exit(0);
+      if (!shouldOverwrite) {
+        console.log(chalk.yellow(`Skipped: ${skillName}`));
+        process.exit(0);
+      }
+    } catch (error) {
+      if (error instanceof ExitPromptError) {
+        console.log(chalk.yellow('\n\nCancelled by user'));
+        process.exit(0);
+      }
+      throw error;
     }
   }
 

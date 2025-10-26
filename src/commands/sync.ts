@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
+import { ExitPromptError } from '@inquirer/core';
 import { findAllSkills } from '../utils/skills.js';
 import { generateSkillsXml, replaceSkillsSection } from '../utils/agents-md.js';
 import type { Skill } from '../types.js';
@@ -28,34 +29,42 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
 
   // Interactive mode by default (unless -y flag)
   if (!options.yes) {
-    // Sort: project first
-    const sorted = skills.sort((a, b) => {
-      if (a.location !== b.location) {
-        return a.location === 'project' ? -1 : 1;
+    try {
+      // Sort: project first
+      const sorted = skills.sort((a, b) => {
+        if (a.location !== b.location) {
+          return a.location === 'project' ? -1 : 1;
+        }
+        return a.name.localeCompare(b.name);
+      });
+
+      const choices = sorted.map((skill) => ({
+        name: `${chalk.bold(skill.name.padEnd(25))} ${skill.location === 'project' ? chalk.blue('(project)') : chalk.dim('(global)')}`,
+        value: skill.name,
+        description: skill.description.slice(0, 70),
+        checked: skill.location === 'project', // Check project skills by default
+      }));
+
+      const selected = await checkbox({
+        message: 'Select skills to sync to AGENTS.md',
+        choices,
+        pageSize: 15,
+      });
+
+      if (selected.length === 0) {
+        console.log(chalk.yellow('No skills selected. AGENTS.md not modified.'));
+        return;
       }
-      return a.name.localeCompare(b.name);
-    });
 
-    const choices = sorted.map((skill) => ({
-      name: `${chalk.bold(skill.name.padEnd(25))} ${skill.location === 'project' ? chalk.blue('(project)') : chalk.dim('(global)')}`,
-      value: skill.name,
-      description: skill.description.slice(0, 70),
-      checked: skill.location === 'project', // Check project skills by default
-    }));
-
-    const selected = await checkbox({
-      message: 'Select skills to sync to AGENTS.md',
-      choices,
-      pageSize: 15,
-    });
-
-    if (selected.length === 0) {
-      console.log(chalk.yellow('No skills selected. AGENTS.md not modified.'));
-      return;
+      // Filter skills to selected ones
+      skills = skills.filter((s) => selected.includes(s.name));
+    } catch (error) {
+      if (error instanceof ExitPromptError) {
+        console.log(chalk.yellow('\n\nCancelled by user'));
+        process.exit(0);
+      }
+      throw error;
     }
-
-    // Filter skills to selected ones
-    skills = skills.filter((s) => selected.includes(s.name));
   }
 
   const xml = generateSkillsXml(skills);
