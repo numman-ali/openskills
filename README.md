@@ -8,7 +8,7 @@ Install and load Anthropic SKILL.md format skills in any AI coding agent.
 
 ```bash
 npm i -g openskills
-openskills install anthropics/skills/pdf-editor
+openskills install anthropics/skills/pdf-editor --project
 openskills read pdf-editor
 ```
 
@@ -22,11 +22,12 @@ openskills read pdf-editor
 
 - ✅ **Universal** - Works in any AI agent with Bash support (Claude Code, Cursor, Windsurf, Aider)
 - ✅ **Standard** - Uses `.claude/skills/` (Claude Code's native location)
-- ✅ **Simple** - One npm install, works everywhere
-- ✅ **Compatible** - Coexists with native Claude Code skills
+- ✅ **Interactive** - Smart defaults with TUI selection for skills and sync
+- ✅ **Compatible** - Coexists with native Claude Code plugins
 - ✅ **GitHub Install** - Pull skills from any GitHub repository
 - ✅ **Progressive Disclosure** - Skills load detailed instructions only when needed
 - ✅ **Type-Safe** - Written in TypeScript with 100% test coverage
+- ✅ **Beautiful UX** - Colors, spinners, conflict warnings, size indicators
 
 ## What Are Skills?
 
@@ -77,22 +78,31 @@ openskills list
 
 ### install
 
-Install skills from GitHub:
+Install skills from GitHub (interactive by default):
 
 ```bash
-# Recommended: Install to project (conflict-free)
+# Install with interactive selection (shows checkboxes)
 openskills install anthropics/skills --project
+
+# Skip interaction, install all
+openskills install anthropics/skills --project -y
+
+# Install specific skill (no interaction)
 openskills install anthropics/skills/pdf-editor --project
 
-# Advanced: Install globally (only for unique custom skills)
+# Global install (advanced, warns about conflicts)
 openskills install my-org/unique-skill
 
 # Install from Git URL
 openskills install https://github.com/owner/repo --project
-
-# Supports nested paths (plugin groupings)
-openskills install anthropics/skills/document-skills/xlsx --project
 ```
+
+**Interactive mode:**
+- Shows checkbox list of all skills found
+- Displays skill size and description preview
+- Check/uncheck skills to install
+- Warns about conflicts (marketplace skills, overwrites)
+- Confirms before overwriting existing skills
 
 ### list
 
@@ -126,18 +136,22 @@ Skill read: pdf-editor
 
 ### sync
 
-Update AGENTS.md with installed skills:
+Update AGENTS.md with installed skills (interactive by default):
 
 ```bash
-# Sync all skills
+# Interactive mode (select which skills to sync)
 openskills sync
 
-# Interactive mode (select which skills to sync)
-openskills sync --interactive
+# Skip interaction, sync all skills
+openskills sync -y
 ```
 
-Scans .claude/skills/ and generates XML section in AGENTS.md.
-Interactive mode shows checkboxes with (global) vs (project) labels.
+**Interactive mode (default):**
+- Shows checkbox list of all installed skills
+- Labels: (project) vs (global)
+- Project skills checked by default
+- Select which to include in AGENTS.md
+- Perfect for managing 15+ skills
 
 ### unsync
 

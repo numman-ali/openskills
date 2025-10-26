@@ -23,7 +23,8 @@ program
 program
   .command('install <source>')
   .description('Install skill from GitHub or Git URL')
-  .option('-p, --project', 'Install to project .claude/skills/ (default: global ~/.claude/skills/)')
+  .option('-p, --project', 'Install to project .claude/skills/ (recommended)')
+  .option('-y, --yes', 'Skip interactive selection, install all skills found')
   .action(installSkill);
 
 program
@@ -33,8 +34,8 @@ program
 
 program
   .command('sync')
-  .description('Update AGENTS.md with installed skills')
-  .option('-i, --interactive', 'Interactively select skills to sync')
+  .description('Update AGENTS.md with installed skills (interactive by default)')
+  .option('-y, --yes', 'Skip interactive selection, sync all skills')
   .action(syncAgentsMd);
 
 program

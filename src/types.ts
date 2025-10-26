@@ -13,6 +13,7 @@ export interface SkillLocation {
 
 export interface InstallOptions {
   project?: boolean;
+  yes?: boolean;
 }
 
 export interface SkillMetadata {

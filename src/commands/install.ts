@@ -1,22 +1,27 @@
-import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
 import { join, basename } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
-import { hasValidFrontmatter } from '../utils/yaml.js';
+import chalk from 'chalk';
+import ora from 'ora';
+import { checkbox, confirm } from '@inquirer/prompts';
+import { hasValidFrontmatter, extractYamlField } from '../utils/yaml.js';
 import { ANTHROPIC_MARKETPLACE_SKILLS } from '../utils/marketplace-skills.js';
 import type { InstallOptions } from '../types.js';
 
 /**
  * Install skill from GitHub or Git URL
  */
-export function installSkill(source: string, options: InstallOptions): void {
+export async function installSkill(source: string, options: InstallOptions): Promise<void> {
   const targetDir = options.project
     ? join(process.cwd(), '.claude/skills')
     : join(homedir(), '.claude/skills');
 
-  const location = options.project ? 'project (.claude/skills)' : 'global (~/.claude/skills)';
+  const location = options.project
+    ? chalk.blue('project (.claude/skills)')
+    : chalk.dim('global (~/.claude/skills)');
 
-  console.log(`Installing from: ${source}`);
+  console.log(`Installing from: ${chalk.cyan(source)}`);
   console.log(`Location: ${location}\n`);
 
   // Parse source
@@ -35,7 +40,7 @@ export function installSkill(source: string, options: InstallOptions): void {
       repoUrl = `https://github.com/${parts[0]}/${parts[1]}`;
       skillSubpath = parts.slice(2).join('/');
     } else {
-      console.error('Error: Invalid source format');
+      console.error(chalk.red('Error: Invalid source format'));
       console.error('Expected: owner/repo or owner/repo/skill-name');
       process.exit(1);
     }
@@ -46,43 +51,54 @@ export function installSkill(source: string, options: InstallOptions): void {
   mkdirSync(tempDir, { recursive: true });
 
   try {
-    // Clone repository
-    console.log('Cloning repository...');
+    // Clone repository with spinner
+    const spinner = ora('Cloning repository...').start();
     execSync(`git clone --depth 1 --quiet "${repoUrl}" "${tempDir}/repo"`, {
-      stdio: 'inherit',
+      stdio: 'ignore',
     });
+    spinner.succeed('Repository cloned');
 
     const repoDir = join(tempDir, 'repo');
 
     if (skillSubpath) {
-      installSpecificSkill(repoDir, skillSubpath, targetDir);
+      // Specific skill path provided - install directly
+      await installSpecificSkill(repoDir, skillSubpath, targetDir, options.project || false);
     } else {
-      installAllSkills(repoDir, targetDir);
+      // Find all skills in repo
+      await installFromRepo(repoDir, targetDir, options);
     }
   } finally {
     // Cleanup
     rmSync(tempDir, { recursive: true, force: true });
   }
 
-  console.log('\nRead skill: openskills read <skill-name>');
+  console.log(`\n${chalk.dim('Read skill:')} ${chalk.cyan('openskills read <skill-name>')}`);
+  if (options.project) {
+    console.log(`${chalk.dim('Sync to AGENTS.md:')} ${chalk.cyan('openskills sync')}`);
+  }
 }
 
 /**
- * Install specific skill from subpath
+ * Install specific skill from subpath (no interaction needed)
  */
-function installSpecificSkill(repoDir: string, skillSubpath: string, targetDir: string): void {
+async function installSpecificSkill(
+  repoDir: string,
+  skillSubpath: string,
+  targetDir: string,
+  isProject: boolean
+): Promise<void> {
   const skillDir = join(repoDir, skillSubpath);
   const skillMdPath = join(skillDir, 'SKILL.md');
 
   if (!existsSync(skillMdPath)) {
-    console.error(`Error: SKILL.md not found at ${skillSubpath}`);
+    console.error(chalk.red(`Error: SKILL.md not found at ${skillSubpath}`));
     process.exit(1);
   }
 
   // Validate
   const content = readFileSync(skillMdPath, 'utf-8');
   if (!hasValidFrontmatter(content)) {
-    console.error('Error: Invalid SKILL.md (missing YAML frontmatter)');
+    console.error(chalk.red('Error: Invalid SKILL.md (missing YAML frontmatter)'));
     process.exit(1);
   }
 
@@ -90,19 +106,24 @@ function installSpecificSkill(repoDir: string, skillSubpath: string, targetDir: 
   const targetPath = join(targetDir, skillName);
 
   // Warn about potential conflicts
-  warnIfConflict(skillName, targetPath, options.project || false);
+  await warnIfConflict(skillName, targetPath, isProject);
 
   mkdirSync(targetDir, { recursive: true });
   cpSync(skillDir, targetPath, { recursive: true });
 
-  console.log(`✅ Installed: ${skillName}`);
+  console.log(chalk.green(`✅ Installed: ${skillName}`));
   console.log(`   Location: ${targetPath}`);
 }
 
 /**
- * Install all skills from repository (recursive search)
+ * Install from repository (with interactive selection unless -y flag)
  */
-function installAllSkills(repoDir: string, targetDir: string): void {
+async function installFromRepo(
+  repoDir: string,
+  targetDir: string,
+  options: InstallOptions
+): Promise<void> {
+  // Find all skills
   const findSkills = (dir: string): string[] => {
     const skills: string[] = [];
     const entries = readdirSync(dir, { withFileTypes: true });
@@ -113,7 +134,6 @@ function installAllSkills(repoDir: string, targetDir: string): void {
         if (existsSync(join(fullPath, 'SKILL.md'))) {
           skills.push(fullPath);
         } else {
-          // Recurse into subdirectories
           skills.push(...findSkills(fullPath));
         }
       }
@@ -124,53 +144,137 @@ function installAllSkills(repoDir: string, targetDir: string): void {
   const skillDirs = findSkills(repoDir);
 
   if (skillDirs.length === 0) {
-    console.error('Error: No SKILL.md files found in repository');
+    console.error(chalk.red('Error: No SKILL.md files found in repository'));
     process.exit(1);
   }
 
-  let installedCount = 0;
+  console.log(chalk.dim(`Found ${skillDirs.length} skill(s)\n`));
 
-  for (const skillDir of skillDirs) {
-    const skillMdPath = join(skillDir, 'SKILL.md');
-    const content = readFileSync(skillMdPath, 'utf-8');
+  // Build skill info list
+  const skillInfos = skillDirs
+    .map((skillDir) => {
+      const skillMdPath = join(skillDir, 'SKILL.md');
+      const content = readFileSync(skillMdPath, 'utf-8');
 
-    if (!hasValidFrontmatter(content)) {
+      if (!hasValidFrontmatter(content)) {
+        return null;
+      }
+
       const skillName = basename(skillDir);
-      console.warn(`⚠️  Skipping ${skillName}: Invalid SKILL.md`);
-      continue;
+      const description = extractYamlField(content, 'description');
+      const targetPath = join(targetDir, skillName);
+
+      // Get size
+      const size = getDirectorySize(skillDir);
+
+      return {
+        skillDir,
+        skillName,
+        description,
+        targetPath,
+        size,
+      };
+    })
+    .filter((info) => info !== null);
+
+  if (skillInfos.length === 0) {
+    console.error(chalk.red('Error: No valid SKILL.md files found'));
+    process.exit(1);
+  }
+
+  // Interactive selection (unless -y flag or single skill)
+  let skillsToInstall = skillInfos;
+
+  if (!options.yes && skillInfos.length > 1) {
+    const choices = skillInfos.map((info) => ({
+      name: `${chalk.bold(info.skillName.padEnd(25))} ${chalk.dim(formatSize(info.size))}`,
+      value: info.skillName,
+      description: info.description.slice(0, 80),
+      checked: true, // Check all by default
+    }));
+
+    const selected = await checkbox({
+      message: 'Select skills to install',
+      choices,
+      pageSize: 15,
+    });
+
+    if (selected.length === 0) {
+      console.log(chalk.yellow('No skills selected. Installation cancelled.'));
+      return;
     }
 
-    const skillName = basename(skillDir);
-    const targetPath = join(targetDir, skillName);
+    skillsToInstall = skillInfos.filter((info) => selected.includes(info.skillName));
+  }
 
-    // Warn about potential conflicts (pass options.project, defaulting to false)
-    const isProject = (targetDir === join(process.cwd(), '.claude/skills'));
-    warnIfConflict(skillName, targetPath, isProject);
+  // Install selected skills
+  const isProject = targetDir === join(process.cwd(), '.claude/skills');
+  let installedCount = 0;
+
+  for (const info of skillsToInstall) {
+    // Warn about conflicts
+    await warnIfConflict(info.skillName, info.targetPath, isProject);
 
     mkdirSync(targetDir, { recursive: true });
-    cpSync(skillDir, targetPath, { recursive: true });
+    cpSync(info.skillDir, info.targetPath, { recursive: true });
 
-    console.log(`✅ Installed: ${skillName}`);
+    console.log(chalk.green(`✅ Installed: ${info.skillName}`));
     installedCount++;
   }
 
-  console.log(`\n✅ Installation complete: ${installedCount} skill(s) installed`);
+  console.log(chalk.green(`\n✅ Installation complete: ${installedCount} skill(s) installed`));
 }
 
 /**
  * Warn if installing could conflict with Claude Code marketplace
  */
-function warnIfConflict(skillName: string, targetPath: string, isProject: boolean): void {
+async function warnIfConflict(skillName: string, targetPath: string, isProject: boolean): Promise<void> {
   // Check if overwriting existing skill
   if (existsSync(targetPath)) {
-    console.warn(`⚠️  Overwriting existing skill at ${targetPath}`);
+    const shouldOverwrite = await confirm({
+      message: chalk.yellow(`Skill '${skillName}' already exists. Overwrite?`),
+      default: false,
+    });
+
+    if (!shouldOverwrite) {
+      console.log(chalk.yellow(`Skipped: ${skillName}`));
+      process.exit(0);
+    }
   }
 
   // Warn about marketplace conflicts (global install only)
   if (!isProject && ANTHROPIC_MARKETPLACE_SKILLS.includes(skillName)) {
-    console.warn(`\n⚠️  Warning: '${skillName}' matches an Anthropic marketplace skill`);
-    console.warn('   Installing globally may conflict with Claude Code plugins.');
-    console.warn('   If you re-enable Claude plugins, this will be overwritten.');
-    console.warn('   Recommend: Use --project flag for conflict-free installation.\n');
+    console.warn(chalk.yellow(`\n⚠️  Warning: '${skillName}' matches an Anthropic marketplace skill`));
+    console.warn(chalk.dim('   Installing globally may conflict with Claude Code plugins.'));
+    console.warn(chalk.dim('   If you re-enable Claude plugins, this will be overwritten.'));
+    console.warn(chalk.dim('   Recommend: Use --project flag for conflict-free installation.\n'));
   }
+}
+
+/**
+ * Get directory size in bytes
+ */
+function getDirectorySize(dirPath: string): number {
+  let size = 0;
+
+  const entries = readdirSync(dirPath, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = join(dirPath, entry.name);
+    if (entry.isFile()) {
+      size += statSync(fullPath).size;
+    } else if (entry.isDirectory()) {
+      size += getDirectorySize(fullPath);
+    }
+  }
+
+  return size;
+}
+
+/**
+ * Format bytes to human-readable size
+ */
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes}B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
 }
