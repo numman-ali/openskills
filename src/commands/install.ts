@@ -47,8 +47,8 @@ export async function installSkill(source: string, options: InstallOptions): Pro
     }
   }
 
-  // Create temp directory
-  const tempDir = join(homedir(), '.openskills-temp');
+  // Create unique temp directory per invocation
+  const tempDir = join(homedir(), `.openskills-temp-${Date.now()}`);
   mkdirSync(tempDir, { recursive: true });
 
   try {
@@ -107,7 +107,11 @@ async function installSpecificSkill(
   const targetPath = join(targetDir, skillName);
 
   // Warn about potential conflicts
-  await warnIfConflict(skillName, targetPath, isProject);
+  const shouldInstall = await warnIfConflict(skillName, targetPath, isProject);
+  if (!shouldInstall) {
+    console.log(chalk.yellow(`Skipped: ${skillName}`));
+    return;
+  }
 
   mkdirSync(targetDir, { recursive: true });
   cpSync(skillDir, targetPath, { recursive: true });
@@ -222,7 +226,11 @@ async function installFromRepo(
 
   for (const info of skillsToInstall) {
     // Warn about conflicts
-    await warnIfConflict(info.skillName, info.targetPath, isProject);
+    const shouldInstall = await warnIfConflict(info.skillName, info.targetPath, isProject);
+    if (!shouldInstall) {
+      console.log(chalk.yellow(`Skipped: ${info.skillName}`));
+      continue; // Skip this skill, continue with next
+    }
 
     mkdirSync(targetDir, { recursive: true });
     cpSync(info.skillDir, info.targetPath, { recursive: true });
@@ -236,8 +244,9 @@ async function installFromRepo(
 
 /**
  * Warn if installing could conflict with Claude Code marketplace
+ * Returns true if should proceed, false if should skip
  */
-async function warnIfConflict(skillName: string, targetPath: string, isProject: boolean): Promise<void> {
+async function warnIfConflict(skillName: string, targetPath: string, isProject: boolean): Promise<boolean> {
   // Check if overwriting existing skill
   if (existsSync(targetPath)) {
     try {
@@ -247,8 +256,7 @@ async function warnIfConflict(skillName: string, targetPath: string, isProject: 
       });
 
       if (!shouldOverwrite) {
-        console.log(chalk.yellow(`Skipped: ${skillName}`));
-        process.exit(0);
+        return false; // Skip this skill, continue with others
       }
     } catch (error) {
       if (error instanceof ExitPromptError) {
@@ -266,6 +274,8 @@ async function warnIfConflict(skillName: string, targetPath: string, isProject: 
     console.warn(chalk.dim('   If you re-enable Claude plugins, this will be overwritten.'));
     console.warn(chalk.dim('   Recommend: Use --project flag for conflict-free installation.\n'));
   }
+
+  return true; // OK to proceed
 }
 
 /**

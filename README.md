@@ -156,14 +156,26 @@ openskills sync -y
 
 **No separate unsync needed** - just uncheck everything in sync!
 
+### manage
+
+Interactively manage (remove) installed skills:
+
+```bash
+openskills manage
+```
+
+Shows checkbox list of all installed skills. Select skills to remove.
+
 ### remove
 
-Remove installed skill:
+Remove specific skill (non-interactive, for scripts):
 
 ```bash
 openskills remove pdf-editor
 openskills rm pdf-editor  # alias
 ```
+
+**Tip:** Use `openskills manage` for interactive multi-select removal.
 
 ## Directory Structure
 

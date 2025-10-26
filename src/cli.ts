@@ -5,6 +5,7 @@ import { listSkills } from './commands/list.js';
 import { installSkill } from './commands/install.js';
 import { readSkill } from './commands/read.js';
 import { removeSkill } from './commands/remove.js';
+import { manageSkills } from './commands/manage.js';
 import { syncAgentsMd } from './commands/sync.js';
 
 const program = new Command();
@@ -13,12 +14,22 @@ program
   .name('openskills')
   .description('Universal skills loader for AI coding agents')
   .version('1.0.0')
-  .showHelpAfterError(true)
+  .showHelpAfterError(false)
   .exitOverride((err) => {
-    if (err.code === 'commander.helpDisplayed') {
+    // Handle all commander errors gracefully (no stack traces)
+    if (err.code === 'commander.helpDisplayed' || err.code === 'commander.help') {
       process.exit(0);
     }
-    throw err;
+    if (err.code === 'commander.missingArgument' || err.code === 'commander.missingMandatoryOptionValue') {
+      // Error already displayed by commander
+      process.exit(1);
+    }
+    if (err.code === 'commander.unknownOption' || err.code === 'commander.invalidArgument') {
+      // Error already displayed by commander
+      process.exit(1);
+    }
+    // Other errors
+    process.exit(err.exitCode || 1);
   });
 
 program
@@ -45,9 +56,14 @@ program
   .action(syncAgentsMd);
 
 program
+  .command('manage')
+  .description('Interactively manage (remove) installed skills')
+  .action(manageSkills);
+
+program
   .command('remove <skill-name>')
   .alias('rm')
-  .description('Remove installed skill')
+  .description('Remove specific skill (for scripts, use manage for interactive)')
   .action(removeSkill);
 
 program.parse();
