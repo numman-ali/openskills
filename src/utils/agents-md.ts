@@ -19,23 +19,17 @@ export function generateSkillsXml(skills: Skill[]): string {
 
 <!-- SKILLS_TABLE_START -->
 <usage>
-Skills provide specialized procedural guidance for complex tasks.
-Progressive disclosure: Skills expand detailed instructions only when loaded.
-Check available skills before starting complex work.
+When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
 
-Load: openskills read <skill-name>
-List: openskills list
-Priority: .claude/skills/ (project) first, ~/.claude/skills/ (global) second
+How to use skills:
+- Invoke: Bash("openskills read <skill-name>")
+- The skill content will load with detailed instructions on how to complete the task
+- Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
 
-Rules:
-- Load only relevant skills for current task
-- Don't load skills already in context
-- Each load is stateless
-
-Resource resolution:
-- Base directory provided in read output
-- Relative paths in SKILL.md resolve from base directory
-- Example: references/guide.md → {base-directory}/references/guide.md
+Usage notes:
+- Only use skills listed in <available_skills> below
+- Do not invoke a skill that is already loaded in your context
+- Each skill invocation is stateless
 </usage>
 
 <available_skills>
