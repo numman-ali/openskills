@@ -26,6 +26,7 @@ export function generateSkillsXml(skills: Skill[]): string {
       (s) => `<skill>
 <name>${s.name}</name>
 <description>${s.description}</description>
+<location>${s.location}</location>
 </skill>`
     )
     .join('\n\n');
