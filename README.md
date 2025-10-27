@@ -115,8 +115,6 @@ Publish to GitHub → users install with:
 openskills install your-username/my-skill --project
 ```
 
-**Full guide:** [Creating Skills](docs/creating-skills.md)
-
 **Use Anthropic's skill-creator:**
 ```bash
 openskills read skill-creator  # Detailed authoring guide
@@ -124,11 +122,11 @@ openskills read skill-creator  # Detailed authoring guide
 
 ---
 
-## Documentation
+## How It Works
 
-- [Getting Started](docs/getting-started.md) - Detailed usage guide
-- [Creating Skills](docs/creating-skills.md) - Authoring skills
-- [Integration](docs/integration.md) - Claude Code compatibility, AGENTS.md setup
+OpenSkills implements Claude Code's skills system identically, but uses CLI instead of tools.
+
+**Want to understand exactly how it works?** Read [How It Works](docs/how-it-works.md) — detailed explanation of Claude Code's skills system and how OpenSkills replicates it universally.
 
 ---
 
