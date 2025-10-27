@@ -14,13 +14,15 @@ import type { InstallOptions } from '../types.js';
  * Install skill from GitHub or Git URL
  */
 export async function installSkill(source: string, options: InstallOptions): Promise<void> {
-  const targetDir = options.project
-    ? join(process.cwd(), '.claude/skills')
-    : join(homedir(), '.claude/skills');
+  const folder = options.universal ? '.agent/skills' : '.claude/skills';
+  const isProject = !options.global; // Default to project unless --global specified
+  const targetDir = isProject
+    ? join(process.cwd(), folder)
+    : join(homedir(), folder);
 
-  const location = options.project
-    ? chalk.blue('project (.claude/skills)')
-    : chalk.dim('global (~/.claude/skills)');
+  const location = isProject
+    ? chalk.blue(`project (${folder})`)
+    : chalk.dim(`global (~/${folder})`);
 
   console.log(`Installing from: ${chalk.cyan(source)}`);
   console.log(`Location: ${location}\n`);
@@ -63,7 +65,7 @@ export async function installSkill(source: string, options: InstallOptions): Pro
 
     if (skillSubpath) {
       // Specific skill path provided - install directly
-      await installSpecificSkill(repoDir, skillSubpath, targetDir, options.project || false);
+      await installSpecificSkill(repoDir, skillSubpath, targetDir, isProject);
     } else {
       // Find all skills in repo
       await installFromRepo(repoDir, targetDir, options);
@@ -74,7 +76,7 @@ export async function installSkill(source: string, options: InstallOptions): Pro
   }
 
   console.log(`\n${chalk.dim('Read skill:')} ${chalk.cyan('openskills read <skill-name>')}`);
-  if (options.project) {
+  if (isProject) {
     console.log(`${chalk.dim('Sync to AGENTS.md:')} ${chalk.cyan('openskills sync')}`);
   }
 }

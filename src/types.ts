@@ -12,7 +12,8 @@ export interface SkillLocation {
 }
 
 export interface InstallOptions {
-  project?: boolean;
+  global?: boolean;
+  universal?: boolean;
   yes?: boolean;
 }
 

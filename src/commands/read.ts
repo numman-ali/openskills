@@ -10,6 +10,8 @@ export function readSkill(skillName: string): void {
   if (!skill) {
     console.error(`Error: Skill '${skillName}' not found`);
     console.error('\nSearched:');
+    console.error('  .agent/skills/ (project universal)');
+    console.error('  ~/.agent/skills/ (global universal)');
     console.error('  .claude/skills/ (project)');
     console.error('  ~/.claude/skills/ (global)');
     console.error('\nInstall skills: openskills install owner/repo');

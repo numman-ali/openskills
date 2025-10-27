@@ -9,6 +9,7 @@ import type { Skill, SkillLocation } from '../types.js';
  */
 export function findAllSkills(): Skill[] {
   const skills: Skill[] = [];
+  const seen = new Set<string>();
   const dirs = getSearchDirs();
 
   for (const dir of dirs) {
@@ -18,10 +19,13 @@ export function findAllSkills(): Skill[] {
 
     for (const entry of entries) {
       if (entry.isDirectory()) {
+        // Deduplicate: only add if we haven't seen this skill name yet
+        if (seen.has(entry.name)) continue;
+
         const skillPath = join(dir, entry.name, 'SKILL.md');
         if (existsSync(skillPath)) {
           const content = readFileSync(skillPath, 'utf-8');
-          const isProjectLocal = dir === join(process.cwd(), '.claude/skills');
+          const isProjectLocal = dir.includes(process.cwd());
 
           skills.push({
             name: entry.name,
@@ -29,6 +33,8 @@ export function findAllSkills(): Skill[] {
             location: isProjectLocal ? 'project' : 'global',
             path: join(dir, entry.name),
           });
+
+          seen.add(entry.name);
         }
       }
     }

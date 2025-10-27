@@ -1,6 +1,6 @@
 {
   "name": "openskills",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Universal skills loader for AI coding agents - install and load Anthropic SKILL.md format skills in any agent",
   "type": "module",
   "main": "./dist/cli.js",

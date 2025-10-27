@@ -13,7 +13,7 @@ const program = new Command();
 program
   .name('openskills')
   .description('Universal skills loader for AI coding agents')
-  .version('1.0.0')
+  .version('1.2.0')
   .showHelpAfterError(false)
   .exitOverride((err) => {
     // Handle all commander errors gracefully (no stack traces)
@@ -40,7 +40,8 @@ program
 program
   .command('install <source>')
   .description('Install skill from GitHub or Git URL')
-  .option('-p, --project', 'Install to project .claude/skills/ (recommended)')
+  .option('-g, --global', 'Install globally (default: project install)')
+  .option('-u, --universal', 'Install to .agent/skills/ (for universal AGENTS.md usage)')
   .option('-y, --yes', 'Skip interactive selection, install all skills found')
   .action(installSkill);
 
