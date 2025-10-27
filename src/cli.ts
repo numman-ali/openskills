@@ -13,7 +13,7 @@ const program = new Command();
 program
   .name('openskills')
   .description('Universal skills loader for AI coding agents')
-  .version('1.2.0')
+  .version('1.2.1')
   .showHelpAfterError(false)
   .exitOverride((err) => {
     // Handle all commander errors gracefully (no stack traces)

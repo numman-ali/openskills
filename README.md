@@ -8,7 +8,7 @@
 
 ```bash
 npm i -g openskills
-openskills install anthropics/skills --project
+openskills install anthropics/skills
 openskills sync
 ```
 
@@ -38,11 +38,13 @@ OpenSkills replicates Claude Code's skills system with **100% compatibility**:
 
 ✅ **Same prompt format** — `<available_skills>` XML with skill tags
 ✅ **Same marketplace** — Install from [anthropics/skills](https://github.com/anthropics/skills)
-✅ **Same folders** — Uses `.claude/skills/` (project) and `~/.openskills/skills/` (global)
+✅ **Same folders** — Uses `.claude/skills/` by default
 ✅ **Same SKILL.md format** — YAML frontmatter + markdown instructions
 ✅ **Same progressive disclosure** — Load skills on demand, not upfront
 
 **Only difference:** Claude Code uses `Skill` tool, OpenSkills uses `openskills read <name>` CLI command.
+
+**Advanced:** Use `--universal` flag to install to `.agent/skills/` for Claude Code + other agents sharing one AGENTS.md.
 
 ---
 
@@ -57,11 +59,11 @@ npm i -g openskills
 ### 2. Install Skills
 
 ```bash
-# Install from Anthropic's marketplace (interactive selection)
-openskills install anthropics/skills --project
+# Install from Anthropic's marketplace (interactive selection, default: project)
+openskills install anthropics/skills
 
 # Or install from any GitHub repo
-openskills install your-org/custom-skills --project
+openskills install your-org/custom-skills
 ```
 
 ### 3. Sync to AGENTS.md
@@ -236,7 +238,7 @@ When the user asks you to work with PDFs, follow these steps:
    Anthropic created skills as SKILL.md files, not MCP servers. We're implementing their spec.
 
 5. **Simpler for users**
-   `openskills install anthropics/skills --project` vs "configure MCP server, set up authentication, manage server lifecycle"
+   `openskills install anthropics/skills` vs "configure MCP server, set up authentication, manage server lifecycle"
 
 **MCP and skills solve different problems.** OpenSkills implements Anthropic's skills spec (SKILL.md format) the way it was designed — as progressively-loaded markdown instructions.
 
@@ -263,23 +265,77 @@ You can use **both** Claude Code plugins and OpenSkills project skills together:
 
 They coexist perfectly. Claude invokes marketplace plugins via `Skill` tool, OpenSkills skills via CLI. No conflicts.
 
+### Advanced: Universal Mode for Multi-Agent Setups
+
+**Problem:** If you use Claude Code + other agents (Cursor, Windsurf, Aider) with one AGENTS.md, installing to `.claude/skills/` can create duplicates with Claude Code's marketplace plugins.
+
+**Solution:** Use `--universal` to install to `.agent/skills/` instead:
+
+```bash
+openskills install anthropics/skills --universal
+```
+
+This installs skills to `.agent/skills/` which:
+- ✅ Works with all agents via AGENTS.md
+- ✅ Doesn't conflict with Claude Code's native marketplace plugins
+- ✅ Keeps Claude Code's `<available_skills>` separate from AGENTS.md skills
+
+**When to use:**
+- ✅ You use Claude Code + Cursor/Windsurf/Aider with one AGENTS.md
+- ✅ You want to avoid duplicate skill definitions
+- ✅ You prefer `.agent/` for infrastructure (keeps `.claude/` for Claude Code only)
+
+**When not to use:**
+- ❌ You only use Claude Code (default `.claude/skills/` is fine)
+- ❌ You only use non-Claude agents (default `.claude/skills/` is fine)
+
+**Priority order:**
+OpenSkills searches 4 locations in priority order:
+1. `./.agent/skills/` (project universal)
+2. `~/.agent/skills/` (global universal)
+3. `./.claude/skills/` (project)
+4. `~/.claude/skills/` (global)
+
+Skills with same name only appear once (highest priority wins).
+
 ---
 
 ## Commands
 
 ```bash
-openskills install <source> [--project] [-y]  # Install from GitHub (interactive)
-openskills sync [-y]                          # Update AGENTS.md (interactive)
-openskills list                               # Show installed skills
-openskills read <name>                        # Load skill (for agents)
-openskills manage                             # Remove skills (interactive)
-openskills remove <name>                      # Remove specific skill
+openskills install <source> [options]  # Install from GitHub (interactive)
+openskills sync [-y]                   # Update AGENTS.md (interactive)
+openskills list                        # Show installed skills
+openskills read <name>                 # Load skill (for agents)
+openskills manage                      # Remove skills (interactive)
+openskills remove <name>               # Remove specific skill
 ```
 
 ### Flags
 
-- `--project` — Install to `.claude/skills/` (recommended, gitignored, project-specific)
+- `--global` — Install globally to `~/.claude/skills` (default: project install)
+- `--universal` — Install to `.agent/skills/` instead of `.claude/skills/` (advanced)
 - `-y` — Skip interactive selection (for scripts/CI)
+
+### Installation Modes
+
+**Default (recommended):**
+```bash
+openskills install anthropics/skills
+# → Installs to ./.claude/skills (project, gitignored)
+```
+
+**Global install:**
+```bash
+openskills install anthropics/skills --global
+# → Installs to ~/.claude/skills (shared across projects)
+```
+
+**Universal mode (advanced):**
+```bash
+openskills install anthropics/skills --universal
+# → Installs to ./.agent/skills (for Claude Code + other agents)
+```
 
 ### Interactive by Default
 
@@ -287,7 +343,7 @@ All commands use beautiful TUI by default:
 
 **Install:**
 ```bash
-openskills install anthropics/skills --project
+openskills install anthropics/skills
 # → Checkbox to select which skills to install
 # → Shows skill name, description, size
 # → All checked by default
@@ -374,14 +430,14 @@ Base directory: /path/to/.claude/skills/my-skill
 ### Publishing
 
 1. Push to GitHub: `your-username/my-skill`
-2. Users install with: `openskills install your-username/my-skill --project`
+2. Users install with: `openskills install your-username/my-skill`
 
 ### Authoring Guide
 
 Use Anthropic's skill-creator for detailed guidance:
 
 ```bash
-openskills install anthropics/skills --project
+openskills install anthropics/skills
 openskills read skill-creator
 ```
 
