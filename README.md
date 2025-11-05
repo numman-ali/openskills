@@ -36,11 +36,11 @@ OpenSkills brings **Anthropic's skills system** to all AI coding agents (Claude 
 
 OpenSkills replicates Claude Code's skills system with **100% compatibility**:
 
-✅ **Same prompt format** — `<available_skills>` XML with skill tags
-✅ **Same marketplace** — Install from [anthropics/skills](https://github.com/anthropics/skills)
-✅ **Same folders** — Uses `.claude/skills/` by default
-✅ **Same SKILL.md format** — YAML frontmatter + markdown instructions
-✅ **Same progressive disclosure** — Load skills on demand, not upfront
+- ✅ **Same prompt format** — `<available_skills>` XML with skill tags
+- ✅ **Same marketplace** — Install from [anthropics/skills](https://github.com/anthropics/skills)
+- ✅ **Same folders** — Uses `.claude/skills/` by default
+- ✅ **Same SKILL.md format** — YAML frontmatter + markdown instructions
+- ✅ **Same progressive disclosure** — Load skills on demand, not upfront
 
 **Only difference:** Claude Code uses `Skill` tool, OpenSkills uses `openskills read <name>` CLI command.
 
@@ -67,6 +67,8 @@ openskills install your-org/custom-skills
 ```
 
 ### 3. Sync to AGENTS.md
+
+_NOTE: You must have a pre-existing AGENTS.md file for sync to update._
 
 ```bash
 openskills sync
