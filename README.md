@@ -38,7 +38,7 @@ OpenSkills replicates Claude Code's skills system with **100% compatibility**:
 
 - ✅ **Same prompt format** — `<available_skills>` XML with skill tags
 - ✅ **Same marketplace** — Install from [anthropics/skills](https://github.com/anthropics/skills)
-- ✅ **Same folders** — Uses `.claude/skills/` by default
+- ✅ **Same folders** — Uses `.claude/skills/` by default, accepts also symlinks to directories
 - ✅ **Same SKILL.md format** — YAML frontmatter + markdown instructions
 - ✅ **Same progressive disclosure** — Load skills on demand, not upfront
 
