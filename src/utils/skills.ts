@@ -18,24 +18,22 @@ export function findAllSkills(): Skill[] {
     const entries = readdirSync(dir, { withFileTypes: true });
 
     for (const entry of entries) {
-      if (entry.isDirectory()) {
-        // Deduplicate: only add if we haven't seen this skill name yet
-        if (seen.has(entry.name)) continue;
+      // Deduplicate: only add if we haven't seen this skill name yet
+      if (seen.has(entry.name)) continue;
 
-        const skillPath = join(dir, entry.name, 'SKILL.md');
-        if (existsSync(skillPath)) {
-          const content = readFileSync(skillPath, 'utf-8');
-          const isProjectLocal = dir.includes(process.cwd());
+      const skillPath = join(dir, entry.name, 'SKILL.md');
+      if (existsSync(skillPath)) {
+        const content = readFileSync(skillPath, 'utf-8');
+        const isProjectLocal = dir.includes(process.cwd());
 
-          skills.push({
-            name: entry.name,
-            description: extractYamlField(content, 'description'),
-            location: isProjectLocal ? 'project' : 'global',
-            path: join(dir, entry.name),
-          });
+        skills.push({
+          name: entry.name,
+          description: extractYamlField(content, 'description'),
+          location: isProjectLocal ? 'project' : 'global',
+          path: join(dir, entry.name),
+        });
 
-          seen.add(entry.name);
-        }
+        seen.add(entry.name);
       }
     }
   }
