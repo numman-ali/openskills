@@ -1,4 +1,5 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
+import { resolve, sep } from 'path';
 import { join, basename } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
@@ -116,7 +117,13 @@ async function installSpecificSkill(
   }
 
   mkdirSync(targetDir, { recursive: true });
-  cpSync(skillDir, targetPath, { recursive: true });
+  const resolvedTargetPath = resolve(targetPath);
+  const resolvedTargetDir = resolve(targetDir);
+  if (!resolvedTargetPath.startsWith(resolvedTargetDir + sep)) {
+    console.error(`\\n${chalk.red('Security error: Installation path outside target directory:')} ${targetPath}`);
+    process.exit(1);
+  }
+  cpSync(skillDir, targetPath, { recursive: true, dereference: true });
 
   console.log(chalk.green(`✅ Installed: ${skillName}`));
   console.log(`   Location: ${targetPath}`);
