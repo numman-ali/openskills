@@ -28,10 +28,10 @@ This is a test skill.`
 }
 
 // Helper to create symlinked skill
-function createSymlinkedSkill(baseDir: string, skillName: string, targetDir: string) {
+function createSymlinkedSkill(baseDir: string, skillName: string, targetDir: string, description: string = 'Test skill') {
   mkdirSync(baseDir, { recursive: true });
   mkdirSync(targetDir, { recursive: true });
-  createSkill(targetDir, skillName);
+  createSkill(targetDir, skillName, description);
   symlinkSync(join(targetDir, skillName), join(baseDir, skillName), 'dir');
 }
 
@@ -231,8 +231,7 @@ describe('findAllSkills', () => {
 
   it('should read SKILL.md content from symlinked directories correctly', () => {
     const externalSkillDir = join(testTempDir, 'external-skills');
-    createSymlinkedSkill(testProjectDir, 'symlink-with-description', externalSkillDir);
-    createSkill(externalSkillDir, 'symlink-with-description', 'Symlink description');
+    createSymlinkedSkill(testProjectDir, 'symlink-with-description', externalSkillDir, 'Symlink description');
 
     const skills = findAllSkills();
 
