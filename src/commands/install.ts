@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statS
 import { join, basename } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
 import chalk from 'chalk';
 import ora from 'ora';
 import { checkbox, confirm } from '@inquirer/prompts';
@@ -29,16 +30,37 @@ export async function installSkill(source: string, options: InstallOptions): Pro
 
   // Parse source
   let repoUrl: string;
-  let skillSubpath: string;
+  let skillSubpath = '';
+  let localRepoPath: string | null = null;
 
-  if (source.startsWith('http://') || source.startsWith('https://')) {
+  if (source.startsWith('file://')) {
+    let fileSource: URL;
+    try {
+      fileSource = new URL(source);
+    } catch {
+      console.error(chalk.red('Error: Invalid file URI'));
+      process.exit(1);
+    }
+
+    const resolvedPath = fileURLToPath(fileSource);
+
+    if (!existsSync(resolvedPath) || !statSync(resolvedPath).isDirectory()) {
+      console.error(chalk.red(`Error: Local repository not found at ${resolvedPath}`));
+      process.exit(1);
+    }
+
+    repoUrl = resolvedPath;
+    localRepoPath = resolvedPath;
+    if (fileSource.hash) {
+      skillSubpath = decodeURIComponent(fileSource.hash.slice(1));
+    }
+    skillSubpath = skillSubpath.replace(/^\/+/u, '');
+  } else if (source.startsWith('http://') || source.startsWith('https://')) {
     repoUrl = source;
-    skillSubpath = '';
   } else {
     const parts = source.split('/');
     if (parts.length === 2) {
       repoUrl = `https://github.com/${source}`;
-      skillSubpath = '';
     } else if (parts.length > 2) {
       repoUrl = `https://github.com/${parts[0]}/${parts[1]}`;
       skillSubpath = parts.slice(2).join('/');
@@ -49,19 +71,28 @@ export async function installSkill(source: string, options: InstallOptions): Pro
     }
   }
 
-  // Create unique temp directory per invocation
-  const tempDir = join(homedir(), `.openskills-temp-${Date.now()}`);
-  mkdirSync(tempDir, { recursive: true });
+  // Create unique temp directory per invocation (skip when reading from local path)
+  const tempDir = localRepoPath ? null : join(homedir(), `.openskills-temp-${Date.now()}`);
+  if (tempDir) {
+    mkdirSync(tempDir, { recursive: true });
+  }
 
   try {
-    // Clone repository with spinner
-    const spinner = ora('Cloning repository...').start();
-    execSync(`git clone --depth 1 --quiet "${repoUrl}" "${tempDir}/repo"`, {
-      stdio: 'ignore',
-    });
-    spinner.succeed('Repository cloned');
+    let repoDir: string;
 
-    const repoDir = join(tempDir, 'repo');
+    if (localRepoPath) {
+      repoDir = localRepoPath;
+    } else if (tempDir) {
+      // Clone repository with spinner
+      const spinner = ora('Cloning repository...').start();
+      execSync(`git clone --depth 1 --quiet "${repoUrl}" "${tempDir}/repo"`, {
+        stdio: 'ignore',
+      });
+      spinner.succeed('Repository cloned');
+      repoDir = join(tempDir, 'repo');
+    } else {
+      throw new Error('Unable to prepare repository');
+    }
 
     if (skillSubpath) {
       // Specific skill path provided - install directly
@@ -72,7 +103,9 @@ export async function installSkill(source: string, options: InstallOptions): Pro
     }
   } finally {
     // Cleanup
-    rmSync(tempDir, { recursive: true, force: true });
+    if (tempDir) {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   }
 
   console.log(`\n${chalk.dim('Read skill:')} ${chalk.cyan('openskills read <skill-name>')}`);
