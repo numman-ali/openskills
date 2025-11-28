@@ -1,17 +1,10 @@
-import { readFileSync, existsSync, statSync } from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 import { findSkill } from '../utils/skills.js';
 
 /**
  * Read skill to stdout (for AI agents)
  */
 export function readSkill(skillName: string): void {
-  if (skillName.startsWith('file://')) {
-    readSkillFromFileUri(skillName);
-    return;
-  }
-
   const skill = findSkill(skillName);
 
   if (!skill) {
@@ -25,44 +18,13 @@ export function readSkill(skillName: string): void {
     process.exit(1);
   }
 
-  outputSkill(skillName, skill.path, skill.baseDir);
-}
-
-function readSkillFromFileUri(uri: string): void {
-  let parsed: URL;
-  try {
-    parsed = new URL(uri);
-  } catch {
-    console.error(`Error: Invalid file URI '${uri}'`);
-    process.exit(1);
-  }
-
-  const fsPath = fileURLToPath(parsed);
-  if (!existsSync(fsPath)) {
-    console.error(`Error: Path not found ${fsPath}`);
-    process.exit(1);
-  }
-
-  const stats = statSync(fsPath);
-  const skillPath = stats.isDirectory() ? join(fsPath, 'SKILL.md') : fsPath;
-  const baseDir = stats.isDirectory() ? fsPath : dirname(fsPath);
-
-  if (!existsSync(skillPath)) {
-    console.error(`Error: SKILL.md not found at ${skillPath}`);
-    process.exit(1);
-  }
-
-  outputSkill(uri, skillPath, baseDir);
-}
-
-function outputSkill(identifier: string, skillPath: string, baseDir: string): void {
-  const content = readFileSync(skillPath, 'utf-8');
+  const content = readFileSync(skill.path, 'utf-8');
 
   // Output in Claude Code format
-  console.log(`Reading: ${identifier}`);
-  console.log(`Base directory: ${baseDir}`);
+  console.log(`Reading: ${skillName}`);
+  console.log(`Base directory: ${skill.baseDir}`);
   console.log('');
   console.log(content);
   console.log('');
-  console.log(`Skill read: ${identifier}`);
+  console.log(`Skill read: ${skillName}`);
 }
