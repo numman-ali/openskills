@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, existsSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join } from 'path';
 import { getSearchDirs } from './dirs.js';
 import { extractYamlField } from './yaml.js';
@@ -18,7 +18,19 @@ export function findAllSkills(): Skill[] {
     const entries = readdirSync(dir, { withFileTypes: true });
 
     for (const entry of entries) {
-      if (entry.isDirectory()) {
+      // Check if it's a directory OR a symlink pointing to a directory
+      const entryPath = join(dir, entry.name);
+      let isDir = entry.isDirectory();
+
+      if (entry.isSymbolicLink()) {
+        try {
+          isDir = statSync(entryPath).isDirectory(); // statSync follows symlinks
+        } catch {
+          continue; // Skip broken symlinks
+        }
+      }
+
+      if (isDir) {
         // Deduplicate: only add if we haven't seen this skill name yet
         if (seen.has(entry.name)) continue;
 
