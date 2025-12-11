@@ -54,6 +54,7 @@ program
   .command('sync')
   .description('Update AGENTS.md with installed skills (interactive, pre-selects current state)')
   .option('-y, --yes', 'Skip interactive selection, sync all skills')
+  .option('-o, --output <path>', 'Output file path (default: AGENTS.md)')
   .action(syncAgentsMd);
 
 program
