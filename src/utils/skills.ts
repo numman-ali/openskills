@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, statSync, Dirent } from 'fs';
 import { join } from 'path';
 import { getSearchDirs } from './dirs.js';
 import { extractYamlField } from './yaml.js';
@@ -7,7 +7,7 @@ import type { Skill, SkillLocation } from '../types.js';
 /**
  * Check if a directory entry is a directory or a symlink pointing to a directory
  */
-function isDirectoryOrSymlinkToDirectory(entry: ReturnType<typeof readdirSync<{ withFileTypes: true }>>[number], parentDir: string): boolean {
+function isDirectoryOrSymlinkToDirectory(entry: Dirent, parentDir: string): boolean {
   if (entry.isDirectory()) {
     return true;
   }
