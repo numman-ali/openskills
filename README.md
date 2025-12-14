@@ -22,8 +22,10 @@ OpenSkills brings **Anthropic's skills system** to all AI coding agents (Claude 
 
 **For Claude Code users:**
 - Install skills from any GitHub repo, not just the marketplace
+- Install from local paths or private git repos
 - Share skills across multiple agents
 - Version control your skills in your repo
+- Symlink skills for local development
 
 **For other agents (Cursor, Windsurf, Aider):**
 - Get Claude Code's skills system universally
@@ -305,8 +307,8 @@ Skills with same name only appear once (highest priority wins).
 ## Commands
 
 ```bash
-openskills install <source> [options]  # Install from GitHub (interactive)
-openskills sync [-y]                   # Update AGENTS.md (interactive)
+openskills install <source> [options]  # Install from GitHub, local path, or private repo
+openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
 openskills list                        # Show installed skills
 openskills read <name>                 # Load skill (for agents)
 openskills manage                      # Remove skills (interactive)
@@ -317,7 +319,8 @@ openskills remove <name>               # Remove specific skill
 
 - `--global` — Install globally to `~/.claude/skills` (default: project install)
 - `--universal` — Install to `.agent/skills/` instead of `.claude/skills/` (advanced)
-- `-y` — Skip interactive selection (for scripts/CI)
+- `-y, --yes` — Skip all prompts including overwrites (for scripts/CI)
+- `-o, --output <path>` — Custom output file for sync (default: `AGENTS.md`)
 
 ### Installation Modes
 
@@ -337,6 +340,46 @@ openskills install anthropics/skills --global
 ```bash
 openskills install anthropics/skills --universal
 # → Installs to ./.agent/skills (for Claude Code + other agents)
+```
+
+### Install from Local Paths
+
+```bash
+# Absolute path
+openskills install /path/to/my-skill
+
+# Relative path
+openskills install ./local-skills/my-skill
+
+# Home directory
+openskills install ~/my-skills/custom-skill
+
+# Install all skills from a directory
+openskills install ./my-skills-folder
+```
+
+### Install from Private Git Repos
+
+```bash
+# SSH (uses your SSH keys)
+openskills install git@github.com:your-org/private-skills.git
+
+# HTTPS (may prompt for credentials)
+openskills install https://github.com/your-org/private-skills.git
+```
+
+### Sync Options
+
+```bash
+# Sync to default AGENTS.md
+openskills sync
+
+# Sync to custom file (auto-creates if missing)
+openskills sync --output .ruler/AGENTS.md
+openskills sync -o custom-rules.md
+
+# Non-interactive (for CI/CD)
+openskills sync -y
 ```
 
 ### Interactive by Default
@@ -433,6 +476,29 @@ Base directory: /path/to/.claude/skills/my-skill
 
 1. Push to GitHub: `your-username/my-skill`
 2. Users install with: `openskills install your-username/my-skill`
+
+### Local Development with Symlinks
+
+For active skill development, symlink your skill into the skills directory:
+
+```bash
+# Clone a skills repo you're developing
+git clone git@github.com:your-org/my-skills.git ~/dev/my-skills
+
+# Symlink into your project's skills directory
+mkdir -p .claude/skills
+ln -s ~/dev/my-skills/my-skill .claude/skills/my-skill
+
+# Now changes to ~/dev/my-skills/my-skill are immediately reflected
+openskills list  # Shows my-skill
+openskills sync  # Includes my-skill in AGENTS.md
+```
+
+This approach lets you:
+- Edit skills in your preferred location
+- Keep skills under version control
+- Test changes instantly without reinstalling
+- Share skills across multiple projects via symlinks
 
 ### Authoring Guide
 
