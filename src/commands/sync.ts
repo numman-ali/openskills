@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { dirname, basename } from 'path';
 import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
@@ -8,15 +9,30 @@ import type { Skill } from '../types.js';
 
 export interface SyncOptions {
   yes?: boolean;
+  output?: string;
 }
 
 /**
- * Sync installed skills to AGENTS.md
+ * Sync installed skills to a markdown file
  */
 export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
-  if (!existsSync('AGENTS.md')) {
-    console.log(chalk.yellow('No AGENTS.md to update'));
-    return;
+  const outputPath = options.output || 'AGENTS.md';
+  const outputName = basename(outputPath);
+
+  // Validate output file is markdown
+  if (!outputPath.endsWith('.md')) {
+    console.error(chalk.red('Error: Output file must be a markdown file (.md)'));
+    process.exit(1);
+  }
+
+  // Create file if it doesn't exist
+  if (!existsSync(outputPath)) {
+    const dir = dirname(outputPath);
+    if (dir && dir !== '.' && !existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+    writeFileSync(outputPath, `# ${outputName.replace('.md', '')}\n\n`);
+    console.log(chalk.dim(`Created ${outputPath}`));
   }
 
   let skills = findAllSkills();
@@ -30,8 +46,8 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
   // Interactive mode by default (unless -y flag)
   if (!options.yes) {
     try {
-      // Parse what's currently in AGENTS.md
-      const content = readFileSync('AGENTS.md', 'utf-8');
+      // Parse what's currently in output file
+      const content = readFileSync(outputPath, 'utf-8');
       const currentSkills = parseCurrentSkills(content);
 
       // Sort: project first
@@ -46,22 +62,22 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
         name: `${chalk.bold(skill.name.padEnd(25))} ${skill.location === 'project' ? chalk.blue('(project)') : chalk.dim('(global)')}`,
         value: skill.name,
         description: skill.description.slice(0, 70),
-        // Pre-select if currently in AGENTS.md, otherwise default to project skills
+        // Pre-select if currently in file, otherwise default to project skills
         checked: currentSkills.includes(skill.name) || (currentSkills.length === 0 && skill.location === 'project'),
       }));
 
       const selected = await checkbox({
-        message: 'Select skills to sync to AGENTS.md',
+        message: `Select skills to sync to ${outputName}`,
         choices,
         pageSize: 15,
       });
 
       if (selected.length === 0) {
         // User unchecked everything - remove skills section
-        const content = readFileSync('AGENTS.md', 'utf-8');
+        const content = readFileSync(outputPath, 'utf-8');
         const updated = removeSkillsSection(content);
-        writeFileSync('AGENTS.md', updated);
-        console.log(chalk.green('✅ Removed all skills from AGENTS.md'));
+        writeFileSync(outputPath, updated);
+        console.log(chalk.green(`✅ Removed all skills from ${outputName}`));
         return;
       }
 
@@ -77,17 +93,17 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
   }
 
   const xml = generateSkillsXml(skills);
-  const content = readFileSync('AGENTS.md', 'utf-8');
+  const content = readFileSync(outputPath, 'utf-8');
   const updated = replaceSkillsSection(content, xml);
 
-  writeFileSync('AGENTS.md', updated);
+  writeFileSync(outputPath, updated);
 
   const hadMarkers =
     content.includes('<skills_system') || content.includes('<!-- SKILLS_TABLE_START -->');
 
   if (hadMarkers) {
-    console.log(chalk.green(`✅ Synced ${skills.length} skill(s) to AGENTS.md`));
+    console.log(chalk.green(`✅ Synced ${skills.length} skill(s) to ${outputName}`));
   } else {
-    console.log(chalk.green(`✅ Added skills section to AGENTS.md (${skills.length} skill(s))`));
+    console.log(chalk.green(`✅ Added skills section to ${outputName} (${skills.length} skill(s))`));
   }
 }

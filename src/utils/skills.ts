@@ -1,8 +1,28 @@
-import { readFileSync, readdirSync, existsSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, statSync, Dirent } from 'fs';
 import { join } from 'path';
 import { getSearchDirs } from './dirs.js';
 import { extractYamlField } from './yaml.js';
 import type { Skill, SkillLocation } from '../types.js';
+
+/**
+ * Check if a directory entry is a directory or a symlink pointing to a directory
+ */
+function isDirectoryOrSymlinkToDirectory(entry: Dirent, parentDir: string): boolean {
+  if (entry.isDirectory()) {
+    return true;
+  }
+  if (entry.isSymbolicLink()) {
+    try {
+      const fullPath = join(parentDir, entry.name);
+      const stats = statSync(fullPath); // statSync follows symlinks
+      return stats.isDirectory();
+    } catch {
+      // Broken symlink or permission error
+      return false;
+    }
+  }
+  return false;
+}
 
 /**
  * Find all installed skills across directories
@@ -18,7 +38,7 @@ export function findAllSkills(): Skill[] {
     const entries = readdirSync(dir, { withFileTypes: true });
 
     for (const entry of entries) {
-      if (entry.isDirectory()) {
+      if (isDirectoryOrSymlinkToDirectory(entry, dir)) {
         // Deduplicate: only add if we haven't seen this skill name yet
         if (seen.has(entry.name)) continue;
 
