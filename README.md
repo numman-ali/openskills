@@ -8,7 +8,7 @@
 
 ```bash
 npm i -g openskills
-openskills install anthropics/skills
+openskills install anthropics/skills # installs to locally by default
 openskills sync
 ```
 
