@@ -12,7 +12,7 @@ openskills install anthropics/skills
 openskills sync
 ```
 
-> **Found this useful?** Follow [@nummanthinks](https://x.com/nummanthinks) for more AI tooling!
+> **Found this useful?** Follow [@nummanali](https://x.com/nummanali) for more AI tooling!
 
 ---
 
