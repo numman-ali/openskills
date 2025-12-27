@@ -58,6 +58,18 @@ OpenSkills replicates Claude Code's skills system with **100% compatibility**:
 npm i -g openskills
 ```
 
+<details>
+<summary>Using Nix</summary>
+
+```bash
+nix profile install github:numman-ali/openskills
+
+# or run directly
+nix run github:numman-ali/openskills -- --help
+```
+
+</details>
+
 ### 2. Install Skills
 
 ```bash

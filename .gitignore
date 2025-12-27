@@ -4,3 +4,5 @@ dist/
 *.log
 .openskills-temp/
 .claude/
+result
+.direnv/
