@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
-import { join, basename, resolve } from 'path';
+import { join, basename, resolve, sep } from 'path';
+import path from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
@@ -194,7 +195,8 @@ async function installSingleLocalSkill(
   // Security: ensure target path stays within target directory
   const resolvedTargetPath = resolve(targetPath);
   const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
+  const relative = path.relative(resolvedTargetDir, resolvedTargetPath);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
     console.error(chalk.red(`Security error: Installation path outside target directory`));
     process.exit(1);
   }
@@ -244,7 +246,8 @@ async function installSpecificSkill(
   // Security: ensure target path stays within target directory
   const resolvedTargetPath = resolve(targetPath);
   const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
+  const relative = path.relative(resolvedTargetDir, resolvedTargetPath);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
     console.error(chalk.red(`Security error: Installation path outside target directory`));
     process.exit(1);
   }
@@ -370,7 +373,8 @@ async function installFromRepo(
     // Security: ensure target path stays within target directory
     const resolvedTargetPath = resolve(info.targetPath);
     const resolvedTargetDir = resolve(targetDir);
-    if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
+    const relative = path.relative(resolvedTargetDir, resolvedTargetPath);
+    if (relative.startsWith("..") || path.isAbsolute(relative)) {
       console.error(chalk.red(`Security error: Installation path outside target directory`));
       continue;
     }
