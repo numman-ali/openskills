@@ -1,9 +1,9 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
 import { join, basename, resolve } from 'path';
 import { homedir } from 'os';
-import { execSync } from 'child_process';
+import { spawn } from 'child_process';
 import chalk from 'chalk';
-import ora from 'ora';
+import { createSpinner } from 'nanospinner';
 import { checkbox, confirm } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
 import { hasValidFrontmatter, extractYamlField } from '../utils/yaml.js';
@@ -97,17 +97,33 @@ export async function installSkill(source: string, options: InstallOptions): Pro
   mkdirSync(tempDir, { recursive: true });
 
   try {
-    const spinner = ora('Cloning repository...').start();
+    const spinner = createSpinner('Cloning repository...').start();
     try {
-      execSync(`git clone --depth 1 --quiet "${repoUrl}" "${tempDir}/repo"`, {
-        stdio: 'pipe',
+      await new Promise<void>((resolve, reject) => {
+        const gitProcess = spawn('git', ['clone', '--depth', '1', '--quiet', repoUrl, `${tempDir}/repo`], {
+          stdio: 'pipe',
+        });
+        let stderr = '';
+        gitProcess.stderr?.on('data', (data) => {
+          stderr += data.toString();
+        });
+        gitProcess.on('close', (code) => {
+          if (code === 0) {
+            resolve();
+          } else {
+            reject(new Error(stderr.trim() || `git clone failed with code ${code}`));
+          }
+        });
+        gitProcess.on('error', (err) => {
+          reject(err);
+        });
       });
-      spinner.succeed('Repository cloned');
+      spinner.success({ text: 'Repository cloned' });
     } catch (error) {
-      spinner.fail('Failed to clone repository');
-      const err = error as { stderr?: Buffer };
-      if (err.stderr) {
-        console.error(chalk.dim(err.stderr.toString().trim()));
+      spinner.error({ text: 'Failed to clone repository' });
+      const err = error as Error;
+      if (err.message) {
+        console.error(chalk.dim(err.message));
       }
       console.error(chalk.yellow('\nTip: For private repos, ensure git SSH keys or credentials are configured'));
       process.exit(1);
