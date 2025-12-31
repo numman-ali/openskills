@@ -15,6 +15,7 @@ export interface InstallOptions {
   global?: boolean;
   universal?: boolean;
   yes?: boolean;
+  symlink?: boolean;
 }
 
 export interface SkillMetadata {

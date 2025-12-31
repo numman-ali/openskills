@@ -319,6 +319,7 @@ openskills remove <name>               # Remove specific skill
 
 - `--global` — Install globally to `~/.claude/skills` (default: project install)
 - `--universal` — Install to `.agent/skills/` instead of `.claude/skills/` (advanced)
+- `-s, --symlink` — Create symbolic links for local paths instead of copying files
 - `-y, --yes` — Skip all prompts including overwrites (for scripts/CI)
 - `-o, --output <path>` — Custom output file for sync (default: `AGENTS.md`)
 
@@ -356,6 +357,12 @@ openskills install ~/my-skills/custom-skill
 
 # Install all skills from a directory
 openskills install ./my-skills-folder
+
+# Using symlinks (recommended for development)
+openskills install ./local-skills/my-skill --symlink
+
+# Install all skills from a directory as symlinks
+openskills install ./my-skills-folder -s
 ```
 
 ### Install from Private Git Repos
@@ -479,26 +486,27 @@ Base directory: /path/to/.claude/skills/my-skill
 
 ### Local Development with Symlinks
 
-For active skill development, symlink your skill into the skills directory:
+For active skill development, use the `--symlink` (or `-s`) flag. This creates a symbolic link in the target directory pointing back to your source code.
 
 ```bash
 # Clone a skills repo you're developing
 git clone git@github.com:your-org/my-skills.git ~/dev/my-skills
 
-# Symlink into your project's skills directory
-mkdir -p .claude/skills
-ln -s ~/dev/my-skills/my-skill .claude/skills/my-skill
+# Install a local skill as a symlink
+openskills install ~/dev/my-skills/my-skill --symlink
 
 # Now changes to ~/dev/my-skills/my-skill are immediately reflected
 openskills list  # Shows my-skill
 openskills sync  # Includes my-skill in AGENTS.md
 ```
 
-This approach lets you:
-- Edit skills in your preferred location
-- Keep skills under version control
-- Test changes instantly without reinstalling
-- Share skills across multiple projects via symlinks
+**Benefits:**
+- ✅ **Live Updates**: Changes in your source directory are reflected instantly.
+- ✅ **Version Control**: Keep your skills in a dedicated repo while using them across projects.
+- ✅ **No Duplication**: Avoid manual copying when updating skills.
+
+> [!NOTE]
+> **Conflict Resolution**: If a physical directory already exists at the target location, `openskills` will (with your confirmation, or automatically with `-y`) delete the existing folder and replace it with a symbolic link.
 
 ### Authoring Guide
 
