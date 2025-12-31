@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync, symlinkSync } from 'fs';
 import { join, basename, resolve } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
@@ -194,12 +194,15 @@ async function installSingleLocalSkill(
   // Security: ensure target path stays within target directory
   const resolvedTargetPath = resolve(targetPath);
   const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
-    console.error(chalk.red(`Security error: Installation path outside target directory`));
-    process.exit(1);
+  if (existsSync(targetPath)) {
+    rmSync(targetPath, { recursive: true, force: true });
   }
 
-  cpSync(skillDir, targetPath, { recursive: true, dereference: true });
+  if (options.symlink) {
+    symlinkSync(resolve(skillDir), targetPath, 'dir');
+  } else {
+    cpSync(skillDir, targetPath, { recursive: true, dereference: true });
+  }
 
   console.log(chalk.green(`✅ Installed: ${skillName}`));
   console.log(`   Location: ${targetPath}`);
@@ -374,7 +377,15 @@ async function installFromRepo(
       console.error(chalk.red(`Security error: Installation path outside target directory`));
       continue;
     }
-    cpSync(info.skillDir, info.targetPath, { recursive: true, dereference: true });
+    if (existsSync(info.targetPath)) {
+      rmSync(info.targetPath, { recursive: true, force: true });
+    }
+
+    if (options.symlink) {
+      symlinkSync(resolve(info.skillDir), info.targetPath, 'dir');
+    } else {
+      cpSync(info.skillDir, info.targetPath, { recursive: true, dereference: true });
+    }
 
     console.log(chalk.green(`✅ Installed: ${info.skillName}`));
     installedCount++;

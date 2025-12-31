@@ -39,10 +39,11 @@ program
 
 program
   .command('install <source>')
-  .description('Install skill from GitHub or Git URL')
+  .description('Install skill from GitHub, Git URL, or local path')
   .option('-g, --global', 'Install globally (default: project install)')
   .option('-u, --universal', 'Install to .agent/skills/ (for universal AGENTS.md usage)')
   .option('-y, --yes', 'Skip interactive selection, install all skills found')
+  .option('-s, --symlink', 'Create symbolic link for local paths instead of copying')
   .action(installSkill);
 
 program
