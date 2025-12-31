@@ -1,0 +1,161 @@
+{
+    "name": "openskills-vscode",
+    "displayName": "OpenSkills VSCode",
+    "description": "Manage, install, and sync OpenSkills (Claude Code compatible skills) from VSCode.",
+    "version": "0.0.1",
+    "publisher": "openskills",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/whyuds/openskills"
+    },
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.96.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [],
+    "main": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "OpenSkills",
+            "properties": {
+                "openskills.repositories": {
+                    "type": "array",
+                    "default": [],
+                    "description": "List of Git repositories containing skills.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "branch": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "openskills.addRepo",
+                "title": "Add Skill Repository",
+                "icon": "$(add)"
+            },
+            {
+                "command": "openskills.refresh",
+                "title": "Refresh Skills",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "openskills.removeRepo",
+                "title": "Remove Repository",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "openskills.installSelected",
+                "title": "Install Selected Skills",
+                "icon": "$(cloud-download)"
+            },
+            {
+                "command": "openskills.deleteSelected",
+                "title": "Delete Selected Skills",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "openskills.sync",
+                "title": "Sync to AGENTS.md",
+                "icon": "$(sync)"
+            },
+            {
+                "command": "openskills.switchBranch",
+                "title": "Switch Branch",
+                "icon": "$(git-branch)"
+            },
+            {
+                "command": "openskills.pullRepo",
+                "title": "Pull Latest",
+                "icon": "$(repo-sync)"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "openskills-explorer",
+                    "title": "OpenSkills",
+                    "icon": "resources/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "openskills-explorer": [
+                {
+                    "id": "openskills-skills",
+                    "name": "Skills"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "openskills.addRepo",
+                    "when": "view == openskills-skills",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "openskills.installSelected",
+                    "when": "view == openskills-skills",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "openskills.deleteSelected",
+                    "when": "view == openskills-skills",
+                    "group": "navigation@3"
+                },
+                {
+                    "command": "openskills.sync",
+                    "when": "view == openskills-skills",
+                    "group": "navigation@4"
+                },
+                {
+                    "command": "openskills.refresh",
+                    "when": "view == openskills-skills",
+                    "group": "navigation@5"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "openskills.pullRepo",
+                    "when": "viewItem == skillRepo",
+                    "group": "inline"
+                },
+                {
+                    "command": "openskills.switchBranch",
+                    "when": "viewItem == skillRepo",
+                    "group": "inline"
+                },
+                {
+                    "command": "openskills.removeRepo",
+                    "when": "viewItem == skillRepo",
+                    "group": "inline"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.96.0",
+        "typescript": "^5.0.0"
+    }
+}
