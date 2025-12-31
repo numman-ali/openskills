@@ -149,13 +149,21 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./"
+        "vscode:prepublish": "npm run package",
+        "compile": "npm run check-types && node esbuild.js",
+        "watch": "npm-run-all -p watch:*",
+        "watch:esbuild": "node esbuild.js --watch",
+        "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+        "package": "npm run check-types && node esbuild.js --production",
+        "check-types": "tsc --noEmit"
     },
+    "dependencies": {},
     "devDependencies": {
+        "openskills": "file:../",
         "@types/node": "^20.0.0",
         "@types/vscode": "^1.96.0",
+        "esbuild": "^0.24.0",
+        "npm-run-all": "^4.1.5",
         "typescript": "^5.0.0"
     }
 }

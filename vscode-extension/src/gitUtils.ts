@@ -3,20 +3,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { Skill } from './types';
+import { extractYamlField, hasValidFrontmatter } from 'openskills';
 
 const CACHE_DIR = path.join(os.tmpdir(), 'openskills-vscode-cache');
 
 if (!fs.existsSync(CACHE_DIR)) {
     fs.mkdirSync(CACHE_DIR, { recursive: true });
-}
-
-function extractYamlField(content: string, field: string): string {
-    const match = content.match(new RegExp(`^${field}:\\s*(.+?)$`, 'm'));
-    return match ? match[1].trim() : '';
-}
-
-function hasValidFrontmatter(content: string): boolean {
-    return content.trim().startsWith('---');
 }
 
 export class GitUtils {

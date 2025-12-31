@@ -19,6 +19,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(skillsTreeView);
 
+    skillsTreeView.onDidChangeCheckboxState(e => {
+        e.items.forEach(([item, state]) => {
+            if (!('url' in item)) {
+                skillsProvider.setChecked(item as Skill, state === vscode.TreeItemCheckboxState.Checked);
+            }
+        });
+    });
+
     context.subscriptions.push(
         vscode.commands.registerCommand('openskills.refresh', () => skillsProvider.refresh()),
 
@@ -107,7 +115,10 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         vscode.commands.registerCommand('openskills.installSelected', async () => {
-            const selected = skillsTreeView.selection.filter(item => !('url' in item)) as Skill[];
+            const checked = skillsProvider.getCheckedSkills();
+            const selected = checked.length > 0
+                ? checked
+                : (skillsTreeView.selection.filter(item => !('url' in item)) as Skill[]);
 
             if (selected.length === 0) {
                 vscode.window.showWarningMessage('Please select skills to install (use checkboxes).');
@@ -154,7 +165,10 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         vscode.commands.registerCommand('openskills.deleteSelected', async () => {
-            const selected = skillsTreeView.selection.filter(item => !('url' in item)) as Skill[];
+            const checked = skillsProvider.getCheckedSkills();
+            const selected = checked.length > 0
+                ? checked
+                : (skillsTreeView.selection.filter(item => !('url' in item)) as Skill[]);
 
             if (selected.length === 0) {
                 vscode.window.showWarningMessage('Please select skills to delete.');

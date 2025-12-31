@@ -9,20 +9,39 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillRepo | Skill
     private _onDidChangeTreeData: vscode.EventEmitter<SkillRepo | Skill | undefined | null | void> = new vscode.EventEmitter<SkillRepo | Skill | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<SkillRepo | Skill | undefined | null | void> = this._onDidChangeTreeData.event;
 
-    private selectedSkills: Set<string> = new Set();
+    private checkedSkills: Set<string> = new Set();
     private syncedSkillsCache: Set<string> = new Set();
+    private skillCache: Map<string, Skill> = new Map();
 
     refresh(): void {
         this.updateSyncedSkillsCache();
         this._onDidChangeTreeData.fire();
     }
 
-    getSelectedSkills(): Skill[] {
-        return [];
+    setChecked(skill: Skill, checked: boolean): void {
+        const key = this.getSkillKey(skill);
+        if (checked) {
+            this.checkedSkills.add(key);
+            // Ensure cache has the latest skill object (handled in getChildren usually, but good to have)
+            this.skillCache.set(key, skill);
+        } else {
+            this.checkedSkills.delete(key);
+        }
+    }
+
+    getCheckedSkills(): Skill[] {
+        const result: Skill[] = [];
+        for (const key of this.checkedSkills) {
+            if (this.skillCache.has(key)) {
+                result.push(this.skillCache.get(key)!);
+            }
+        }
+        return result;
     }
 
     clearSelection(): void {
-        this.selectedSkills.clear();
+        this.checkedSkills.clear();
+        this.refresh();
     }
 
     private getSkillKey(skill: Skill): string {
@@ -98,7 +117,12 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillRepo | Skill
                 iconName = 'check';
             }
             item.iconPath = new vscode.ThemeIcon(iconName);
-            item.checkboxState = vscode.TreeItemCheckboxState.Unchecked;
+
+            const key = this.getSkillKey(element);
+            item.checkboxState = this.checkedSkills.has(key)
+                ? vscode.TreeItemCheckboxState.Checked
+                : vscode.TreeItemCheckboxState.Unchecked;
+
             return item;
         }
     }
@@ -107,6 +131,7 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillRepo | Skill
         if (!element) {
             // Root: return repos
             this.updateSyncedSkillsCache();
+            // Clear skill cache on full refresh? Maybe not, incremental is fine.
             return ConfigManager.getRepos();
         } else if ('url' in element) {
             // Repo: return skills
@@ -114,6 +139,8 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillRepo | Skill
                 const skills = await GitUtils.getSkillsFromRepo(element.url, element.branch);
                 skills.forEach(s => {
                     s.installed = this.isSkillInstalled(s.name);
+                    // Update cache
+                    this.skillCache.set(this.getSkillKey(s), s);
                 });
                 return skills;
             } catch (e) {

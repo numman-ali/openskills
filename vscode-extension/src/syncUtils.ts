@@ -1,18 +1,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import {
+    extractYamlField,
+    generateSkillsXml as cliGenerateSkillsXml,
+    replaceSkillsSection,
+    type Skill
+} from 'openskills';
 
-interface InstalledSkill {
-    name: string;
-    description: string;
-    location: 'project' | 'global';
+interface InstalledSkill extends Skill {
     path: string;
 }
 
-function extractYamlField(content: string, field: string): string {
-    const match = content.match(new RegExp(`^${field}:\\s*(.+?)$`, 'm'));
-    return match ? match[1].trim() : '';
-}
-
+/**
+ * Find all installed skills in workspace (extension-specific version)
+ * Uses workspace root parameter instead of process.cwd()
+ */
 export function findInstalledSkills(workspaceRoot: string): InstalledSkill[] {
     const skills: InstalledSkill[] = [];
     const dirs = [
@@ -43,64 +45,19 @@ export function findInstalledSkills(workspaceRoot: string): InstalledSkill[] {
     return skills;
 }
 
+// Re-export from openskills
+export { replaceSkillsSection };
+
+/**
+ * Generate skills XML (wrapper to ensure correct type)
+ */
 export function generateSkillsXml(skills: InstalledSkill[]): string {
-    const skillTags = skills
-        .map(s => `<skill>
-<name>${s.name}</name>
-<description>${s.description}</description>
-<location>${s.location}</location>
-</skill>`)
-        .join('\n\n');
-
-    return `<skills_system priority="1">
-
-## Available Skills
-
-<!-- SKILLS_TABLE_START -->
-<usage>
-When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
-
-How to use skills:
-- Invoke: Bash("npx openskills read <skill-name>")
-- The skill content will load with detailed instructions on how to complete the task
-- Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
-
-Usage notes:
-- Only use skills listed in <available_skills> below
-- Do not invoke a skill that is already loaded in your context
-- Each skill invocation is stateless
-</usage>
-
-<available_skills>
-
-${skillTags}
-
-</available_skills>
-<!-- SKILLS_TABLE_END -->
-
-</skills_system>`;
+    return cliGenerateSkillsXml(skills);
 }
 
-export function replaceSkillsSection(content: string, newSection: string): string {
-    const startMarker = '<skills_system';
-
-    if (content.includes(startMarker)) {
-        const regex = /<skills_system[^>]*>[\s\S]*?<\/skills_system>/;
-        return content.replace(regex, newSection);
-    }
-
-    const htmlStartMarker = '<!-- SKILLS_TABLE_START -->';
-    const htmlEndMarker = '<!-- SKILLS_TABLE_END -->';
-
-    if (content.includes(htmlStartMarker)) {
-        const innerContent = newSection.replace(/<skills_system[^>]*>|<\/skills_system>/g, '');
-        const regex = new RegExp(`${htmlStartMarker}[\\s\\S]*?${htmlEndMarker}`, 'g');
-        return content.replace(regex, `${htmlStartMarker}\n${innerContent}\n${htmlEndMarker}`);
-    }
-
-    return content.trimEnd() + '\n\n' + newSection + '\n';
-}
-
+/**
+ * Sync installed skills to AGENTS.md
+ */
 export function syncToAgentsMd(workspaceRoot: string): { success: boolean; message: string; count: number } {
     const outputPath = path.join(workspaceRoot, 'AGENTS.md');
 
