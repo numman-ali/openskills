@@ -181,7 +181,7 @@ describe('skills.ts', () => {
       const skill = findSkill('my-skill');
 
       expect(skill).not.toBeNull();
-      expect(skill?.path).toContain('my-skill/SKILL.md');
+      expect(skill?.path).toContain(join('my-skill', 'SKILL.md'));
       expect(skill?.baseDir).toContain('my-skill');
     });
 
@@ -191,7 +191,7 @@ describe('skills.ts', () => {
       const skill = findSkill('linked-skill');
 
       expect(skill).not.toBeNull();
-      expect(skill?.path).toContain('linked-skill/SKILL.md');
+      expect(skill?.path).toContain(join('linked-skill', 'SKILL.md'));
     });
 
     it('should return null for non-existent skill', () => {

@@ -180,7 +180,7 @@ describe('End-to-end CLI tests', () => {
     });
 
     it('should error for non-existent local path', () => {
-      const result = runCli(`install /non/existent/path -y`);
+      const result = runCli(`install ${join(testTempDir, 'non-existent')} -y`);
 
       expect(result.exitCode).toBe(1);
       expect(result.stderr).toContain('does not exist');
