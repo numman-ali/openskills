@@ -169,7 +169,7 @@ describe('install.ts helper functions', () => {
 
     it('should allow nested subdirectories', () => {
       const base = resolve('/home/user/.claude/skills');
-      expect(isPathSafe(join(base, 'category/my-skill'), base)).toBe(true);
+      expect(isPathSafe(join(base, 'category', 'my-skill'), base)).toBe(true);
     });
   });
 });
