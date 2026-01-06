@@ -12,6 +12,27 @@ let skillsTreeView: vscode.TreeView<SkillRepo | Skill>;
 export function activate(context: vscode.ExtensionContext) {
     const skillsProvider = new SkillsProvider();
 
+    // Create Output Channel
+    const outputChannel = vscode.window.createOutputChannel('OpenSkills');
+
+    // Patch console to redirect to Output Channel
+    const originalLog = console.log;
+    const originalError = console.error;
+
+    console.log = (...args: any[]) => {
+        const message = args.map(arg => String(arg)).join(' ');
+        outputChannel.appendLine(`[INFO] ${message}`);
+        originalLog.apply(console, args);
+    };
+
+    console.error = (...args: any[]) => {
+        const message = args.map(arg => String(arg)).join(' ');
+        outputChannel.appendLine(`[ERROR] ${message}`);
+        originalError.apply(console, args);
+    };
+
+    outputChannel.appendLine('OpenSkills extension activated');
+
     skillsTreeView = vscode.window.createTreeView('openskills-skills', {
         treeDataProvider: skillsProvider,
         canSelectMany: true
@@ -102,9 +123,11 @@ export function activate(context: vscode.ExtensionContext) {
                 title: 'Syncing to AGENTS.md...',
                 cancellable: false
             }, async () => {
+                outputChannel.show();
+                console.log(`Starting sync process... IDE: ${vscode.env.appName}`);
                 const { syncToAgentsMd } = await import('./syncUtils');
                 const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
-                const result = syncToAgentsMd(workspaceRoot);
+                const result = syncToAgentsMd(workspaceRoot, vscode.env.appName);
 
                 if (result.success) {
                     vscode.window.showInformationMessage(result.message);
@@ -219,4 +242,6 @@ function copyRecursiveSync(src: string, dest: string) {
     }
 }
 
-export function deactivate() { }
+export function deactivate() {
+    // Restore console? (Optional, as extension host is dying anyway)
+}

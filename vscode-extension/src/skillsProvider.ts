@@ -4,6 +4,7 @@ import * as path from 'path';
 import { ConfigManager } from './configManager';
 import { GitUtils } from './gitUtils';
 import { Skill, SkillRepo } from './types';
+import { getIdeConfig } from 'openskills';
 
 export class SkillsProvider implements vscode.TreeDataProvider<SkillRepo | Skill> {
     private _onDidChangeTreeData: vscode.EventEmitter<SkillRepo | Skill | undefined | null | void> = new vscode.EventEmitter<SkillRepo | Skill | undefined | null | void>();
@@ -69,7 +70,10 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillRepo | Skill
         const root = this.getWorkspaceRoot();
         if (!root) return;
 
-        const agentsPath = path.join(root, 'AGENTS.md');
+        if (!root) return;
+
+        const config = getIdeConfig(vscode.env.appName);
+        const agentsPath = path.join(root, config.rulesFile);
         if (!fs.existsSync(agentsPath)) return;
 
         const content = fs.readFileSync(agentsPath, 'utf-8');

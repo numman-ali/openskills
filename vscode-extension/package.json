@@ -9,6 +9,7 @@
         "url": "https://github.com/whyuds/openskills"
     },
     "license": "MIT",
+    "icon": "resources/skills-logo.png",
     "engines": {
         "vscode": "^1.96.0"
     },
@@ -89,7 +90,7 @@
                 {
                     "id": "openskills-explorer",
                     "title": "OpenSkills",
-                    "icon": "resources/icon.svg"
+                    "icon": "resources/skills-icon.svg"
                 }
             ]
         },

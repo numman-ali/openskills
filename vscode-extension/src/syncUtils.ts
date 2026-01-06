@@ -4,7 +4,9 @@ import {
     extractYamlField,
     generateSkillsXml as cliGenerateSkillsXml,
     replaceSkillsSection,
-    type Skill
+    getIdeConfig,
+    type Skill,
+    type IdeConfig
 } from 'openskills';
 
 interface InstalledSkill extends Skill {
@@ -58,12 +60,18 @@ export function generateSkillsXml(skills: InstalledSkill[]): string {
 /**
  * Sync installed skills to AGENTS.md
  */
-export function syncToAgentsMd(workspaceRoot: string): { success: boolean; message: string; count: number } {
-    const outputPath = path.join(workspaceRoot, 'AGENTS.md');
+export function syncToAgentsMd(workspaceRoot: string, ideName?: string): { success: boolean; message: string; count: number } {
+    const config = getIdeConfig(ideName || 'vscode');
+    const outputPath = path.join(workspaceRoot, config.rulesFile);
 
     // Create file if it doesn't exist
     if (!fs.existsSync(outputPath)) {
-        fs.writeFileSync(outputPath, '# AGENTS\n\n');
+        // Ensure directory exists
+        const dir = path.dirname(outputPath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(outputPath, config.initialContent);
     }
 
     const skills = findInstalledSkills(workspaceRoot);
@@ -78,5 +86,5 @@ export function syncToAgentsMd(workspaceRoot: string): { success: boolean; messa
 
     fs.writeFileSync(outputPath, updated);
 
-    return { success: true, message: `Synced ${skills.length} skill(s) to AGENTS.md`, count: skills.length };
+    return { success: true, message: `Synced ${skills.length} skill(s) to ${path.basename(outputPath)}`, count: skills.length };
 }
