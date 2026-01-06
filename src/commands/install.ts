@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
-import { join, basename, resolve } from 'path';
+import { join, basename, resolve, relative, sep } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
@@ -194,9 +194,10 @@ async function installSingleLocalSkill(
   // Security: ensure target path stays within target directory
   const resolvedTargetPath = resolve(targetPath);
   const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
-    console.error(chalk.red(`Security error: Installation path outside target directory`));
-    process.exit(1);
+  const relativePath = relative(resolvedTargetDir, resolvedTargetPath);
+  if (relativePath.startsWith('..') || relative(resolvedTargetDir, resolvedTargetPath).includes('..')) {
+	console.error(chalk.red(`Security error: Installation path outside target directory`));
+	process.exit(1);
   }
 
   cpSync(skillDir, targetPath, { recursive: true, dereference: true });
@@ -244,9 +245,10 @@ async function installSpecificSkill(
   // Security: ensure target path stays within target directory
   const resolvedTargetPath = resolve(targetPath);
   const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
-    console.error(chalk.red(`Security error: Installation path outside target directory`));
-    process.exit(1);
+  const relativePath = relative(resolvedTargetDir, resolvedTargetPath);
+  if (relativePath.startsWith('..')) {
+   console.error(chalk.red(`Security error: Installation path outside target directory`));
+   process.exit(1);
   }
   cpSync(skillDir, targetPath, { recursive: true, dereference: true });
 
@@ -370,9 +372,10 @@ async function installFromRepo(
     // Security: ensure target path stays within target directory
     const resolvedTargetPath = resolve(info.targetPath);
     const resolvedTargetDir = resolve(targetDir);
-    if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
-      console.error(chalk.red(`Security error: Installation path outside target directory`));
-      continue;
+    const relativePath = relative(resolvedTargetDir, resolvedTargetPath);
+    if (relativePath.startsWith('..')) {
+     console.error(chalk.red(`Security error: Installation path outside target directory`));
+     continue;
     }
     cpSync(info.skillDir, info.targetPath, { recursive: true, dereference: true });
 

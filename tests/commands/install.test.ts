@@ -138,10 +138,11 @@ describe('install.ts helper functions', () => {
   describe('path traversal security', () => {
     // Test the security check logic
     const isPathSafe = (targetPath: string, targetDir: string): boolean => {
-      const resolvedTargetPath = resolve(targetPath);
-      const resolvedTargetDir = resolve(targetDir);
-      return resolvedTargetPath.startsWith(resolvedTargetDir + '/');
-    };
+	  const resolvedTargetPath = resolve(targetPath);
+	  const resolvedTargetDir = resolve(targetDir);
+	  const relativePath = require('path').relative(resolvedTargetDir, resolvedTargetPath);
+	  return !relativePath.startsWith('..');
+	};
 
     it('should allow normal skill paths within target directory', () => {
       expect(isPathSafe('/home/user/.claude/skills/my-skill', '/home/user/.claude/skills')).toBe(true);

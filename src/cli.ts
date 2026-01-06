@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { listSkills } from './commands/list.js';
 import { installSkill } from './commands/install.js';
 import { readSkill } from './commands/read.js';
@@ -8,12 +11,19 @@ import { removeSkill } from './commands/remove.js';
 import { manageSkills } from './commands/manage.js';
 import { syncAgentsMd } from './commands/sync.js';
 
+// Get version from package.json
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJsonPath = join(__dirname, '..', 'package.json');
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+const version = packageJson.version;
+
 const program = new Command();
 
 program
   .name('openskills')
   .description('Universal skills loader for AI coding agents')
-  .version('1.2.1')
+  .version(version)
   .showHelpAfterError(false)
   .exitOverride((err) => {
     // Handle all commander errors gracefully (no stack traces)
