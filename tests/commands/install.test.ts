@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolve, join } from 'path';
+import { resolve, join, sep } from 'path';
 import { homedir } from 'os';
 
 // We need to test the helper functions, but they're not exported
@@ -136,32 +136,55 @@ describe('install.ts helper functions', () => {
   });
 
   describe('path traversal security', () => {
-    // Test the security check logic
+    // Test the security check logic (updated to use path.sep for cross-platform compatibility)
     const isPathSafe = (targetPath: string, targetDir: string): boolean => {
       const resolvedTargetPath = resolve(targetPath);
       const resolvedTargetDir = resolve(targetDir);
-      return resolvedTargetPath.startsWith(resolvedTargetDir + '/');
+      return resolvedTargetPath.startsWith(resolvedTargetDir + sep);
     };
 
     it('should allow normal skill paths within target directory', () => {
-      expect(isPathSafe('/home/user/.claude/skills/my-skill', '/home/user/.claude/skills')).toBe(true);
+      const targetDir = resolve('/home/user/.claude/skills');
+      const targetPath = resolve('/home/user/.claude/skills/my-skill');
+      expect(isPathSafe(targetPath, targetDir)).toBe(true);
     });
 
     it('should block path traversal attempts with ../', () => {
-      expect(isPathSafe('/home/user/.claude/skills/../../../etc/passwd', '/home/user/.claude/skills')).toBe(false);
+      const targetDir = resolve('/home/user/.claude/skills');
+      const targetPath = resolve('/home/user/.claude/skills/../../../etc/passwd');
+      expect(isPathSafe(targetPath, targetDir)).toBe(false);
     });
 
     it('should block paths outside target directory', () => {
-      expect(isPathSafe('/etc/passwd', '/home/user/.claude/skills')).toBe(false);
+      const targetDir = resolve('/home/user/.claude/skills');
+      const targetPath = resolve('/etc/passwd');
+      expect(isPathSafe(targetPath, targetDir)).toBe(false);
     });
 
     it('should block paths that are prefix but not subdirectory', () => {
       // /home/user/.claude/skills-evil should NOT be allowed when target is /home/user/.claude/skills
-      expect(isPathSafe('/home/user/.claude/skills-evil', '/home/user/.claude/skills')).toBe(false);
+      const targetDir = resolve('/home/user/.claude/skills');
+      const targetPath = resolve('/home/user/.claude/skills-evil');
+      expect(isPathSafe(targetPath, targetDir)).toBe(false);
     });
 
     it('should allow nested subdirectories', () => {
-      expect(isPathSafe('/home/user/.claude/skills/category/my-skill', '/home/user/.claude/skills')).toBe(true);
+      const targetDir = resolve('/home/user/.claude/skills');
+      const targetPath = resolve('/home/user/.claude/skills/category/my-skill');
+      expect(isPathSafe(targetPath, targetDir)).toBe(true);
+    });
+
+    it('should work on Windows paths with drive letters', () => {
+      // Simulate Windows paths - resolve() will use correct separators for the platform
+      const targetDir = resolve('C:/Users/test/.claude/skills');
+      const targetPath = resolve('C:/Users/test/.claude/skills/my-skill');
+      expect(isPathSafe(targetPath, targetDir)).toBe(true);
+    });
+
+    it('should block Windows path traversal attempts', () => {
+      const targetDir = resolve('C:/Users/test/.claude/skills');
+      const targetPath = resolve('C:/Users/test/.claude/skills/../../../Windows/System32');
+      expect(isPathSafe(targetPath, targetDir)).toBe(false);
     });
   });
 });
