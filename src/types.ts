@@ -22,3 +22,9 @@ export interface SkillMetadata {
   description: string;
   context?: string;
 }
+
+export interface DeleteOptions {
+  yes?: boolean;      // Skip interactive prompts
+  permanent?: boolean; // Permanently delete instead of moving to trash
+  dryRun?: boolean;   // Only show what would be deleted
+}

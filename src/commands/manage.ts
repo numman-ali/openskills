@@ -1,13 +1,14 @@
-import { rmSync } from 'fs';
 import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
 import { findAllSkills, findSkill } from '../utils/skills.js';
+import { safeDelete } from '../utils/trash.js';
+import type { Skill, DeleteOptions } from '../types.js';
 
 /**
  * Interactively manage (remove) installed skills
  */
-export async function manageSkills(): Promise<void> {
+export async function manageSkills(options: DeleteOptions = {}): Promise<void> {
   const skills = findAllSkills();
 
   if (skills.length === 0) {
@@ -24,39 +25,50 @@ export async function manageSkills(): Promise<void> {
       return a.name.localeCompare(b.name);
     });
 
+    // Interactive mode - select skills to manage
     const choices = sorted.map((skill) => ({
       name: `${chalk.bold(skill.name.padEnd(25))} ${skill.location === 'project' ? chalk.blue('(project)') : chalk.dim('(global)')}`,
       value: skill.name,
       checked: false, // Nothing checked by default
     }));
 
-    const toRemove = await checkbox({
-      message: 'Select skills to remove',
+    const selectedSkillNames = await checkbox({
+      message: 'Select skills to manage',
       choices,
       pageSize: 15,
     });
 
-    if (toRemove.length === 0) {
-      console.log(chalk.yellow('No skills selected for removal.'));
+    if (selectedSkillNames.length === 0) {
+      console.log('No skills selected for management.');
       return;
     }
 
-    // Remove selected skills
-    for (const skillName of toRemove) {
+    // Determine deletion mode based on --force flag
+    // Always use trash by default, only use permanent deletion with --force
+    const isPermanent = options.permanent || false;
+
+    // Process each selected skill
+    let successCount = 0;
+
+    for (const skillName of selectedSkillNames) {
       const skill = findSkill(skillName);
       if (skill) {
-        rmSync(skill.baseDir, { recursive: true, force: true });
-        const location = skill.source.includes(process.cwd()) ? 'project' : 'global';
-        console.log(chalk.green(`✅ Removed: ${skillName} (${location})`));
+        const deleted = await safeDelete([skill.baseDir], isPermanent);
+        if (deleted) {
+          successCount++;
+        }
       }
     }
 
-    console.log(chalk.green(`\n✅ Removed ${toRemove.length} skill(s)`));
+    // Report results
+    const action = isPermanent ? 'permanently removed' : 'moved to trash';
+    console.log(`\n✅ Successfully ${action}: ${successCount} skill(s)`);
   } catch (error) {
     if (error instanceof ExitPromptError) {
-      console.log(chalk.yellow('\n\nCancelled by user'));
+      console.log('\n\nCancelled by user');
       process.exit(0);
     }
     throw error;
   }
 }
+

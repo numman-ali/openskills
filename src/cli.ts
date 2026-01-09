@@ -69,12 +69,28 @@ program
 program
   .command('manage')
   .description('Interactively manage (remove) installed skills')
-  .action(manageSkills);
+  .option('--force', 'Permanently delete instead of moving to trash')
+  .action(async (options) => {
+    try {
+      await manageSkills(options);
+    } catch (error) {
+      console.error('Error managing skills:', error);
+      process.exit(1);
+    }
+  });
 
 program
   .command('remove <skill-name>')
   .alias('rm')
   .description('Remove specific skill (for scripts, use manage for interactive)')
-  .action(removeSkill);
+  .option('--force', 'Permanently delete skill (bypass trash)')
+  .action(async (skillName: string, options: { force?: boolean; }) => {
+    try {
+      await removeSkill(skillName, { permanent: options.force });
+    } catch (error) {
+      console.error('Error removing skill:', error);
+      process.exit(1);
+    }
+  });
 
 program.parse();
