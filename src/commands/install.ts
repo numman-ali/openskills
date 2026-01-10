@@ -15,10 +15,18 @@ import type { InstallOptions } from '../types.js';
  */
 function isLocalPath(source: string): boolean {
   return (
+    // Unix path patterns
     source.startsWith('/') ||
     source.startsWith('./') ||
     source.startsWith('../') ||
-    source.startsWith('~/')
+    source.startsWith('~/') ||
+    // Windows path patterns - convert match results to booleans using !!
+    !!source.match(/^[A-Za-z]:\\/) || // Windows absolute path with drive letter (backslash)
+    !!source.match(/^[A-Za-z]:\//) ||  // Windows absolute path with drive letter (forward slash)
+    source.startsWith('.\\') ||      // Windows relative path with backslash
+    source.startsWith('..\\') ||      // Windows parent relative path with backslash
+    source.startsWith('\\') ||        // Windows root-relative path with backslash
+    !!source.match(/^[A-Za-z]:[^\\\/]/)  // Windows drive-relative path (no leading slash/backslash)
   );
 }
 
