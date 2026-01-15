@@ -39,9 +39,9 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/numman-ali/openskills.git"
+    "url": "https://github.com/otkHsiao/openskills.git"
   },
-  "homepage": "https://github.com/numman-ali/openskills#readme",
+  "homepage": "https://github.com/otkHsiao/openskills#readme",
   "engines": {
     "node": ">=20.6.0"
   },
