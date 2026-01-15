@@ -4,6 +4,22 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { execSync } from 'child_process';
 
+// Helper to safely create symlinks (handles Windows permission issues)
+function safeSymlinkSync(target: string, path: string, type: 'dir' | 'file' = 'dir'): boolean {
+  try {
+    symlinkSync(target, path, type);
+    return true;
+  } catch (error: any) {
+    if (error.code === 'EPERM' && process.platform === 'win32') {
+      // On Windows, symlink creation requires admin privileges or developer mode
+      // Skip the test gracefully
+      console.warn(`Skipping symlink test on Windows due to insufficient privileges: ${error.message}`);
+      return false;
+    }
+    throw error;
+  }
+}
+
 const testId = Math.random().toString(36).slice(2);
 const testTempDir = join(tmpdir(), `openskills-e2e-${testId}`);
 const cliPath = join(process.cwd(), 'dist', 'cli.js');
@@ -215,10 +231,16 @@ describe('End-to-end CLI tests', () => {
       // Create symlink in skills directory
       const skillsDir = join(testTempDir, '.claude', 'skills');
       mkdirSync(skillsDir, { recursive: true });
-      symlinkSync(
+      const symlinkCreated = safeSymlinkSync(
         join(actualSkillDir, 'symlinked-skill'),
         join(skillsDir, 'symlinked-skill')
       );
+
+      // Skip test if symlink creation failed (Windows permissions)
+      if (!symlinkCreated) {
+        console.log('Skipping symlink test due to insufficient privileges');
+        return;
+      }
 
       const result = runCli('list');
 
@@ -232,10 +254,16 @@ describe('End-to-end CLI tests', () => {
 
       const skillsDir = join(testTempDir, '.claude', 'skills');
       mkdirSync(skillsDir, { recursive: true });
-      symlinkSync(
+      const symlinkCreated = safeSymlinkSync(
         join(actualSkillDir, 'linked-readable'),
         join(skillsDir, 'linked-readable')
       );
+
+      // Skip test if symlink creation failed (Windows permissions)
+      if (!symlinkCreated) {
+        console.log('Skipping symlink test due to insufficient privileges');
+        return;
+      }
 
       const result = runCli('read linked-readable');
 

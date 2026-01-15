@@ -165,7 +165,9 @@ describe('install.ts helper functions', () => {
 
     it('should keep absolute paths as-is (resolved)', () => {
       const expanded = expandPath('/absolute/path');
-      expect(expanded).toBe('/absolute/path');
+      // On Windows, resolve() converts Unix paths to Windows format
+      const expected = process.platform === 'win32' ? resolve('/absolute/path') : '/absolute/path';
+      expect(expanded).toBe(expected);
     });
   });
 
@@ -174,7 +176,9 @@ describe('install.ts helper functions', () => {
     const isPathSafe = (targetPath: string, targetDir: string): boolean => {
       const resolvedTargetPath = resolve(targetPath);
       const resolvedTargetDir = resolve(targetDir);
-      return resolvedTargetPath.startsWith(resolvedTargetDir + '/');
+      // Use platform-appropriate path separator
+      const separator = process.platform === 'win32' ? '\\' : '/';
+      return resolvedTargetPath.startsWith(resolvedTargetDir + separator);
     };
 
     it('should allow normal skill paths within target directory', () => {

@@ -5,6 +5,22 @@ import { tmpdir } from 'os';
 import { findAllSkills, findSkill } from '../../src/utils/skills.js';
 import * as dirsModule from '../../src/utils/dirs.js';
 
+// Helper to safely create symlinks (handles Windows permission issues)
+function safeSymlinkSync(target: string, path: string, type: 'dir' | 'file' = 'dir'): boolean {
+  try {
+    symlinkSync(target, path, type);
+    return true;
+  } catch (error: any) {
+    if (error.code === 'EPERM' && process.platform === 'win32') {
+      // On Windows, symlink creation requires admin privileges or developer mode
+      // Skip the test gracefully
+      console.warn(`Skipping symlink test on Windows due to insufficient privileges: ${error.message}`);
+      return false;
+    }
+    throw error;
+  }
+}
+
 // Create unique temp directories for each test run
 const testId = Math.random().toString(36).slice(2);
 const testTempDir = join(tmpdir(), `openskills-test-${testId}`);
@@ -34,7 +50,7 @@ function createSymlinkedSkill(
   skillsDir: string,
   skillName: string,
   description: string = 'Symlinked test skill'
-): void {
+): boolean {
   // Create the actual skill in the symlink target directory
   const actualSkillDir = join(testSymlinkTargetDir, skillName);
   mkdirSync(actualSkillDir, { recursive: true });
@@ -52,14 +68,14 @@ This is a symlinked test skill.`
 
   // Create symlink in the skills directory
   mkdirSync(skillsDir, { recursive: true });
-  symlinkSync(actualSkillDir, join(skillsDir, skillName), 'dir');
+  return safeSymlinkSync(actualSkillDir, join(skillsDir, skillName), 'dir');
 }
 
 // Helper to create a broken symlink
-function createBrokenSymlink(skillsDir: string, skillName: string): void {
+function createBrokenSymlink(skillsDir: string, skillName: string): boolean {
   mkdirSync(skillsDir, { recursive: true });
   const nonExistentTarget = join(testTempDir, 'non-existent', skillName);
-  symlinkSync(nonExistentTarget, join(skillsDir, skillName), 'dir');
+  return safeSymlinkSync(nonExistentTarget, join(skillsDir, skillName), 'dir');
 }
 
 describe('skills.ts', () => {
@@ -94,7 +110,13 @@ describe('skills.ts', () => {
     });
 
     it('should find symlinked skill directories', () => {
-      createSymlinkedSkill(testGlobalSkillsDir, 'symlinked-skill', 'A symlinked skill');
+      const symlinkCreated = createSymlinkedSkill(testGlobalSkillsDir, 'symlinked-skill', 'A symlinked skill');
+      
+      // Skip test if symlink creation failed (Windows permissions)
+      if (!symlinkCreated) {
+        console.log('Skipping symlink test due to insufficient privileges');
+        return;
+      }
 
       const skills = findAllSkills();
 
@@ -105,24 +127,36 @@ describe('skills.ts', () => {
 
     it('should find both regular and symlinked skills', () => {
       createSkill(testProjectSkillsDir, 'regular-skill', 'Regular');
-      createSymlinkedSkill(testGlobalSkillsDir, 'symlinked-skill', 'Symlinked');
+      const symlinkCreated = createSymlinkedSkill(testGlobalSkillsDir, 'symlinked-skill', 'Symlinked');
 
       const skills = findAllSkills();
 
-      expect(skills).toHaveLength(2);
-      const names = skills.map(s => s.name);
-      expect(names).toContain('regular-skill');
-      expect(names).toContain('symlinked-skill');
+      if (!symlinkCreated) {
+        // If symlink creation failed, expect only the regular skill
+        expect(skills).toHaveLength(1);
+        expect(skills[0].name).toBe('regular-skill');
+      } else {
+        expect(skills).toHaveLength(2);
+        const names = skills.map(s => s.name);
+        expect(names).toContain('regular-skill');
+        expect(names).toContain('symlinked-skill');
+      }
     });
 
     it('should skip broken symlinks gracefully', () => {
       createSkill(testProjectSkillsDir, 'good-skill', 'Good skill');
-      createBrokenSymlink(testGlobalSkillsDir, 'broken-symlink');
+      const symlinkCreated = createBrokenSymlink(testGlobalSkillsDir, 'broken-symlink');
 
       const skills = findAllSkills();
 
+      // If symlink creation failed, we only have the good skill
+      // If symlink creation succeeded, broken symlinks should be gracefully ignored
       expect(skills).toHaveLength(1);
       expect(skills[0].name).toBe('good-skill');
+      
+      if (!symlinkCreated) {
+        console.log('Skipping broken symlink test due to insufficient privileges');
+      }
     });
 
     it('should deduplicate skills with same name (project takes priority)', () => {
@@ -181,12 +215,20 @@ describe('skills.ts', () => {
       const skill = findSkill('my-skill');
 
       expect(skill).not.toBeNull();
-      expect(skill?.path).toContain('my-skill/SKILL.md');
+      // Use platform-agnostic path checking
+      const pathSeparator = process.platform === 'win32' ? '\\' : '/';
+      expect(skill?.path).toContain(`my-skill${pathSeparator}SKILL.md`);
       expect(skill?.baseDir).toContain('my-skill');
     });
 
     it('should find symlinked skills by name', () => {
-      createSymlinkedSkill(testGlobalSkillsDir, 'linked-skill', 'Linked description');
+      const symlinkCreated = createSymlinkedSkill(testGlobalSkillsDir, 'linked-skill', 'Linked description');
+      
+      // Skip test if symlink creation failed (Windows permissions)
+      if (!symlinkCreated) {
+        console.log('Skipping symlink test due to insufficient privileges');
+        return;
+      }
 
       const skill = findSkill('linked-skill');
 
