@@ -1,7 +1,7 @@
 {
-  "name": "@wic-fe-lib/openskills",
+  "name": "wic-fe-lib-openskills",
   "version": "1.3.0",
-  "description": "Windows. Universal skills loader for AI coding agents - install and load Anthropic SKILL.md format skills in any agent",
+  "description": "Universal skills loader for AI coding agents - install and load Anthropic SKILL.md format skills in any agent",
   "type": "module",
   "main": "./dist/cli.js",
   "bin": {
@@ -39,7 +39,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/otkHsiao/openskills.git"
+    "url": "git+https://github.com/otkHsiao/openskills.git"
   },
   "homepage": "https://github.com/otkHsiao/openskills#readme",
   "engines": {
