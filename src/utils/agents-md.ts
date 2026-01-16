@@ -42,6 +42,7 @@ When users ask you to perform tasks, check if any of the available skills below 
 How to use skills:
 - Invoke: Bash("openskills read <skill-name>")
 - The skill content will load with detailed instructions on how to complete the task
+- If openskills is not installed, run `npm i -g openskills` to install it first.
 - Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
 
 Usage notes:
