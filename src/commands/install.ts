@@ -36,6 +36,17 @@ function isGitUrl(source: string): boolean {
 }
 
 /**
+ * Extract repo name from a git URL
+ */
+function getRepoName(repoUrl: string): string | null {
+  const cleaned = repoUrl.replace(/\.git$/, '');
+  const lastPart = cleaned.split('/').pop();
+  if (!lastPart) return null;
+  const maybeRepo = lastPart.includes(':') ? lastPart.split(':').pop() : lastPart;
+  return maybeRepo || null;
+}
+
+/**
  * Expand ~ to home directory
  */
 function expandPath(source: string): string {
@@ -130,7 +141,8 @@ export async function installSkill(source: string, options: InstallOptions): Pro
     if (skillSubpath) {
       await installSpecificSkill(repoDir, skillSubpath, targetDir, isProject, options);
     } else {
-      await installFromRepo(repoDir, targetDir, options);
+      const repoName = getRepoName(repoUrl);
+      await installFromRepo(repoDir, targetDir, options, repoName || undefined);
     }
   } finally {
     rmSync(tempDir, { recursive: true, force: true });
@@ -268,8 +280,38 @@ async function installSpecificSkill(
 async function installFromRepo(
   repoDir: string,
   targetDir: string,
-  options: InstallOptions
+  options: InstallOptions,
+  repoName?: string
 ): Promise<void> {
+  const rootSkillPath = join(repoDir, 'SKILL.md');
+  let skillInfos: Array<{
+    skillDir: string;
+    skillName: string;
+    description: string;
+    targetPath: string;
+    size: number;
+  }> = [];
+
+  if (existsSync(rootSkillPath)) {
+    const content = readFileSync(rootSkillPath, 'utf-8');
+    if (!hasValidFrontmatter(content)) {
+      console.error(chalk.red('Error: Invalid SKILL.md (missing YAML frontmatter)'));
+      process.exit(1);
+    }
+
+    const frontmatterName = extractYamlField(content, 'name');
+    const skillName = frontmatterName || repoName || basename(repoDir);
+    skillInfos = [
+      {
+        skillDir: repoDir,
+        skillName,
+        description: extractYamlField(content, 'description'),
+        targetPath: join(targetDir, skillName),
+        size: getDirectorySize(repoDir),
+      },
+    ];
+  }
+
   // Find all skills
   const findSkills = (dir: string): string[] => {
     const skills: string[] = [];
@@ -288,46 +330,54 @@ async function installFromRepo(
     return skills;
   };
 
-  const skillDirs = findSkills(repoDir);
-
-  if (skillDirs.length === 0) {
-    console.error(chalk.red('Error: No SKILL.md files found in repository'));
-    process.exit(1);
-  }
-
-  console.log(chalk.dim(`Found ${skillDirs.length} skill(s)\n`));
-
-  // Build skill info list
-  const skillInfos = skillDirs
-    .map((skillDir) => {
-      const skillMdPath = join(skillDir, 'SKILL.md');
-      const content = readFileSync(skillMdPath, 'utf-8');
-
-      if (!hasValidFrontmatter(content)) {
-        return null;
-      }
-
-      const skillName = basename(skillDir);
-      const description = extractYamlField(content, 'description');
-      const targetPath = join(targetDir, skillName);
-
-      // Get size
-      const size = getDirectorySize(skillDir);
-
-      return {
-        skillDir,
-        skillName,
-        description,
-        targetPath,
-        size,
-      };
-    })
-    .filter((info) => info !== null);
-
   if (skillInfos.length === 0) {
-    console.error(chalk.red('Error: No valid SKILL.md files found'));
-    process.exit(1);
+    const skillDirs = findSkills(repoDir);
+
+    if (skillDirs.length === 0) {
+      console.error(chalk.red('Error: No SKILL.md files found in repository'));
+      process.exit(1);
+    }
+
+    // Build skill info list
+    skillInfos = skillDirs
+      .map((skillDir) => {
+        const skillMdPath = join(skillDir, 'SKILL.md');
+        const content = readFileSync(skillMdPath, 'utf-8');
+
+        if (!hasValidFrontmatter(content)) {
+          return null;
+        }
+
+        const skillName = basename(skillDir);
+        const description = extractYamlField(content, 'description');
+        const targetPath = join(targetDir, skillName);
+
+        // Get size
+        const size = getDirectorySize(skillDir);
+
+        return {
+          skillDir,
+          skillName,
+          description,
+          targetPath,
+          size,
+        };
+      })
+      .filter((info) => info !== null) as Array<{
+      skillDir: string;
+      skillName: string;
+      description: string;
+      targetPath: string;
+      size: number;
+    }>;
+
+    if (skillInfos.length === 0) {
+      console.error(chalk.red('Error: No valid SKILL.md files found'));
+      process.exit(1);
+    }
   }
+
+  console.log(chalk.dim(`Found ${skillInfos.length} skill(s)\n`));
 
   // Interactive selection (unless -y flag or single skill)
   let skillsToInstall = skillInfos;
@@ -363,7 +413,7 @@ async function installFromRepo(
   }
 
   // Install selected skills
-  const isProject = targetDir === join(process.cwd(), '.claude/skills');
+  const isProject = targetDir.startsWith(process.cwd());
   let installedCount = 0;
 
   for (const info of skillsToInstall) {
