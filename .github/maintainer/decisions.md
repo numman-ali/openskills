@@ -2,6 +2,11 @@
 
 ## 2026-01
 
+### [RELEASE:1.5.0] Shipped update command + source tracking
+**Date:** 2026-01-17
+**Decision:** Release and publish 1.5.0
+**Reasoning:** Adds `openskills update`, source metadata tracking, multi-skill reads, and improved update UX.
+
 ### [RELEASE:1.3.1] Shipped fixes for Windows install, CLI version, root SKILL.md
 **Date:** 2026-01-17
 **Decision:** Release and publish 1.3.1
