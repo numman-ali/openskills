@@ -1,0 +1,651 @@
+{
+  "generatedAt": "2026-01-17T13:39:40.172Z",
+  "count": 32,
+  "items": [
+    {
+      "id": 6,
+      "type": "issue",
+      "title": "[FEATURE] --yes should overwrite",
+      "actionability": "closable",
+      "priorityScore": 17,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-6.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 9,
+      "type": "issue",
+      "title": "[FEATURE] Document workflow/create script for updating skills from upstream git repo",
+      "actionability": "needs-info",
+      "priorityScore": 17,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-9.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 13,
+      "type": "issue",
+      "title": "[FEATURE] Support skill switch",
+      "actionability": "ready",
+      "priorityScore": 5,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-13.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 16,
+      "type": "issue",
+      "title": "[BUG] Bash(\"openskills read <skill-name>\") Messes Up Gemini CLI's behaviour",
+      "actionability": "ready",
+      "priorityScore": 7,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-16.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 17,
+      "type": "issue",
+      "title": "Windows: Security error when installing from GitHub repos",
+      "actionability": "ready",
+      "priorityScore": 7,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-17.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 19,
+      "type": "issue",
+      "title": "[FEATURE] Support gitlab",
+      "actionability": "ready",
+      "priorityScore": 0,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-19.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 20,
+      "type": "issue",
+      "title": "[BUG]version1.3.0 version mistake && can not install skills",
+      "actionability": "ready",
+      "priorityScore": 26,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-20.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 24,
+      "type": "issue",
+      "title": "[FEATURE] AugmentCode",
+      "actionability": "ready",
+      "priorityScore": 5,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-24.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 28,
+      "type": "issue",
+      "title": "[BUG]win run openskills install anthropics/skills return: \"Security error: Installation path outside target directory\"",
+      "actionability": "ready",
+      "priorityScore": 50,
+      "agentScore": 100,
+      "agentConfidence": "high",
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-28.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 29,
+      "type": "issue",
+      "title": "[BUG] can not install correctly,shows out of target directory",
+      "actionability": "needs-info",
+      "priorityScore": 18,
+      "sentimentScore": 0,
+      "needsInfoScore": 5,
+      "needsInfoSignals": [
+        "missing-repro",
+        "missing-expected-actual",
+        "missing-environment",
+        "missing-version"
+      ],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-29.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 32,
+      "type": "issue",
+      "title": "[FEATURE] Project version requirements management",
+      "actionability": "ready",
+      "priorityScore": 5,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-32.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 34,
+      "type": "issue",
+      "title": "[Bug] \"Security error: Installation path outside target directory\" on Windows",
+      "actionability": "ready",
+      "priorityScore": 27,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-34.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 35,
+      "type": "issue",
+      "title": "[I NEED YOU!] Request for a Core Contributor!",
+      "actionability": "ready",
+      "priorityScore": 9,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-35.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 41,
+      "type": "issue",
+      "title": "[FEATURE] support multiple skill reads at once OR explain that they should be read sparately",
+      "actionability": "ready",
+      "priorityScore": 5,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-41.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 42,
+      "type": "issue",
+      "title": "v1.3.0 CLI version still shows 1.2.1",
+      "actionability": "ready",
+      "priorityScore": 12,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-42.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 43,
+      "type": "issue",
+      "title": "[BUG] Installation Fails on Windows with Security Error",
+      "actionability": "ready",
+      "priorityScore": 20,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-43.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 47,
+      "type": "issue",
+      "title": "[FEATURE]",
+      "actionability": "ready",
+      "priorityScore": 5,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-47.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 48,
+      "type": "issue",
+      "title": "[BUG] Security error when installing skills from nested directory structures (including anthropics/skills)",
+      "actionability": "ready",
+      "priorityScore": 10,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-48.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 50,
+      "type": "issue",
+      "title": "now i have skills and model api ,but i can' use claude ,should i write workflow to let the model use skill or how can i create a project like claude to use the skills",
+      "actionability": "ready",
+      "priorityScore": 5,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "enhancement"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-50.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 51,
+      "type": "issue",
+      "title": "[BUG] No SKILL.md files found in repository",
+      "actionability": "ready",
+      "priorityScore": 12,
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [
+        "bug"
+      ],
+      "notePath": ".github/maintainer/notes/issues/000/ISSUE-51.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 18,
+      "type": "pr",
+      "title": "fix: Use path.sep for cross-platform path validation",
+      "actionability": "needs-analysis",
+      "priorityScore": 8,
+      "implementationScoreAuto": 18,
+      "implementationScoreFinal": 18,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 9,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "medium",
+      "relationshipQualityFinal": "medium",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [
+        17
+      ],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-18.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 23,
+      "type": "pr",
+      "title": "Update README with installation command details for non Claude Code u…",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-23.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 25,
+      "type": "pr",
+      "title": "feat: add Nix flake for declarative builds and development",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-25.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 26,
+      "type": "pr",
+      "title": "Harden install path validation with filesystem-aware checks and cross-platform security tests",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-26.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 27,
+      "type": "pr",
+      "title": "fix: update version to 1.3.0",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-27.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 30,
+      "type": "pr",
+      "title": "fix: switch to async spawn to unblock spinner animation and switch fr…",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-30.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 31,
+      "type": "pr",
+      "title": "feat: support installing local skills via symlinks with --symlink flag",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-31.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 37,
+      "type": "pr",
+      "title": "Fix: Windows path separator and dynamic version reading",
+      "actionability": "needs-analysis",
+      "priorityScore": 4,
+      "implementationScoreAuto": 116,
+      "implementationScoreFinal": 116,
+      "implementationTierAuto": "strong",
+      "implementationTierFinal": "strong",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 37,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "strong",
+      "relationshipQualityFinal": "strong",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [
+        20,
+        17,
+        28,
+        29,
+        34
+      ],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-37.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 38,
+      "type": "pr",
+      "title": "fix: Use path.sep for Windows compatibility in path validation",
+      "actionability": "needs-analysis",
+      "priorityScore": 8,
+      "implementationScoreAuto": 119,
+      "implementationScoreFinal": 262,
+      "implementationTierAuto": "strong",
+      "implementationTierFinal": "strong",
+      "agentScore": 95,
+      "agentConfidence": "high",
+      "relationshipScore": 39,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "strong",
+      "relationshipQualityFinal": "strong",
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [
+        34,
+        28,
+        29,
+        17,
+        20
+      ],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-38.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 39,
+      "type": "pr",
+      "title": "feat: implement safe deletion with trash/recycle bin suppor",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-39.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 40,
+      "type": "pr",
+      "title": "Fix/windows local path",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 3,
+      "implementationScoreFinal": 3,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-40.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    },
+    {
+      "id": 49,
+      "type": "pr",
+      "title": "In a project that already has Skills installed, new developers can automatically install OpenSkills by default.",
+      "actionability": "needs-analysis",
+      "priorityScore": 0,
+      "implementationScoreAuto": 0,
+      "implementationScoreFinal": 0,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 0,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "none",
+      "relationshipQualityFinal": "none",
+      "sentimentScore": 0,
+      "needsInfoScore": 1,
+      "needsInfoSignals": [
+        "missing-test-plan"
+      ],
+      "linkedIssues": [],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-49.md",
+      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+    }
+  ]
+}

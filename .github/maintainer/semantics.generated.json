@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-01-17T13:12:54.700Z",
+  "sources": [
+    "/Users/numman/Repos/openskills/.github/ISSUE_TEMPLATE/bug_report.md",
+    "/Users/numman/Repos/openskills/.github/ISSUE_TEMPLATE/config.yml",
+    "/Users/numman/Repos/openskills/.github/ISSUE_TEMPLATE/feature_request.md",
+    "/Users/numman/Repos/openskills/CONTRIBUTING.md"
+  ],
+  "overrides": {
+    "semantics": {
+      "intent": {
+        "bug": [
+          "bug description"
+        ],
+        "feature": [
+          "feature description",
+          "feature requests"
+        ],
+        "question": [
+          "questions?"
+        ],
+        "support": [],
+        "meta": [
+          "contributing: open a discussion thread"
+        ]
+      },
+      "needsInfo": {
+        "repro": [
+          "steps to reproduce",
+          "provide clear reproduction steps"
+        ],
+        "expected": [
+          "expected behavior"
+        ],
+        "actual": [
+          "actual behavior"
+        ],
+        "environment": [
+          "environment",
+          "operating system"
+        ],
+        "version": [
+          "openskills version",
+          "node.js version",
+          "include version information"
+        ],
+        "logs": [],
+        "testPlan": [
+          "testing: include tests for new functionality",
+          "link locally for testing",
+          "testing changes"
+        ]
+      },
+      "environmentTokens": [
+        "windows",
+        "win11",
+        "win10",
+        "mac",
+        "macos",
+        "linux",
+        "ubuntu",
+        "debian",
+        "node",
+        "npm",
+        "pnpm",
+        "yarn"
+      ],
+      "relationship": {
+        "linkKeywords": [],
+        "duplicateHints": []
+      },
+      "errors": {
+        "signatures": [],
+        "keywords": []
+      }
+    }
+  }
+}

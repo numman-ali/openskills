@@ -1,0 +1,608 @@
+{
+  "generatedAt": "2026-01-17T13:39:40.172Z",
+  "nodes": [
+    {
+      "id": "issue:28",
+      "type": "issue",
+      "title": "[BUG]win run openskills install anthropics/skills return: \"Security error: Installation path outside target directory\"",
+      "priorityScore": 50,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:34",
+      "type": "issue",
+      "title": "[Bug] \"Security error: Installation path outside target directory\" on Windows",
+      "priorityScore": 27,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:20",
+      "type": "issue",
+      "title": "[BUG]version1.3.0 version mistake && can not install skills",
+      "priorityScore": 26,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:43",
+      "type": "issue",
+      "title": "[BUG] Installation Fails on Windows with Security Error",
+      "priorityScore": 20,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:29",
+      "type": "issue",
+      "title": "[BUG] can not install correctly,shows out of target directory",
+      "priorityScore": 18,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:9",
+      "type": "issue",
+      "title": "[FEATURE] Document workflow/create script for updating skills from upstream git repo",
+      "priorityScore": 17,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:6",
+      "type": "issue",
+      "title": "[FEATURE] --yes should overwrite",
+      "priorityScore": 17,
+      "actionability": "closable"
+    },
+    {
+      "id": "issue:51",
+      "type": "issue",
+      "title": "[BUG] No SKILL.md files found in repository",
+      "priorityScore": 12,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:42",
+      "type": "issue",
+      "title": "v1.3.0 CLI version still shows 1.2.1",
+      "priorityScore": 12,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:48",
+      "type": "issue",
+      "title": "[BUG] Security error when installing skills from nested directory structures (including anthropics/skills)",
+      "priorityScore": 10,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:35",
+      "type": "issue",
+      "title": "[I NEED YOU!] Request for a Core Contributor!",
+      "priorityScore": 9,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:17",
+      "type": "issue",
+      "title": "Windows: Security error when installing from GitHub repos",
+      "priorityScore": 7,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:16",
+      "type": "issue",
+      "title": "[BUG] Bash(\"openskills read <skill-name>\") Messes Up Gemini CLI's behaviour",
+      "priorityScore": 7,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:50",
+      "type": "issue",
+      "title": "now i have skills and model api ,but i can' use claude ,should i write workflow to let the model use skill or how can i create a project like claude to use the skills",
+      "priorityScore": 5,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:47",
+      "type": "issue",
+      "title": "[FEATURE]",
+      "priorityScore": 5,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:41",
+      "type": "issue",
+      "title": "[FEATURE] support multiple skill reads at once OR explain that they should be read sparately",
+      "priorityScore": 5,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:32",
+      "type": "issue",
+      "title": "[FEATURE] Project version requirements management",
+      "priorityScore": 5,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:24",
+      "type": "issue",
+      "title": "[FEATURE] AugmentCode",
+      "priorityScore": 5,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:13",
+      "type": "issue",
+      "title": "[FEATURE] Support skill switch",
+      "priorityScore": 5,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:19",
+      "type": "issue",
+      "title": "[FEATURE] Support gitlab",
+      "priorityScore": 0,
+      "actionability": "ready"
+    },
+    {
+      "id": "pr:38",
+      "type": "pr",
+      "title": "fix: Use path.sep for Windows compatibility in path validation",
+      "priorityScore": 8,
+      "implementationScore": 262,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:18",
+      "type": "pr",
+      "title": "fix: Use path.sep for cross-platform path validation",
+      "priorityScore": 8,
+      "implementationScore": 18,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:37",
+      "type": "pr",
+      "title": "Fix: Windows path separator and dynamic version reading",
+      "priorityScore": 4,
+      "implementationScore": 116,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:49",
+      "type": "pr",
+      "title": "In a project that already has Skills installed, new developers can automatically install OpenSkills by default.",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:40",
+      "type": "pr",
+      "title": "Fix/windows local path",
+      "priorityScore": 0,
+      "implementationScore": 3,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:39",
+      "type": "pr",
+      "title": "feat: implement safe deletion with trash/recycle bin suppor",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:31",
+      "type": "pr",
+      "title": "feat: support installing local skills via symlinks with --symlink flag",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:30",
+      "type": "pr",
+      "title": "fix: switch to async spawn to unblock spinner animation and switch fr…",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:27",
+      "type": "pr",
+      "title": "fix: update version to 1.3.0",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:26",
+      "type": "pr",
+      "title": "Harden install path validation with filesystem-aware checks and cross-platform security tests",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:25",
+      "type": "pr",
+      "title": "feat: add Nix flake for declarative builds and development",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:23",
+      "type": "pr",
+      "title": "Update README with installation command details for non Claude Code u…",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    }
+  ],
+  "edges": [
+    {
+      "from": "issue:28",
+      "to": "issue:18",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:38",
+      "to": "issue:28",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:37",
+      "to": "issue:28",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:28",
+      "to": "issue:43",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:28",
+      "to": "issue:48",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:28",
+      "to": "issue:20",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:28",
+      "to": "issue:34",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:28",
+      "to": "issue:17",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:38",
+      "to": "issue:34",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:37",
+      "to": "issue:34",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:34",
+      "to": "issue:43",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:34",
+      "to": "issue:48",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:34",
+      "to": "issue:28",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:34",
+      "to": "issue:20",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:34",
+      "to": "issue:17",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:38",
+      "to": "issue:20",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:37",
+      "to": "issue:20",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:20",
+      "to": "issue:43",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:20",
+      "to": "issue:48",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:20",
+      "to": "issue:28",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:20",
+      "to": "issue:34",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:20",
+      "to": "issue:17",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:43",
+      "to": "issue:18",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:43",
+      "to": "issue:48",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:43",
+      "to": "issue:28",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:43",
+      "to": "issue:20",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:43",
+      "to": "issue:34",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:43",
+      "to": "issue:17",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:29",
+      "to": "issue:18",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:38",
+      "to": "issue:29",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:37",
+      "to": "issue:29",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:48",
+      "to": "issue:43",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:48",
+      "to": "issue:28",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:48",
+      "to": "issue:20",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:48",
+      "to": "issue:34",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:48",
+      "to": "issue:17",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:38",
+      "to": "issue:17",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:18",
+      "to": "issue:17",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:37",
+      "to": "issue:17",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:17",
+      "to": "issue:43",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:17",
+      "to": "issue:48",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:17",
+      "to": "issue:28",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:17",
+      "to": "issue:20",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:17",
+      "to": "issue:34",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:47",
+      "to": "issue:9",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:47",
+      "to": "issue:41",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:47",
+      "to": "issue:6",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:47",
+      "to": "issue:32",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:47",
+      "to": "issue:24",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:47",
+      "to": "issue:19",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:47",
+      "to": "issue:13",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:32",
+      "to": "issue:45",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:32",
+      "to": "issue:38",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:13",
+      "to": "issue:41",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:19",
+      "to": "issue:41",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "issue:19",
+      "to": "issue:13",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "pr:38",
+      "to": "issue:34",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:38",
+      "to": "issue:28",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:38",
+      "to": "issue:29",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:38",
+      "to": "issue:17",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:38",
+      "to": "issue:20",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:32",
+      "to": "pr:38",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "pr:38",
+      "to": "pr:18",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "pr:18",
+      "to": "issue:17",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:28",
+      "to": "pr:18",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:43",
+      "to": "pr:18",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:29",
+      "to": "pr:18",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "pr:18",
+      "to": "pr:38",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "pr:37",
+      "to": "issue:20",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:37",
+      "to": "issue:17",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:37",
+      "to": "issue:28",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:37",
+      "to": "issue:29",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:37",
+      "to": "issue:34",
+      "type": "mentions"
+    }
+  ]
+}

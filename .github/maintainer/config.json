@@ -1,0 +1,385 @@
+{
+  "schemaVersion": 1,
+  "reportsDir": "reports",
+  "stateFile": ".github/maintainer/state.json",
+  "noMergeExternalPRs": true,
+  "semantics": {
+    "intent": {
+      "bug": [
+        "bug",
+        "crash",
+        "error",
+        "exception",
+        "fails",
+        "failing",
+        "broken",
+        "regression"
+      ],
+      "feature": [
+        "feature",
+        "enhancement",
+        "feature request",
+        "would be nice",
+        "add support",
+        "request"
+      ],
+      "question": [
+        "how do i",
+        "how can i",
+        "is it possible",
+        "what does",
+        "question"
+      ],
+      "support": [
+        "help",
+        "support",
+        "troubleshoot",
+        "configure",
+        "configuration",
+        "setup",
+        "install"
+      ],
+      "meta": [
+        "roadmap",
+        "governance",
+        "maintainer",
+        "community",
+        "discussion"
+      ]
+    },
+    "needsInfo": {
+      "repro": [
+        "steps to reproduce",
+        "repro steps",
+        "reproduction"
+      ],
+      "expected": [
+        "expected behavior",
+        "expected result"
+      ],
+      "actual": [
+        "actual behavior",
+        "actual result"
+      ],
+      "environment": [
+        "environment",
+        "os",
+        "operating system",
+        "platform"
+      ],
+      "version": [
+        "version",
+        "openskills version",
+        "node version"
+      ],
+      "logs": [
+        "logs",
+        "stack trace",
+        "error output"
+      ],
+      "testPlan": [
+        "test plan",
+        "testing",
+        "tests run"
+      ]
+    },
+    "environmentTokens": [
+      "windows",
+      "win11",
+      "win10",
+      "mac",
+      "macos",
+      "linux",
+      "ubuntu",
+      "debian",
+      "node",
+      "npm",
+      "pnpm",
+      "yarn"
+    ],
+    "relationship": {
+      "linkKeywords": [
+        "fixes",
+        "closes",
+        "resolves",
+        "addresses",
+        "related to",
+        "see",
+        "ref",
+        "refs",
+        "linked to"
+      ],
+      "duplicateHints": [
+        "duplicate",
+        "same issue",
+        "same error",
+        "same problem"
+      ]
+    },
+    "errors": {
+      "signatures": [],
+      "keywords": [
+        "error",
+        "exception",
+        "failed",
+        "failure",
+        "crash",
+        "security error"
+      ]
+    }
+  },
+  "heuristics": {
+    "needsInfo": {
+      "enabled": true,
+      "threshold": 2,
+      "issueSignals": {
+        "missingRepro": {
+          "enabled": true,
+          "applyTo": [
+            "bug",
+            "unknown"
+          ]
+        },
+        "missingExpectedActual": {
+          "enabled": true,
+          "applyTo": [
+            "bug",
+            "unknown"
+          ]
+        },
+        "missingEnvironment": {
+          "enabled": true,
+          "applyTo": [
+            "bug",
+            "support",
+            "question",
+            "unknown"
+          ]
+        },
+        "missingVersion": {
+          "enabled": true,
+          "applyTo": [
+            "bug",
+            "support",
+            "question",
+            "unknown"
+          ]
+        },
+        "missingLogs": {
+          "enabled": true,
+          "applyTo": [
+            "bug",
+            "support",
+            "unknown"
+          ]
+        }
+      },
+      "prSignals": {
+        "missingTestPlan": {
+          "enabled": true
+        },
+        "missingDescription": {
+          "enabled": true
+        }
+      },
+      "weights": {
+        "missingRepro": 2,
+        "missingExpectedActual": 1,
+        "missingEnvironment": 1,
+        "missingVersion": 1,
+        "missingLogs": 1,
+        "missingTestPlan": 1,
+        "missingDescription": 1
+      }
+    },
+    "duplicates": {
+      "titleSimilarityThreshold": 0.6,
+      "overlapThreshold": 0.35,
+      "requireSharedError": false
+    },
+    "relationshipQuality": {
+      "strongOverlapThreshold": 0.45,
+      "mediumOverlapThreshold": 0.15,
+      "strongWhenExplicit": true,
+      "defaultWhenLinked": "medium"
+    }
+  },
+  "sentiment": {
+    "positiveWords": [
+      "thanks",
+      "thank",
+      "great",
+      "awesome",
+      "good",
+      "love",
+      "like",
+      "helpful",
+      "appreciate",
+      "nice",
+      "excellent",
+      "amazing",
+      "worked",
+      "works",
+      "fixed",
+      "resolved",
+      "perfect"
+    ],
+    "negativeWords": [
+      "broken",
+      "fail",
+      "fails",
+      "failing",
+      "error",
+      "crash",
+      "crashes",
+      "bad",
+      "terrible",
+      "awful",
+      "hate",
+      "bug",
+      "regression",
+      "doesnt",
+      "doesn't",
+      "cant",
+      "can't",
+      "worse",
+      "problem",
+      "issue"
+    ]
+  },
+  "staleDays": {
+    "issues": 60,
+    "prs": 30
+  },
+  "labels": {
+    "blocked": [
+      "blocked",
+      "on-hold"
+    ],
+    "needsInfo": [
+      "needs-info",
+      "needs-more-info",
+      "waiting-for-response"
+    ],
+    "needsDecision": [
+      "needs-decision"
+    ],
+    "closable": [
+      "duplicate",
+      "wontfix",
+      "invalid",
+      "out-of-scope"
+    ]
+  },
+  "typeLabels": {
+    "bug": [
+      "bug"
+    ],
+    "feature": [
+      "feature",
+      "enhancement"
+    ],
+    "question": [
+      "question"
+    ],
+    "support": [
+      "support"
+    ],
+    "meta": [
+      "meta",
+      "governance",
+      "roadmap"
+    ]
+  },
+  "priority": {
+    "issue": {
+      "commentWeight": 2,
+      "reactionWeights": {
+        "THUMBS_UP": 3,
+        "THUMBS_DOWN": 2,
+        "HEART": 2
+      },
+      "typeBoosts": {
+        "bug": 10,
+        "feature": 5
+      },
+      "stalePenalty": {
+        "over30": -5,
+        "over60": -10
+      },
+      "ageBoost": {
+        "over30AndFresh": 5
+      }
+    },
+    "pr": {
+      "commentWeight": 2,
+      "reviewWeight": 3,
+      "approvalBoost": 8,
+      "ciSuccessBoost": 6,
+      "unresolvedThreadsPenalty": -5,
+      "changesRequestedPenalty": -5,
+      "draftPenalty": -8,
+      "stalePenalty": {
+        "over14": -5,
+        "over30": -10
+      }
+    },
+    "labelBoosts": {
+      "security": 40,
+      "critical": 25,
+      "high-priority": 15
+    }
+  },
+  "relationshipScore": {
+    "overlapWeight": 30,
+    "explicitLinkBoost": 8,
+    "linkedIssuesWeight": 2,
+    "mentionedByWeight": 2,
+    "linkedIssuePriorityWeight": 0.15
+  },
+  "implementation": {
+    "commentWeight": 1,
+    "reviewWeight": 2,
+    "reviewCommentWeight": 1,
+    "reactionWeight": 1,
+    "linkedIssuePriorityWeight": 0.6,
+    "linkedIssueReactionWeight": 0.3,
+    "linkedIssueSentimentWeight": 0.2,
+    "relationshipScoreWeight": 0.5,
+    "relationshipQualityBoosts": {
+      "strong": 6,
+      "medium": 3,
+      "weak": 0,
+      "none": -2
+    },
+    "touchesTestsBoost": 5,
+    "ciSuccessBoost": 6,
+    "ciFailurePenalty": -6,
+    "changesRequestedPenalty": -8,
+    "unresolvedThreadsPenalty": -4,
+    "draftPenalty": -10,
+    "agePenalty": {
+      "over14": -3,
+      "over30": -7,
+      "over60": -12
+    },
+    "sizePenalty": {
+      "filesOver10": -3,
+      "filesOver25": -7,
+      "linesOver500": -8,
+      "linesOver1000": -12
+    },
+    "agentScoreWeight": 1,
+    "agentConfidenceMultipliers": {
+      "high": 1.5,
+      "medium": 1,
+      "low": 0.5,
+      "unset": 0
+    },
+    "scoreFloor": 0,
+    "tierThresholds": {
+      "strong": 40,
+      "medium": 20
+    }
+  }
+}
