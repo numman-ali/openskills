@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
-import { join, basename, resolve } from 'path';
+import { join, basename, resolve, sep } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
@@ -43,6 +43,18 @@ function expandPath(source: string): string {
     return join(homedir(), source.slice(2));
   }
   return resolve(source);
+}
+
+/**
+ * Ensure target path stays within target directory
+ */
+function isPathInside(targetPath: string, targetDir: string): boolean {
+  const resolvedTargetPath = resolve(targetPath);
+  const resolvedTargetDir = resolve(targetDir);
+  const resolvedTargetDirWithSep = resolvedTargetDir.endsWith(sep)
+    ? resolvedTargetDir
+    : resolvedTargetDir + sep;
+  return resolvedTargetPath.startsWith(resolvedTargetDirWithSep);
 }
 
 /**
@@ -192,9 +204,7 @@ async function installSingleLocalSkill(
 
   mkdirSync(targetDir, { recursive: true });
   // Security: ensure target path stays within target directory
-  const resolvedTargetPath = resolve(targetPath);
-  const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
+  if (!isPathInside(targetPath, targetDir)) {
     console.error(chalk.red(`Security error: Installation path outside target directory`));
     process.exit(1);
   }
@@ -242,9 +252,7 @@ async function installSpecificSkill(
 
   mkdirSync(targetDir, { recursive: true });
   // Security: ensure target path stays within target directory
-  const resolvedTargetPath = resolve(targetPath);
-  const resolvedTargetDir = resolve(targetDir);
-  if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
+  if (!isPathInside(targetPath, targetDir)) {
     console.error(chalk.red(`Security error: Installation path outside target directory`));
     process.exit(1);
   }
@@ -368,9 +376,7 @@ async function installFromRepo(
 
     mkdirSync(targetDir, { recursive: true });
     // Security: ensure target path stays within target directory
-    const resolvedTargetPath = resolve(info.targetPath);
-    const resolvedTargetDir = resolve(targetDir);
-    if (!resolvedTargetPath.startsWith(resolvedTargetDir + '/')) {
+    if (!isPathInside(info.targetPath, targetDir)) {
       console.error(chalk.red(`Security error: Installation path outside target directory`));
       continue;
     }

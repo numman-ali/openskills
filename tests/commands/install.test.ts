@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolve, join } from 'path';
+import { resolve, join, sep, win32 } from 'path';
 import { homedir } from 'os';
 
 // We need to test the helper functions, but they're not exported
@@ -137,10 +137,18 @@ describe('install.ts helper functions', () => {
 
   describe('path traversal security', () => {
     // Test the security check logic
-    const isPathSafe = (targetPath: string, targetDir: string): boolean => {
-      const resolvedTargetPath = resolve(targetPath);
-      const resolvedTargetDir = resolve(targetDir);
-      return resolvedTargetPath.startsWith(resolvedTargetDir + '/');
+    const isPathSafe = (
+      targetPath: string,
+      targetDir: string,
+      pathResolve = resolve,
+      pathSep = sep
+    ): boolean => {
+      const resolvedTargetPath = pathResolve(targetPath);
+      const resolvedTargetDir = pathResolve(targetDir);
+      const resolvedTargetDirWithSep = resolvedTargetDir.endsWith(pathSep)
+        ? resolvedTargetDir
+        : resolvedTargetDir + pathSep;
+      return resolvedTargetPath.startsWith(resolvedTargetDirWithSep);
     };
 
     it('should allow normal skill paths within target directory', () => {
@@ -162,6 +170,39 @@ describe('install.ts helper functions', () => {
 
     it('should allow nested subdirectories', () => {
       expect(isPathSafe('/home/user/.claude/skills/category/my-skill', '/home/user/.claude/skills')).toBe(true);
+    });
+
+    it('should allow Windows paths within target directory', () => {
+      expect(
+        isPathSafe(
+          'C:\\Users\\dev\\.claude\\skills\\my-skill',
+          'C:\\Users\\dev\\.claude\\skills',
+          win32.resolve,
+          win32.sep
+        )
+      ).toBe(true);
+    });
+
+    it('should block Windows path traversal attempts', () => {
+      expect(
+        isPathSafe(
+          'C:\\Users\\dev\\.claude\\skills\\..\\..\\Windows',
+          'C:\\Users\\dev\\.claude\\skills',
+          win32.resolve,
+          win32.sep
+        )
+      ).toBe(false);
+    });
+
+    it('should block Windows prefix-but-not-child paths', () => {
+      expect(
+        isPathSafe(
+          'C:\\Users\\dev\\.claude\\skills-evil',
+          'C:\\Users\\dev\\.claude\\skills',
+          win32.resolve,
+          win32.sep
+        )
+      ).toBe(false);
     });
   });
 });
