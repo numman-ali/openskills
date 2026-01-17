@@ -14,7 +14,7 @@ export function readSkill(skillName: string): void {
     console.error('  ~/.agent/skills/ (global universal)');
     console.error('  .claude/skills/ (project)');
     console.error('  ~/.claude/skills/ (global)');
-    console.error('\nInstall skills: openskills install owner/repo');
+    console.error('\nInstall skills: npx openskills install owner/repo');
     process.exit(1);
   }
 

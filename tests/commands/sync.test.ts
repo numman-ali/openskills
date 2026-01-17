@@ -43,7 +43,7 @@ describe('sync utilities (agents-md.ts)', () => {
       const xml = generateSkillsXml(skills);
 
       expect(xml).toContain('<usage>');
-      expect(xml).toContain('openskills read');
+      expect(xml).toContain('npx openskills read');
       expect(xml).toContain('</usage>');
     });
 

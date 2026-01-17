@@ -12,8 +12,8 @@ export function listSkills(): void {
   if (skills.length === 0) {
     console.log('No skills installed.\n');
     console.log('Install skills:');
-    console.log(`  ${chalk.cyan('openskills install anthropics/skills')}         ${chalk.dim('# Project (default)')}`);
-    console.log(`  ${chalk.cyan('openskills install owner/skill --global')}     ${chalk.dim('# Global (advanced)')}`);
+    console.log(`  ${chalk.cyan('npx openskills install anthropics/skills')}         ${chalk.dim('# Project (default)')}`);
+    console.log(`  ${chalk.cyan('npx openskills install owner/skill --global')}     ${chalk.dim('# Global (advanced)')}`);
     return;
   }
 

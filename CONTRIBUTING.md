@@ -37,7 +37,7 @@ npm run build
 
 # Link locally for testing
 npm link
-openskills list
+npx openskills list
 ```
 
 ## Testing Changes
@@ -57,9 +57,9 @@ npm run test:coverage
 
 # Test CLI locally
 npm link
-openskills install anthropics/skills/pdf-editor --project
-openskills sync
-openskills read pdf-editor
+npx openskills install anthropics/skills/pdf-editor --project
+npx openskills sync
+npx openskills read pdf-editor
 ```
 
 ## Project Structure
@@ -81,7 +81,7 @@ When reporting issues, please:
 
 - **Check existing issues** to avoid duplicates
 - **Provide clear reproduction steps**
-- **Include version information** (`openskills --version`, `node --version`)
+- **Include version information** (`npx openskills --version`, `node --version`)
 - **Use issue templates** (bug report or feature request)
 
 ## Feature Requests

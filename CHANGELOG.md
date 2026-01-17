@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **Windows installs** - Path validation now works on Windows (`Security error: Installation path outside target directory`)
-- **CLI version** - `openskills --version` reads from package.json
+- **CLI version** - `npx openskills --version` reads from package.json
 - **Root SKILL.md** - Single-skill repos with SKILL.md in repo root now install correctly
 
 ## [1.2.1] - 2025-10-27
@@ -93,12 +93,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial release
-- `openskills install <source>` - Install skills from GitHub repos
-- `openskills sync` - Generate `<available_skills>` XML for AGENTS.md
-- `openskills list` - Show installed skills
-- `openskills read <name>` - Load skill content for agents
-- `openskills manage` - Interactive skill removal
-- `openskills remove <name>` - Remove specific skill
+- `npx openskills install <source>` - Install skills from GitHub repos
+- `npx openskills sync` - Generate `<available_skills>` XML for AGENTS.md
+- `npx openskills list` - Show installed skills
+- `npx openskills read <name>` - Load skill content for agents
+- `npx openskills manage` - Interactive skill removal
+- `npx openskills remove <name>` - Remove specific skill
 - Interactive TUI for all commands
 - Support for Anthropic's SKILL.md format
 - Progressive disclosure (load skills on demand)

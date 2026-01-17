@@ -155,9 +155,9 @@ export async function installSkill(source: string, options: InstallOptions): Pro
  * Print post-install hints
  */
 function printPostInstallHints(isProject: boolean): void {
-  console.log(`\n${chalk.dim('Read skill:')} ${chalk.cyan('openskills read <skill-name>')}`);
+  console.log(`\n${chalk.dim('Read skill:')} ${chalk.cyan('npx openskills read <skill-name>')}`);
   if (isProject) {
-    console.log(`${chalk.dim('Sync to AGENTS.md:')} ${chalk.cyan('openskills sync')}`);
+    console.log(`${chalk.dim('Sync to AGENTS.md:')} ${chalk.cyan('npx openskills sync')}`);
   }
 }
 

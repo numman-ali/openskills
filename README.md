@@ -30,12 +30,11 @@ OpenSkills brings **Anthropic's skills system** to every AI coding agent — Cla
 ## 🚀 Quick Start
 
 ```bash
-npm i -g openskills
-openskills install anthropics/skills
-openskills sync
+npx openskills install anthropics/skills
+npx openskills sync
 ```
 
-> **Note:** `openskills sync` updates an existing `AGENTS.md` file. Create one first if you don't have it yet.
+> **Note:** `npx openskills sync` updates an existing `AGENTS.md` file. Create one first if you don't have it yet.
 
 ---
 
@@ -70,7 +69,7 @@ Claude Code ships skills as **SKILL.md files** and exposes them inside a `<avail
 OpenSkills generates the **exact same `<available_skills>` XML** in your `AGENTS.md` and loads skills via:
 
 ```bash
-openskills read <skill-name>
+npx openskills read <skill-name>
 ```
 
 So any agent that can read `AGENTS.md` can use Claude Code skills without needing Claude Code itself.
@@ -81,7 +80,7 @@ So any agent that can read `AGENTS.md` can use Claude Code skills without needin
 |--------|-------------|------------|
 | **Prompt Format** | `<available_skills>` XML | Same XML | 
 | **Skill Storage** | `.claude/skills/` | `.claude/skills/` (default) | 
-| **Invocation** | `Skill("name")` tool | `openskills read <name>` | 
+| **Invocation** | `Skill("name")` tool | `npx openskills read <name>` | 
 | **Marketplace** | Anthropic marketplace | GitHub (anthropics/skills) | 
 | **Progressive Disclosure** | ✅ | ✅ |
 
@@ -98,7 +97,7 @@ So any agent that can read `AGENTS.md` can use Claude Code skills without needin
 When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively.
 
 How to use skills:
-- Invoke: Bash("openskills read <skill-name>")
+- Invoke: Bash("npx openskills read <skill-name>")
 - The skill content will load with detailed instructions
 - Base directory provided in output for resolving bundled resources
 
@@ -130,25 +129,25 @@ Usage notes:
 ### From Anthropic Marketplace
 
 ```bash
-openskills install anthropics/skills
+npx openskills install anthropics/skills
 ```
 
 ### From Any GitHub Repo
 
 ```bash
-openskills install your-org/your-skills
+npx openskills install your-org/your-skills
 ```
 
 ### From a Local Path
 
 ```bash
-openskills install ./local-skills/my-skill
+npx openskills install ./local-skills/my-skill
 ```
 
 ### From Private Git Repos
 
 ```bash
-openskills install git@github.com:your-org/private-skills.git
+npx openskills install git@github.com:your-org/private-skills.git
 ```
 
 ---
@@ -158,7 +157,7 @@ openskills install git@github.com:your-org/private-skills.git
 If you use Claude Code **and** other agents with one `AGENTS.md`, install to `.agent/skills/` to avoid conflicts with Claude's plugin marketplace:
 
 ```bash
-openskills install anthropics/skills --universal
+npx openskills install anthropics/skills --universal
 ```
 
 **Priority order (highest wins):**
@@ -172,12 +171,12 @@ openskills install anthropics/skills --universal
 ## 🧰 Commands
 
 ```bash
-openskills install <source> [options]  # Install from GitHub, local path, or private repo
-openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
-openskills list                        # Show installed skills
-openskills read <name>                 # Load skill (for agents)
-openskills manage                      # Remove skills (interactive)
-openskills remove <name>               # Remove specific skill
+npx openskills install <source> [options]  # Install from GitHub, local path, or private repo
+npx openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
+npx openskills list                        # Show installed skills
+npx openskills read <name>                 # Load skill (for agents)
+npx openskills manage                      # Remove skills (interactive)
+npx openskills remove <name>               # Remove specific skill
 ```
 
 ### Flags
@@ -233,7 +232,7 @@ my-skill/
 Install your own skill:
 
 ```bash
-openskills install ./my-skill
+npx openskills install ./my-skill
 ```
 
 ### Local Development with Symlinks
@@ -247,8 +246,8 @@ ln -s ~/dev/my-skills/my-skill .claude/skills/my-skill
 ### Authoring Guide
 
 ```bash
-openskills install anthropics/skills
-openskills read skill-creator
+npx openskills install anthropics/skills
+npx openskills read skill-creator
 ```
 
 ---
