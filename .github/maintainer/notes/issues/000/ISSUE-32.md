@@ -8,7 +8,7 @@ sentiment_score: 0
 needs_info_score: 0
 needs_info_signals: []
 labels: [enhancement]
-last_seen_at: 2026-01-17T19:10:52.058Z
+last_seen_at: 2026-01-17T19:26:09.772Z
 ---
 ## Intent
 - TODO: Summarize the reporter intent and underlying need.

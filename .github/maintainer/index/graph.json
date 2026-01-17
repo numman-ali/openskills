@@ -1,13 +1,6 @@
 {
-  "generatedAt": "2026-01-17T19:10:52.058Z",
+  "generatedAt": "2026-01-17T19:26:09.772Z",
   "nodes": [
-    {
-      "id": "issue:9",
-      "type": "issue",
-      "title": "[FEATURE] Document workflow/create script for updating skills from upstream git repo",
-      "priorityScore": 17,
-      "actionability": "needs-info"
-    },
     {
       "id": "issue:35",
       "type": "issue",
@@ -19,13 +12,6 @@
       "id": "issue:50",
       "type": "issue",
       "title": "now i have skills and model api ,but i can' use claude ,should i write workflow to let the model use skill or how can i create a project like claude to use the skills",
-      "priorityScore": 7,
-      "actionability": "ready"
-    },
-    {
-      "id": "issue:16",
-      "type": "issue",
-      "title": "[BUG] Bash(\"openskills read <skill-name>\") Messes Up Gemini CLI's behaviour",
       "priorityScore": 7,
       "actionability": "ready"
     },
@@ -105,11 +91,6 @@
     }
   ],
   "edges": [
-    {
-      "from": "issue:47",
-      "to": "issue:9",
-      "type": "possible_duplicate"
-    },
     {
       "from": "issue:47",
       "to": "issue:41",
