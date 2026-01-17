@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-17T14:59:03.417Z",
+  "generatedAt": "2026-01-17T17:32:44.575Z",
   "count": 32,
   "items": [
     {
@@ -16,7 +16,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-6.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 9,
@@ -32,7 +32,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-9.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 13,
@@ -48,7 +48,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-13.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 16,
@@ -64,7 +64,7 @@
         "bug"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-16.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 17,
@@ -94,7 +94,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-19.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 20,
@@ -126,7 +126,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-24.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 28,
@@ -181,7 +181,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-32.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 34,
@@ -211,7 +211,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-35.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 41,
@@ -227,7 +227,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-41.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 42,
@@ -275,7 +275,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-47.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 48,
@@ -307,7 +307,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-50.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 51,
@@ -360,11 +360,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 5,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 5,
+      "agentConfidence": "medium",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -377,7 +377,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-23.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 25,
@@ -386,11 +386,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 20,
       "implementationTierAuto": "weak",
-      "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "implementationTierFinal": "medium",
+      "agentScore": 20,
+      "agentConfidence": "medium",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -403,20 +403,20 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-25.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 26,
       "type": "pr",
-      "title": "Harden install path validation with filesystem-aware checks and cross-platform security tests",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
       "implementationScoreFinal": 0,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 5,
+      "agentConfidence": "medium",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -434,7 +434,7 @@
     {
       "id": 27,
       "type": "pr",
-      "title": "fix: update version to 1.3.0",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
@@ -442,7 +442,7 @@
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
       "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentConfidence": "high",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -464,11 +464,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 8,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 15,
+      "agentConfidence": "low",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -481,7 +481,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-30.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 31,
@@ -490,11 +490,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 25,
       "implementationTierAuto": "weak",
-      "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "implementationTierFinal": "medium",
+      "agentScore": 25,
+      "agentConfidence": "medium",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -507,7 +507,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-31.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 37,
@@ -578,11 +578,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 5,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 10,
+      "agentConfidence": "low",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -593,7 +593,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-39.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     },
     {
       "id": 40,
@@ -628,11 +628,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 20,
       "implementationTierAuto": "weak",
-      "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "implementationTierFinal": "medium",
+      "agentScore": 20,
+      "agentConfidence": "medium",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -645,7 +645,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-49.md",
-      "lastSeenAt": "2026-01-17T14:59:03.417Z"
+      "lastSeenAt": "2026-01-17T17:32:44.575Z"
     }
   ]
 }
