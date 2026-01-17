@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./dist/cli.js",
   "bin": {
-    "openskills": "./dist/cli.js"
+    "openskills": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -39,7 +39,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/numman-ali/openskills.git"
+    "url": "git+https://github.com/numman-ali/openskills.git"
   },
   "homepage": "https://github.com/numman-ali/openskills#readme",
   "engines": {
