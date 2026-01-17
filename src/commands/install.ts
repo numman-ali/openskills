@@ -82,8 +82,21 @@ export async function installSkill(source: string, options: InstallOptions): Pro
     ? chalk.blue(`project (${folder})`)
     : chalk.dim(`global (~/${folder})`);
 
+  const projectLocation = `./${folder}`;
+  const globalLocation = `~/${folder}`;
+
   console.log(`Installing from: ${chalk.cyan(source)}`);
-  console.log(`Location: ${location}\n`);
+  console.log(`Location: ${location}`);
+  if (isProject) {
+    console.log(
+      chalk.dim(`Default install is project-local (${projectLocation}). Use --global for ${globalLocation}.`)
+    );
+  } else {
+    console.log(
+      chalk.dim(`Global install selected (${globalLocation}). Omit --global for ${projectLocation}.`)
+    );
+  }
+  console.log('');
 
   // Handle local path installation
   if (isLocalPath(source)) {

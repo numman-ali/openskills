@@ -58,6 +58,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CLI version** - `npx openskills --version` reads from package.json
 - **Root SKILL.md** - Single-skill repos with SKILL.md in repo root now install correctly
 
+## [1.4.0] - 2026-01-17
+
+### Changed
+
+- **README** - Clarify project-local default installs and remove redundant sync note
+- **Installer messages** - Call out project-local default vs `--global` explicitly
+
 ## [1.3.2] - 2026-01-17
 
 ### Changed
@@ -113,6 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.3.0]: https://github.com/numman-ali/openskills/compare/v1.2.1...v1.3.0
 [1.3.1]: https://github.com/numman-ali/openskills/compare/v1.3.0...v1.3.1
 [1.3.2]: https://github.com/numman-ali/openskills/compare/v1.3.1...v1.3.2
+[1.4.0]: https://github.com/numman-ali/openskills/compare/v1.3.2...v1.4.0
 [1.2.1]: https://github.com/numman-ali/openskills/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/numman-ali/openskills/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/numman-ali/openskills/compare/v1.0.0...v1.1.0

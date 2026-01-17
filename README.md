@@ -34,7 +34,7 @@ npx openskills install anthropics/skills
 npx openskills sync
 ```
 
-> **Note:** `npx openskills sync` updates an existing `AGENTS.md` file. Create one first if you don't have it yet.
+By default, installs are project-local (`./.claude/skills`, or `./.agent/skills` with `--universal`). Use `--global` for `~/.claude/skills`.
 
 ---
 
