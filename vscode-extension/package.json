@@ -1,12 +1,12 @@
 {
-    "name": "openskills-vscode",
-    "displayName": "OpenSkills VSCode",
-    "description": "Manage, install, and sync OpenSkills (Claude Code compatible skills) from VSCode.",
-    "version": "0.0.1",
-    "publisher": "openskills",
+    "name": "agent-skills-manager",
+    "displayName": "AgentSkillsManager",
+    "description": "Manage, install, and sync Agent Skills (Claude Code compatible skills) from VSCode.",
+    "version": "0.6.0",
+    "publisher": "whyuds",
     "repository": {
         "type": "git",
-        "url": "https://github.com/whyuds/openskills"
+        "url": "https://github.com/lasoons/AgentSkillsManager"
     },
     "license": "MIT",
     "icon": "resources/skills-logo.png",
@@ -20,9 +20,9 @@
     "main": "./out/extension.js",
     "contributes": {
         "configuration": {
-            "title": "OpenSkills",
+            "title": "Agent Skills Manager",
             "properties": {
-                "openskills.repositories": {
+                "agentskills.repositories": {
                     "type": "array",
                     "default": [],
                     "description": "List of Git repositories containing skills.",
@@ -45,59 +45,99 @@
         },
         "commands": [
             {
-                "command": "openskills.addRepo",
+                "command": "agentskills.addRepo",
                 "title": "Add Skill Repository",
                 "icon": "$(add)"
             },
             {
-                "command": "openskills.refresh",
+                "command": "agentskills.search",
+                "title": "Search Skills",
+                "icon": "$(search)"
+            },
+            {
+                "command": "agentskills.clearSearch",
+                "title": "Clear Filter",
+                "icon": "$(clear-all)"
+            },
+            {
+                "command": "agentskills.refresh",
                 "title": "Refresh Skills",
                 "icon": "$(refresh)"
             },
             {
-                "command": "openskills.removeRepo",
+                "command": "agentskills.selectAllInRepo",
+                "title": "Select All (Repo)",
+                "icon": "$(checklist)"
+            },
+            {
+                "command": "agentskills.clearInRepo",
+                "title": "Clear (Repo)",
+                "icon": "$(clear-all)"
+            },
+            {
+                "command": "agentskills.removeRepo",
                 "title": "Remove Repository",
                 "icon": "$(trash)"
             },
             {
-                "command": "openskills.installSelected",
+                "command": "agentskills.installSelected",
                 "title": "Install Selected Skills",
                 "icon": "$(cloud-download)"
             },
             {
-                "command": "openskills.deleteSelected",
+                "command": "agentskills.deleteSelected",
                 "title": "Delete Selected Skills",
                 "icon": "$(trash)"
             },
             {
-                "command": "openskills.sync",
-                "title": "Sync to AGENTS.md",
-                "icon": "$(sync)"
-            },
-            {
-                "command": "openskills.switchBranch",
+                "command": "agentskills.switchBranch",
                 "title": "Switch Branch",
                 "icon": "$(git-branch)"
             },
             {
-                "command": "openskills.pullRepo",
+                "command": "agentskills.pullRepo",
                 "title": "Pull Latest",
                 "icon": "$(repo-sync)"
+            },
+            {
+                "command": "agentskills.deleteLocalSkill",
+                "title": "Delete Skill",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "agentskills.openLocalSkill",
+                "title": "Open SKILL.md",
+                "icon": "$(go-to-file)"
+            },
+            {
+                "command": "agentskills.installSkill",
+                "title": "Install Skill",
+                "icon": "$(cloud-download)"
+            },
+            {
+                "command": "agentskills.deleteSkill",
+                "title": "Delete Skill",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "agentskills.installPersonalSkill",
+                "title": "Install Skill",
+                "icon": "$(cloud-download)"
             }
         ],
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "openskills-explorer",
-                    "title": "OpenSkills",
+                    "id": "agentskills-explorer",
+                    "title": "Agent Skills",
                     "icon": "resources/skills-icon.svg"
                 }
             ]
         },
         "views": {
-            "openskills-explorer": [
+            "agentskills-explorer": [
                 {
-                    "id": "openskills-skills",
+                    "id": "agentskills-skills",
                     "name": "Skills"
                 }
             ]
@@ -105,45 +145,85 @@
         "menus": {
             "view/title": [
                 {
-                    "command": "openskills.addRepo",
-                    "when": "view == openskills-skills",
+                    "command": "agentskills.addRepo",
+                    "when": "view == agentskills-skills",
                     "group": "navigation@1"
                 },
                 {
-                    "command": "openskills.installSelected",
-                    "when": "view == openskills-skills",
+                    "command": "agentskills.installSelected",
+                    "when": "view == agentskills-skills",
                     "group": "navigation@2"
                 },
                 {
-                    "command": "openskills.deleteSelected",
-                    "when": "view == openskills-skills",
+                    "command": "agentskills.deleteSelected",
+                    "when": "view == agentskills-skills",
                     "group": "navigation@3"
                 },
                 {
-                    "command": "openskills.sync",
-                    "when": "view == openskills-skills",
+                    "command": "agentskills.search",
+                    "when": "view == agentskills-skills",
                     "group": "navigation@4"
                 },
                 {
-                    "command": "openskills.refresh",
-                    "when": "view == openskills-skills",
+                    "command": "agentskills.clearSearch",
+                    "when": "view == agentskills-skills && agentskills.hasFilter",
+                    "group": "navigation@4.1"
+                },
+                {
+                    "command": "agentskills.refresh",
+                    "when": "view == agentskills-skills",
                     "group": "navigation@5"
                 }
             ],
             "view/item/context": [
                 {
-                    "command": "openskills.pullRepo",
+                    "command": "agentskills.pullRepo",
                     "when": "viewItem == skillRepo",
                     "group": "inline"
                 },
                 {
-                    "command": "openskills.switchBranch",
+                    "command": "agentskills.selectAllInRepo",
+                    "when": "viewItem == skillRepo",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "agentskills.clearInRepo",
+                    "when": "viewItem == skillRepo",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "agentskills.switchBranch",
                     "when": "viewItem == skillRepo",
                     "group": "inline"
                 },
                 {
-                    "command": "openskills.removeRepo",
+                    "command": "agentskills.removeRepo",
                     "when": "viewItem == skillRepo",
+                    "group": "inline"
+                },
+                {
+                    "command": "agentskills.openLocalSkill",
+                    "when": "viewItem == localSkill",
+                    "group": "inline"
+                },
+                {
+                    "command": "agentskills.deleteLocalSkill",
+                    "when": "viewItem == localSkill",
+                    "group": "inline"
+                },
+                {
+                    "command": "agentskills.installSkill",
+                    "when": "viewItem == skill",
+                    "group": "inline"
+                },
+                {
+                    "command": "agentskills.deleteSkill",
+                    "when": "viewItem == skillInstalled",
+                    "group": "inline"
+                },
+                {
+                    "command": "agentskills.installPersonalSkill",
+                    "when": "viewItem == personalSkill",
                     "group": "inline"
                 }
             ]
@@ -158,9 +238,11 @@
         "package": "npm run check-types && node esbuild.js --production",
         "check-types": "tsc --noEmit"
     },
-    "dependencies": {},
+    "dependencies": {
+        "adm-zip": "^0.5.12"
+    },
     "devDependencies": {
-        "openskills": "file:../",
+        "@types/adm-zip": "^0.5.7",
         "@types/node": "^20.0.0",
         "@types/vscode": "^1.96.0",
         "esbuild": "^0.24.0",

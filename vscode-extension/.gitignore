@@ -1,3 +1,8 @@
 out
 node_modules
 .vscode-test
+*.vsix
+.cursor/*
+.trae/*
+.windsurf/*
+.claude/
