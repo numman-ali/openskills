@@ -3,107 +3,88 @@
 Generated: 2026-01-17
 Repository: numman-ali/openskills
 
-## Brief 1: Fix Windows Path Security Bug (Critical)
+## Brief 1: Decide on Safe Deletion (PR #39)
 
-**Intent**: Fix the path security check that blocks ALL Windows users from installing skills. The check uses hardcoded `/` which doesn't match Windows `\` separator.
+**Intent**: Evaluate whether `remove`/`manage` should trash by default (with `--force` for permanent delete) and whether adding the `trash` dependency is acceptable.
 
-**Related**: ISSUE:28, ISSUE:34, ISSUE:20, ISSUE:43, ISSUE:48, ISSUE:17, ISSUE:29, PR:38, PR:37, PR:18
+**Context**:
+- PR #39 adds `trash` dependency + `--force` flag
+- Linux support caveats noted by dependency author
 
-**Constraints**:
-- Must maintain security guarantees on all platforms
-- Use Node.js built-in `path.sep` (not string replacement)
-- Update existing tests to use `path.sep` and `resolve()` for cross-platform compatibility
-- Add Windows-specific test cases
-
-**Files to modify**:
-1. `src/commands/install.ts` - Import `sep` from path, replace 3 occurrences of `'/'` with `sep`
-2. `tests/commands/install.test.ts` - Update `isPathSafe` helper to use `sep`, add Windows test cases
-
-**Acceptance**:
-- All existing tests pass
-- New Windows path tests pass
-- Code uses `path.sep` in security checks
-
-**Approval needed**: Yes - requires human approval before implementing
-
----
-
-## Brief 2: Fix Version Mismatch Bug
-
-**Intent**: CLI shows version 1.2.1 instead of 1.3.0 because version is hardcoded in cli.ts instead of reading from package.json.
-
-**Related**: ISSUE:42, PR:37
+**Acceptance Criteria** (if accepted):
+- Default deletion is explicit and documented
+- `--force` provides permanent deletion
+- Behavior is consistent across OSes (with graceful fallback)
 
 **Constraints**:
-- Read version dynamically from package.json
-- Handle ESM module context correctly (use fileURLToPath)
-- Path to package.json must work in both dev and installed contexts
+- Avoid breaking workflows unexpectedly
+- Prefer minimal dependency risk
 
-**Files to modify**:
-1. `src/cli.ts` - Add imports, read version from package.json dynamically
-
-**Acceptance**:
-- `openskills --version` outputs the version from package.json
-- Works in development and when installed via npm
-
-**Approval needed**: Yes - requires human approval before implementing
+**Approval needed**: Yes
 
 ---
 
-## Brief 3: Close Duplicate Windows Issues
+## Brief 2: Decide on Symlink Install Flag (PR #31)
 
-**Intent**: Consolidate 6 duplicate issues into primary issue #28 with a unified response.
+**Intent**: Decide whether to support `--symlink` for local installs to enable live updates.
 
-**Related**: ISSUE:34, ISSUE:20, ISSUE:43, ISSUE:48, ISSUE:17, ISSUE:29
+**Context**:
+- Manual symlink workflow already documented
+- PR adds flag + tests
 
-**Draft Response** (for each duplicate):
-```
-This is a duplicate of #28. The fix has been implemented - the path security check now uses platform-appropriate separators.
+**Acceptance Criteria** (if accepted):
+- `openskills install ./path --symlink` creates symlink
+- Default behavior remains copy
+- Tests cover symlink and broken link scenarios
 
-Thank you for reporting this issue. Your report helped confirm the scope of this Windows compatibility problem.
-```
-
-**Approval needed**: Yes - all public comments require human approval
-
----
-
-## Brief 4: Close Windows Fix PRs with Thanks
-
-**Intent**: Close PRs that contributed solutions for the Windows path bug, thanking contributors for their insights.
-
-**Related**: PR:38, PR:37, PR:18, PR:40, PR:26
-
-**Draft Response for PR:38 (best quality)**:
-```
-Thank you @didierhk for this well-documented PR! Your analysis of the root cause and the `path.sep` solution was excellent.
-
-I've implemented the fix based on your approach - using `path.sep` for cross-platform path validation. The tests you outlined were also incorporated.
-
-Closing this PR as the fix has been merged. Really appreciate your contribution to making openskills work on Windows!
-```
-
-**Draft Response for other PRs**:
-```
-Thank you for contributing a fix for the Windows path issue! I've implemented a solution based on the collective insights from PRs #38, #37, and #18.
-
-Your approach of [describe their specific approach] was valuable in understanding the problem. Closing this PR as the fix has been merged through a combined implementation.
-
-Appreciate your contribution!
-```
-
-**Approval needed**: Yes - all public comments require human approval
+**Approval needed**: Yes
 
 ---
 
-## Brief 5: Investigate SKILL.md Not Found (Issue #51)
+## Brief 3: Decide on Nix Flake Support (PR #25)
 
-**Intent**: Understand why user gets "No SKILL.md files found" error.
+**Intent**: Decide if the repo should ship a Nix flake for dev/build ergonomics.
 
-**Related**: ISSUE:51
+**Context**:
+- Adds `flake.nix`, `flake.lock`, README snippet
+- Requires ongoing maintenance
 
-**Investigation needed**:
-1. What repository is user trying to install from?
-2. Is the SKILL.md detection logic correct?
-3. Are there edge cases with repository structure?
+**Approval needed**: Yes
 
-**Approval needed**: Need to read issue details before responding
+---
+
+## Brief 4: Triage Gemini CLI Behavior (ISSUE #16)
+
+**Intent**: Understand why `Bash("openskills read <skill-name>")` affects Gemini CLI behavior.
+
+**Information Needed**:
+- Exact repro steps
+- Agent/CLI versions
+- Any logs or stderr output
+
+**Approval needed**: Yes (response)
+
+---
+
+## Brief 5: Guidance for Non‑Claude Users (ISSUE #50)
+
+**Intent**: Provide clear steps for using OpenSkills with other agents.
+
+**Draft Guidance**:
+- Install skills (`openskills install ...`)
+- Sync to AGENTS.md (`openskills sync`)
+- Ensure the agent reads AGENTS.md and can run `openskills read`
+
+**Approval needed**: Yes (response)
+
+---
+
+## Brief 6: Clarify Skill Update Workflow (ISSUE #9)
+
+**Intent**: Determine if we should document an upstream sync workflow or provide a script.
+
+**Questions**:
+- Are they asking for auto‑sync or a manual update recipe?
+- Should this live in README or a separate doc?
+
+**Approval needed**: Yes

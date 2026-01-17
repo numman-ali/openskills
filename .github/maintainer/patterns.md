@@ -14,6 +14,11 @@
 - **Cause:** Hardcoded version string not updated
 - **Resolution:** Read from package.json dynamically
 
+### Root SKILL.md Not Detected
+- **First seen:** 2026-01-17
+- **Cause:** Installer only searched subdirectories for SKILL.md
+- **Resolution:** Treat repo-root SKILL.md as a single-skill repo (v1.3.1)
+
 ## Contributor Patterns
 
 - Chinese-speaking user base is significant (consider i18n)
@@ -23,4 +28,3 @@
 
 - Most bugs cluster in `src/cli/` (needs refactoring)
 - Test coverage gaps in error handling paths
-

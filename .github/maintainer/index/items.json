@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-17T13:39:40.172Z",
+  "generatedAt": "2026-01-17T14:59:03.417Z",
   "count": 32,
   "items": [
     {
@@ -16,7 +16,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-6.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 9,
@@ -32,7 +32,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-9.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 13,
@@ -48,7 +48,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-13.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 16,
@@ -64,12 +64,12 @@
         "bug"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-16.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 17,
       "type": "issue",
-      "title": "Windows: Security error when installing from GitHub repos",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 7,
       "sentimentScore": 0,
@@ -94,12 +94,12 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-19.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 20,
       "type": "issue",
-      "title": "[BUG]version1.3.0 version mistake && can not install skills",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 26,
       "sentimentScore": 0,
@@ -126,12 +126,12 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-24.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 28,
       "type": "issue",
-      "title": "[BUG]win run openskills install anthropics/skills return: \"Security error: Installation path outside target directory\"",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 50,
       "agentScore": 100,
@@ -149,7 +149,7 @@
     {
       "id": 29,
       "type": "issue",
-      "title": "[BUG] can not install correctly,shows out of target directory",
+      "title": "",
       "actionability": "needs-info",
       "priorityScore": 18,
       "sentimentScore": 0,
@@ -181,12 +181,12 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-32.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 34,
       "type": "issue",
-      "title": "[Bug] \"Security error: Installation path outside target directory\" on Windows",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 27,
       "sentimentScore": 0,
@@ -211,7 +211,7 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-35.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 41,
@@ -227,12 +227,12 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-41.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 42,
       "type": "issue",
-      "title": "v1.3.0 CLI version still shows 1.2.1",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 12,
       "sentimentScore": 0,
@@ -248,7 +248,7 @@
     {
       "id": 43,
       "type": "issue",
-      "title": "[BUG] Installation Fails on Windows with Security Error",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 20,
       "sentimentScore": 0,
@@ -275,12 +275,12 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-47.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 48,
       "type": "issue",
-      "title": "[BUG] Security error when installing skills from nested directory structures (including anthropics/skills)",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 10,
       "sentimentScore": 0,
@@ -307,12 +307,12 @@
         "enhancement"
       ],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-50.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 51,
       "type": "issue",
-      "title": "[BUG] No SKILL.md files found in repository",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 12,
       "sentimentScore": 0,
@@ -328,7 +328,7 @@
     {
       "id": 18,
       "type": "pr",
-      "title": "fix: Use path.sep for cross-platform path validation",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 8,
       "implementationScoreAuto": 18,
@@ -377,7 +377,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-23.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 25,
@@ -403,7 +403,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-25.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 26,
@@ -429,7 +429,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-26.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 27,
@@ -455,7 +455,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-27.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 30,
@@ -481,7 +481,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-30.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 31,
@@ -507,20 +507,20 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-31.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 37,
       "type": "pr",
-      "title": "Fix: Windows path separator and dynamic version reading",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 4,
       "implementationScoreAuto": 116,
       "implementationScoreFinal": 116,
       "implementationTierAuto": "strong",
       "implementationTierFinal": "strong",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 70,
+      "agentConfidence": "medium",
       "relationshipScore": 37,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "strong",
@@ -544,7 +544,7 @@
     {
       "id": 38,
       "type": "pr",
-      "title": "fix: Use path.sep for Windows compatibility in path validation",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 8,
       "implementationScoreAuto": 119,
@@ -593,12 +593,12 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-39.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     },
     {
       "id": 40,
       "type": "pr",
-      "title": "Fix/windows local path",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 3,
@@ -645,7 +645,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-49.md",
-      "lastSeenAt": "2026-01-17T13:39:40.172Z"
+      "lastSeenAt": "2026-01-17T14:59:03.417Z"
     }
   ]
 }
