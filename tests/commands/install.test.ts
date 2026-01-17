@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { resolve, join } from 'path';
-import { homedir } from 'os';
+import { resolve, join, sep, win32, basename } from 'path';
+import { homedir, tmpdir } from 'os';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { extractYamlField, hasValidFrontmatter } from '../../src/utils/yaml.js';
 
 // We need to test the helper functions, but they're not exported
 // So we'll test them indirectly or create a test module
@@ -137,10 +139,18 @@ describe('install.ts helper functions', () => {
 
   describe('path traversal security', () => {
     // Test the security check logic
-    const isPathSafe = (targetPath: string, targetDir: string): boolean => {
-      const resolvedTargetPath = resolve(targetPath);
-      const resolvedTargetDir = resolve(targetDir);
-      return resolvedTargetPath.startsWith(resolvedTargetDir + '/');
+    const isPathSafe = (
+      targetPath: string,
+      targetDir: string,
+      pathResolve = resolve,
+      pathSep = sep
+    ): boolean => {
+      const resolvedTargetPath = pathResolve(targetPath);
+      const resolvedTargetDir = pathResolve(targetDir);
+      const resolvedTargetDirWithSep = resolvedTargetDir.endsWith(pathSep)
+        ? resolvedTargetDir
+        : resolvedTargetDir + pathSep;
+      return resolvedTargetPath.startsWith(resolvedTargetDirWithSep);
     };
 
     it('should allow normal skill paths within target directory', () => {
@@ -162,6 +172,75 @@ describe('install.ts helper functions', () => {
 
     it('should allow nested subdirectories', () => {
       expect(isPathSafe('/home/user/.claude/skills/category/my-skill', '/home/user/.claude/skills')).toBe(true);
+    });
+
+    it('should allow Windows paths within target directory', () => {
+      expect(
+        isPathSafe(
+          'C:\\Users\\dev\\.claude\\skills\\my-skill',
+          'C:\\Users\\dev\\.claude\\skills',
+          win32.resolve,
+          win32.sep
+        )
+      ).toBe(true);
+    });
+
+    it('should block Windows path traversal attempts', () => {
+      expect(
+        isPathSafe(
+          'C:\\Users\\dev\\.claude\\skills\\..\\..\\Windows',
+          'C:\\Users\\dev\\.claude\\skills',
+          win32.resolve,
+          win32.sep
+        )
+      ).toBe(false);
+    });
+
+    it('should block Windows prefix-but-not-child paths', () => {
+      expect(
+        isPathSafe(
+          'C:\\Users\\dev\\.claude\\skills-evil',
+          'C:\\Users\\dev\\.claude\\skills',
+          win32.resolve,
+          win32.sep
+        )
+      ).toBe(false);
+    });
+  });
+
+  describe('root SKILL.md detection', () => {
+    const getRootSkillName = (repoDir: string, repoName?: string): string | null => {
+      const skillPath = join(repoDir, 'SKILL.md');
+      if (!existsSync(skillPath)) return null;
+      const content = readFileSync(skillPath, 'utf-8');
+      if (!hasValidFrontmatter(content)) return null;
+      return extractYamlField(content, 'name') || repoName || basename(repoDir);
+    };
+
+    it('should detect root SKILL.md and use frontmatter name', () => {
+      const tempDir = mkdtempSync(join(tmpdir(), 'openskills-test-'));
+      try {
+        writeFileSync(
+          join(tempDir, 'SKILL.md'),
+          "---\nname: claude-android-skill\ndescription: Android helper\n---\n\n# Skill\n"
+        );
+        expect(getRootSkillName(tempDir, 'claude-android-skill')).toBe('claude-android-skill');
+      } finally {
+        rmSync(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should fall back to repo name when frontmatter name is missing', () => {
+      const tempDir = mkdtempSync(join(tmpdir(), 'openskills-test-'));
+      try {
+        writeFileSync(
+          join(tempDir, 'SKILL.md'),
+          "---\ndescription: Android helper\n---\n\n# Skill\n"
+        );
+        expect(getRootSkillName(tempDir, 'claude-android-skill')).toBe('claude-android-skill');
+      } finally {
+        rmSync(tempDir, { recursive: true, force: true });
+      }
     });
   });
 });

@@ -50,6 +50,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Symlink dereference** - `cpSync` uses `dereference: true` to safely copy symlink targets
 - **Non-greedy YAML regex** - Prevents potential ReDoS in frontmatter parsing
 
+## [1.3.1] - 2026-01-17
+
+### Fixed
+
+- **Windows installs** - Path validation now works on Windows (`Security error: Installation path outside target directory`)
+- **CLI version** - `openskills --version` reads from package.json
+- **Root SKILL.md** - Single-skill repos with SKILL.md in repo root now install correctly
+
 ## [1.2.1] - 2025-10-27
 
 ### Fixed
@@ -97,6 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bundled resources support (references/, scripts/, assets/)
 
 [1.3.0]: https://github.com/numman-ali/openskills/compare/v1.2.1...v1.3.0
+[1.3.1]: https://github.com/numman-ali/openskills/compare/v1.3.0...v1.3.1
 [1.2.1]: https://github.com/numman-ali/openskills/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/numman-ali/openskills/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/numman-ali/openskills/compare/v1.0.0...v1.1.0

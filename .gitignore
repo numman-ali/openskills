@@ -4,3 +4,7 @@ dist/
 *.log
 .openskills-temp/
 .claude/
+skills/
+.tmp/
+.venv-skill/
+reports/
