@@ -201,14 +201,14 @@ export default createPrompt(
     const restoreActiveIndex = useRef<number | null>(null);
     const activeItemIndex = useRef<number | null>(null);
 
-    useMemo(() => {
+    // Validate that at least one selectable choice exists
+    useEffect(() => {
       const first = items.findIndex(isSelectable);
       if (first === -1) {
         throw new ValidationError(
           '[searchable checkbox] No selectable choices. All choices are disabled.',
         );
       }
-      return first;
     }, [items]);
 
     const filteredIndexes = useMemo(() => {
