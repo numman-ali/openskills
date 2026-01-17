@@ -3,12 +3,12 @@ id: 50
 type: issue
 status: open
 actionability: ready
-priority_score: 5
+priority_score: 7
 sentiment_score: 0
 needs_info_score: 0
 needs_info_signals: []
 labels: [enhancement]
-last_seen_at: 2026-01-17T17:32:44.575Z
+last_seen_at: 2026-01-17T19:10:52.058Z
 ---
 ## Intent
 - TODO: Summarize the reporter intent and underlying need.

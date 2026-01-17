@@ -1,23 +1,26 @@
 ---
 id: 6
 type: issue
-status: open
-actionability: closable
+status: closed
+actionability: done
 priority_score: 17
 sentiment_score: 0
 needs_info_score: 0
 needs_info_signals: []
 labels: [enhancement]
-last_seen_at: 2026-01-17T17:32:44.575Z
+last_seen_at: 2026-01-17T19:10:52.058Z
 ---
 ## Intent
-- TODO: Summarize the reporter intent and underlying need.
+Enable fully non-interactive installs where `--yes` also accepts overwrite prompts.
 
 ## Analysis
-- TODO: Root cause, severity, scope.
+Shipped in v1.3.0 with non-interactive overwrite behavior. Reporter confirmed working on 2026-01-07.
 
 ## Proposed Action
-- TODO: Implement, ask for info, close, defer.
+Close as resolved.
 
 ## Draft Response (requires approval)
-- TODO: Draft the public response.
+Posted and closed after confirmation (v1.3.0/v1.3.1).
+
+## Resolution
+Closed as resolved after reporter confirmation and release fix.
