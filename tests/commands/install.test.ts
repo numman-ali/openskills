@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { resolve, join, sep, win32 } from 'path';
-import { homedir } from 'os';
+import { resolve, join, sep, win32, basename } from 'path';
+import { homedir, tmpdir } from 'os';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { extractYamlField, hasValidFrontmatter } from '../../src/utils/yaml.js';
 
 // We need to test the helper functions, but they're not exported
 // So we'll test them indirectly or create a test module
@@ -203,6 +205,42 @@ describe('install.ts helper functions', () => {
           win32.sep
         )
       ).toBe(false);
+    });
+  });
+
+  describe('root SKILL.md detection', () => {
+    const getRootSkillName = (repoDir: string, repoName?: string): string | null => {
+      const skillPath = join(repoDir, 'SKILL.md');
+      if (!existsSync(skillPath)) return null;
+      const content = readFileSync(skillPath, 'utf-8');
+      if (!hasValidFrontmatter(content)) return null;
+      return extractYamlField(content, 'name') || repoName || basename(repoDir);
+    };
+
+    it('should detect root SKILL.md and use frontmatter name', () => {
+      const tempDir = mkdtempSync(join(tmpdir(), 'openskills-test-'));
+      try {
+        writeFileSync(
+          join(tempDir, 'SKILL.md'),
+          "---\nname: claude-android-skill\ndescription: Android helper\n---\n\n# Skill\n"
+        );
+        expect(getRootSkillName(tempDir, 'claude-android-skill')).toBe('claude-android-skill');
+      } finally {
+        rmSync(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should fall back to repo name when frontmatter name is missing', () => {
+      const tempDir = mkdtempSync(join(tmpdir(), 'openskills-test-'));
+      try {
+        writeFileSync(
+          join(tempDir, 'SKILL.md'),
+          "---\ndescription: Android helper\n---\n\n# Skill\n"
+        );
+        expect(getRootSkillName(tempDir, 'claude-android-skill')).toBe('claude-android-skill');
+      } finally {
+        rmSync(tempDir, { recursive: true, force: true });
+      }
     });
   });
 });
