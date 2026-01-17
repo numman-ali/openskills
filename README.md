@@ -97,7 +97,7 @@ So any agent that can read `AGENTS.md` can use Claude Code skills without needin
 When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively.
 
 How to use skills:
-- Invoke: Bash("npx openskills read <skill-name>")
+- Invoke: `npx openskills read <skill-name>` (run in your shell)
 - The skill content will load with detailed instructions
 - Base directory provided in output for resolving bundled resources
 
@@ -175,6 +175,7 @@ npx openskills install <source> [options]  # Install from GitHub, local path, or
 npx openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
 npx openskills list                        # Show installed skills
 npx openskills read <name>                 # Load skill (for agents)
+npx openskills update [name...]            # Update installed skills (default: all)
 npx openskills manage                      # Remove skills (interactive)
 npx openskills remove <name>               # Remove specific skill
 ```
@@ -249,6 +250,31 @@ ln -s ~/dev/my-skills/my-skill .claude/skills/my-skill
 npx openskills install anthropics/skills
 npx openskills read skill-creator
 ```
+
+---
+
+## 🔄 Updating Skills
+
+If you installed skills from a git repo, you can refresh them anytime:
+
+```bash
+npx openskills update
+```
+
+To update specific skills, pass a comma-separated list:
+
+```bash
+npx openskills update git-workflow,check-branch-first
+```
+
+If a skill was installed before updates were tracked, re-install it once to record its source.
+
+---
+
+## ✅ Tips
+
+- You can always run OpenSkills via `npx`; a global install is optional.
+- For multiple reads, prefer comma-separated names: `npx openskills read foo,bar`.
 
 ---
 

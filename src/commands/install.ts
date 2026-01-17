@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, rmSync, cpSync, statSync } from 'fs';
-import { join, basename, resolve, sep } from 'path';
+import { join, basename, resolve, sep, relative } from 'path';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
@@ -8,7 +8,16 @@ import { checkbox, confirm } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
 import { hasValidFrontmatter, extractYamlField } from '../utils/yaml.js';
 import { ANTHROPIC_MARKETPLACE_SKILLS } from '../utils/marketplace-skills.js';
+import { writeSkillMetadata } from '../utils/skill-metadata.js';
 import type { InstallOptions } from '../types.js';
+import type { SkillSourceMetadata, SkillSourceType } from '../utils/skill-metadata.js';
+
+interface InstallSourceInfo {
+  source: string;
+  sourceType: SkillSourceType;
+  repoUrl?: string;
+  localRoot?: string;
+}
 
 /**
  * Check if source is a local path
@@ -101,7 +110,12 @@ export async function installSkill(source: string, options: InstallOptions): Pro
   // Handle local path installation
   if (isLocalPath(source)) {
     const localPath = expandPath(source);
-    await installFromLocal(localPath, targetDir, options);
+    const sourceInfo: InstallSourceInfo = {
+      source,
+      sourceType: 'local',
+      localRoot: localPath,
+    };
+    await installFromLocal(localPath, targetDir, options, sourceInfo);
     printPostInstallHints(isProject);
     return;
   }
@@ -131,6 +145,11 @@ export async function installSkill(source: string, options: InstallOptions): Pro
   // Clone and install from git
   const tempDir = join(homedir(), `.openskills-temp-${Date.now()}`);
   mkdirSync(tempDir, { recursive: true });
+  const sourceInfo: InstallSourceInfo = {
+    source,
+    sourceType: 'git',
+    repoUrl,
+  };
 
   try {
     const spinner = ora('Cloning repository...').start();
@@ -152,10 +171,10 @@ export async function installSkill(source: string, options: InstallOptions): Pro
     const repoDir = join(tempDir, 'repo');
 
     if (skillSubpath) {
-      await installSpecificSkill(repoDir, skillSubpath, targetDir, isProject, options);
+      await installSpecificSkill(repoDir, skillSubpath, targetDir, isProject, options, sourceInfo);
     } else {
       const repoName = getRepoName(repoUrl);
-      await installFromRepo(repoDir, targetDir, options, repoName || undefined);
+      await installFromRepo(repoDir, targetDir, options, repoName || undefined, sourceInfo);
     }
   } finally {
     rmSync(tempDir, { recursive: true, force: true });
@@ -177,7 +196,12 @@ function printPostInstallHints(isProject: boolean): void {
 /**
  * Install from local path (directory containing skills or single skill)
  */
-async function installFromLocal(localPath: string, targetDir: string, options: InstallOptions): Promise<void> {
+async function installFromLocal(
+  localPath: string,
+  targetDir: string,
+  options: InstallOptions,
+  sourceInfo: InstallSourceInfo
+): Promise<void> {
   if (!existsSync(localPath)) {
     console.error(chalk.red(`Error: Path does not exist: ${localPath}`));
     process.exit(1);
@@ -194,10 +218,10 @@ async function installFromLocal(localPath: string, targetDir: string, options: I
   if (existsSync(skillMdPath)) {
     // Single skill directory
     const isProject = targetDir.includes(process.cwd());
-    await installSingleLocalSkill(localPath, targetDir, isProject, options);
+    await installSingleLocalSkill(localPath, targetDir, isProject, options, sourceInfo);
   } else {
     // Directory containing multiple skills
-    await installFromRepo(localPath, targetDir, options);
+    await installFromRepo(localPath, targetDir, options, undefined, sourceInfo);
   }
 }
 
@@ -208,7 +232,8 @@ async function installSingleLocalSkill(
   skillDir: string,
   targetDir: string,
   isProject: boolean,
-  options: InstallOptions
+  options: InstallOptions,
+  sourceInfo: InstallSourceInfo
 ): Promise<void> {
   const skillMdPath = join(skillDir, 'SKILL.md');
   const content = readFileSync(skillMdPath, 'utf-8');
@@ -235,6 +260,7 @@ async function installSingleLocalSkill(
   }
 
   cpSync(skillDir, targetPath, { recursive: true, dereference: true });
+  writeSkillMetadata(targetPath, buildLocalMetadata(sourceInfo, skillDir));
 
   console.log(chalk.green(`✅ Installed: ${skillName}`));
   console.log(`   Location: ${targetPath}`);
@@ -248,7 +274,8 @@ async function installSpecificSkill(
   skillSubpath: string,
   targetDir: string,
   isProject: boolean,
-  options: InstallOptions
+  options: InstallOptions,
+  sourceInfo: InstallSourceInfo
 ): Promise<void> {
   const skillDir = join(repoDir, skillSubpath);
   const skillMdPath = join(skillDir, 'SKILL.md');
@@ -282,6 +309,7 @@ async function installSpecificSkill(
     process.exit(1);
   }
   cpSync(skillDir, targetPath, { recursive: true, dereference: true });
+  writeSkillMetadata(targetPath, buildGitMetadata(sourceInfo, skillSubpath));
 
   console.log(chalk.green(`✅ Installed: ${skillName}`));
   console.log(`   Location: ${targetPath}`);
@@ -294,7 +322,8 @@ async function installFromRepo(
   repoDir: string,
   targetDir: string,
   options: InstallOptions,
-  repoName?: string
+  repoName: string | undefined,
+  sourceInfo: InstallSourceInfo
 ): Promise<void> {
   const rootSkillPath = join(repoDir, 'SKILL.md');
   let skillInfos: Array<{
@@ -444,12 +473,45 @@ async function installFromRepo(
       continue;
     }
     cpSync(info.skillDir, info.targetPath, { recursive: true, dereference: true });
+    writeSkillMetadata(info.targetPath, buildMetadataFromSource(sourceInfo, info.skillDir, repoDir));
 
     console.log(chalk.green(`✅ Installed: ${info.skillName}`));
     installedCount++;
   }
 
   console.log(chalk.green(`\n✅ Installation complete: ${installedCount} skill(s) installed`));
+}
+
+function buildMetadataFromSource(
+  sourceInfo: InstallSourceInfo,
+  skillDir: string,
+  repoDir: string
+): SkillSourceMetadata {
+  if (sourceInfo.sourceType === 'local') {
+    return buildLocalMetadata(sourceInfo, skillDir);
+  }
+  const subpath = relative(repoDir, skillDir);
+  const normalizedSubpath = subpath === '' ? '' : subpath;
+  return buildGitMetadata(sourceInfo, normalizedSubpath);
+}
+
+function buildGitMetadata(sourceInfo: InstallSourceInfo, subpath: string): SkillSourceMetadata {
+  return {
+    source: sourceInfo.source,
+    sourceType: 'git',
+    repoUrl: sourceInfo.repoUrl,
+    subpath,
+    installedAt: new Date().toISOString(),
+  };
+}
+
+function buildLocalMetadata(sourceInfo: InstallSourceInfo, skillDir: string): SkillSourceMetadata {
+  return {
+    source: sourceInfo.source,
+    sourceType: 'local',
+    localPath: skillDir,
+    installedAt: new Date().toISOString(),
+  };
 }
 
 /**

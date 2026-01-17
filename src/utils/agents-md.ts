@@ -40,7 +40,8 @@ export function generateSkillsXml(skills: Skill[]): string {
 When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
 
 How to use skills:
-- Invoke: Bash("npx openskills read <skill-name>")
+- Invoke: \`npx openskills read <skill-name>\` (run in your shell)
+  - For multiple: \`npx openskills read skill-one,skill-two\`
 - The skill content will load with detailed instructions on how to complete the task
 - Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
 
