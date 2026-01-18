@@ -4,8 +4,9 @@ import { homedir } from 'os';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
 import ora from 'ora';
-import { checkbox, confirm } from '@inquirer/prompts';
+import { confirm } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
+import searchableCheckbox from '../utils/searchable-checkbox.js';
 import { hasValidFrontmatter, extractYamlField } from '../utils/yaml.js';
 import { ANTHROPIC_MARKETPLACE_SKILLS } from '../utils/marketplace-skills.js';
 import { writeSkillMetadata } from '../utils/skill-metadata.js';
@@ -433,10 +434,11 @@ async function installFromRepo(
         checked: true, // Check all by default
       }));
 
-      const selected = await checkbox({
+      const selected = await searchableCheckbox({
         message: 'Select skills to install',
         choices,
         pageSize: 15,
+        searchKey: 'f',
       });
 
       if (selected.length === 0) {
