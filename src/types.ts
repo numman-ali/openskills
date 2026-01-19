@@ -28,3 +28,5 @@ export interface DeleteOptions {
   permanent?: boolean; // Permanently delete instead of moving to trash
   dryRun?: boolean;   // Only show what would be deleted
 }
+
+
