@@ -96,7 +96,7 @@ We welcome feature requests that:
 
 For questions about:
 - **Usage:** Open a GitHub issue
-- **Contributing:** Open a discussion thread
+- **Contributing:** Open an issue
 - **Anthropic Skills spec:** See [Anthropic's documentation](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
 
 ## License

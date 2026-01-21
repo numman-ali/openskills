@@ -6,6 +6,6 @@ contact_links:
   - name: Anthropic Skills Repository
     url: https://github.com/anthropics/skills
     about: Browse official Anthropic example skills
-  - name: Discussions
-    url: https://github.com/numman-ali/openskills/discussions
-    about: Ask questions or discuss OpenSkills with the community
+  - name: Questions & Discussion
+    url: https://github.com/numman-ali/openskills/issues
+    about: Ask questions or discuss OpenSkills (use a descriptive title)
