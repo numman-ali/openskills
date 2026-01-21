@@ -75,7 +75,7 @@ OpenSkills minimizes dependencies for security:
 
 ## Questions?
 
-For security questions that are not vulnerabilities, open a discussion thread on GitHub.
+For security questions that are not vulnerabilities, open an issue on GitHub.
 
 ---
 
