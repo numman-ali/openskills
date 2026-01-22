@@ -176,8 +176,8 @@ npx openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
 npx openskills list                        # Show installed skills
 npx openskills read <name>                 # Load skill (for agents)
 npx openskills update [name...]            # Update installed skills (default: all)
-npx openskills manage                      # Remove skills (interactive)
-npx openskills remove <name>               # Remove specific skill
+npx openskills manage [--force]            # Remove skills (interactive, use --force for permanent deletion)
+npx openskills remove <name> [--force]     # Remove specific skill (use --force for permanent deletion)
 ```
 
 ### Flags
@@ -186,6 +186,7 @@ npx openskills remove <name>               # Remove specific skill
 - `--universal` — Install to `.agent/skills/` instead of `.claude/skills/`
 - `-y, --yes` — Skip prompts (useful for CI)
 - `-o, --output <path>` — Output file for sync (default: `AGENTS.md`)
+- `--force` — Permanently delete skills instead of moving to trash/recycle bin (for manage and remove commands)
 
 ---
 
@@ -275,6 +276,7 @@ If a skill was installed before updates were tracked, re-install it once to reco
 
 - You can always run OpenSkills via `npx`; a global install is optional.
 - For multiple reads, prefer comma-separated names: `npx openskills read foo,bar`.
+- By default, remove and manage commands move skills to trash/recycle bin for safety; use `--force` flag for permanent deletion.
 
 ---
 
