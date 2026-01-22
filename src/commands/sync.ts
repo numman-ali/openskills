@@ -10,6 +10,7 @@ import type { Skill } from '../types.js';
 export interface SyncOptions {
   yes?: boolean;
   output?: string;
+  cliTool?: string;
 }
 
 /**
@@ -92,7 +93,7 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
     }
   }
 
-  const xml = generateSkillsXml(skills);
+  const xml = generateSkillsXml(skills, { tool: options.cliTool });
   const content = readFileSync(outputPath, 'utf-8');
   const updated = replaceSkillsSection(content, xml);
 

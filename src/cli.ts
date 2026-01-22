@@ -64,6 +64,7 @@ program
   .description('Update AGENTS.md with installed skills (interactive, pre-selects current state)')
   .option('-y, --yes', 'Skip interactive selection, sync all skills')
   .option('-o, --output <path>', 'Output file path (default: AGENTS.md)')
+  .option('-t, --cli-tool <name>', 'Custom tool name to use instead of "Bash" (e.g., "bash", "Bash", "Shell")')
   .action(syncAgentsMd);
 
 program

@@ -172,7 +172,7 @@ npx openskills install anthropics/skills --universal
 
 ```bash
 npx openskills install <source> [options]  # Install from GitHub, local path, or private repo
-npx openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
+npx openskills sync [-y] [-o <path>] [--cli-tool <name>]  # Update AGENTS.md (or custom output) with your agent's CLI tool name
 npx openskills list                        # Show installed skills
 npx openskills read <name>                 # Load skill (for agents)
 npx openskills update [name...]            # Update installed skills (default: all)
@@ -186,6 +186,7 @@ npx openskills remove <name>               # Remove specific skill
 - `--universal` — Install to `.agent/skills/` instead of `.claude/skills/`
 - `-y, --yes` — Skip prompts (useful for CI)
 - `-o, --output <path>` — Output file for sync (default: `AGENTS.md`)
+- `--cli-tool <name>` — Redefining the CLI tool name used by the agent to invoke openskills (default: `Bash`)
 
 ---
 
