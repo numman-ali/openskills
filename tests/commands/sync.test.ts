@@ -35,7 +35,7 @@ describe('sync utilities (agents-md.ts)', () => {
       expect(xml).toContain('</skills_system>');
     });
 
-    it('should include usage instructions', () => {
+    it('should include usage instructions with default tool name', () => {
       const skills: Skill[] = [
         { name: 'test', description: 'Test skill', location: 'project', path: '/path' },
       ];
@@ -43,7 +43,19 @@ describe('sync utilities (agents-md.ts)', () => {
       const xml = generateSkillsXml(skills);
 
       expect(xml).toContain('<usage>');
-      expect(xml).toContain('npx openskills read');
+      expect(xml).toContain('Bash("openskills read <skill-name>")');
+      expect(xml).toContain('</usage>');
+    });
+
+    it('should include usage instructions with custom tool name', () => {
+      const skills: Skill[] = [
+        { name: 'test', description: 'Test skill', location: 'project', path: '/path' },
+      ];
+
+      const xml = generateSkillsXml(skills, { tool: 'Shell' });
+
+      expect(xml).toContain('<usage>');
+      expect(xml).toContain('Shell("openskills read <skill-name>")');
       expect(xml).toContain('</usage>');
     });
 
