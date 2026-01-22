@@ -8,3 +8,4 @@ skills/
 .tmp/
 .venv-skill/
 reports/
+.agent
