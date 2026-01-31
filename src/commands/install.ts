@@ -27,7 +27,9 @@ function isLocalPath(source: string): boolean {
     source.startsWith('/') ||
     source.startsWith('./') ||
     source.startsWith('../') ||
-    source.startsWith('~/')
+    source.startsWith('~/') ||
+    source.startsWith('~\\') ||                   // Windows home directory with backslash
+    /^[a-zA-Z]:[/\\]/.test(source)               // Windows drive (C:/ or C:\)
   );
 }
 
@@ -56,10 +58,11 @@ function getRepoName(repoUrl: string): string | null {
 }
 
 /**
- * Expand ~ to home directory
+ * Expand ~ to home directory and normalize path
  */
 function expandPath(source: string): string {
-  if (source.startsWith('~/')) {
+  // Support both Unix (~/) and Windows (~\) tilde notation
+  if (source.startsWith('~/') || source.startsWith('~\\')) {
     return join(homedir(), source.slice(2));
   }
   return resolve(source);

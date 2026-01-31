@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { dirname, basename } from 'path';
+import { dirname, basename, resolve, join } from 'path';
+import { homedir } from 'os';
 import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
@@ -13,10 +14,22 @@ export interface SyncOptions {
 }
 
 /**
+ * Expand ~ to home directory and resolve path
+ */
+function expandPath(path: string): string {
+  // Support both Unix (~/) and Windows (~\) tilde notation
+  if (path.startsWith('~/') || path.startsWith('~\\')) {
+    return join(homedir(), path.slice(2));
+  }
+  return resolve(path);
+}
+
+/**
  * Sync installed skills to a markdown file
  */
 export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
-  const outputPath = options.output || 'AGENTS.md';
+  const rawOutputPath = options.output || 'AGENTS.md';
+  const outputPath = expandPath(rawOutputPath);
   const outputName = basename(outputPath);
 
   // Validate output file is markdown
