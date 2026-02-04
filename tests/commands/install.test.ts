@@ -12,12 +12,22 @@ describe('install.ts helper functions', () => {
   describe('isLocalPath detection', () => {
     // Replicate the logic from isLocalPath()
     const isLocalPath = (source: string): boolean => {
-      return (
-        source.startsWith('/') ||
-        source.startsWith('./') ||
-        source.startsWith('../') ||
-        source.startsWith('~/')
-      );
+      // Windows drive letter: C:\ or C:/
+      if (/^[A-Za-z]:[/\\]/.test(source)) return true;
+
+      // Windows UNC path: \\server\share
+      if (source.startsWith('\\\\')) return true;
+
+      // Unix absolute path
+      if (source.startsWith('/')) return true;
+
+      // Relative paths: ./ ../ .\ ..\
+      if (/^\.\.?[/\\]/.test(source)) return true;
+
+      // Home directory: ~ or ~/path
+      if (source === '~' || source.startsWith('~/')) return true;
+
+      return false;
     };
 
     it('should detect absolute paths starting with /', () => {
@@ -38,6 +48,45 @@ describe('install.ts helper functions', () => {
     it('should detect home directory paths starting with ~/', () => {
       expect(isLocalPath('~/skills/my-skill')).toBe(true);
       expect(isLocalPath('~/.claude/skills')).toBe(true);
+    });
+
+    it('should detect Windows drive letter paths with backslash', () => {
+      expect(isLocalPath('C:\\Users\\dev\\skills')).toBe(true);
+      expect(isLocalPath('D:\\projects\\my-skill')).toBe(true);
+      expect(isLocalPath('E:\\path')).toBe(true);
+    });
+
+    it('should detect Windows drive letter paths with forward slash', () => {
+      expect(isLocalPath('C:/Users/dev/skills')).toBe(true);
+      expect(isLocalPath('D:/projects/my-skill')).toBe(true);
+    });
+
+    it('should detect lowercase Windows drive letters', () => {
+      expect(isLocalPath('c:\\Users\\dev')).toBe(true);
+      expect(isLocalPath('d:/projects')).toBe(true);
+    });
+
+    it('should detect Windows UNC paths', () => {
+      expect(isLocalPath('\\\\server\\share')).toBe(true);
+      expect(isLocalPath('\\\\192.168.1.1\\folder')).toBe(true);
+      expect(isLocalPath('\\\\nas\\skills\\my-skill')).toBe(true);
+    });
+
+    it('should detect Windows-style relative paths with backslash', () => {
+      expect(isLocalPath('.\\relative\\path')).toBe(true);
+      expect(isLocalPath('.\\skill')).toBe(true);
+      expect(isLocalPath('..\\parent\\path')).toBe(true);
+      expect(isLocalPath('..\\..\\deep\\path')).toBe(true);
+    });
+
+    it('should detect bare ~ as home directory', () => {
+      expect(isLocalPath('~')).toBe(true);
+    });
+
+    it('should NOT detect invalid drive letter formats as local path', () => {
+      expect(isLocalPath('C:')).toBe(false);
+      expect(isLocalPath('CC:\\path')).toBe(false);
+      expect(isLocalPath('1:\\path')).toBe(false);
     });
 
     it('should NOT detect GitHub shorthand as local path', () => {
