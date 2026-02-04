@@ -23,12 +23,22 @@ interface InstallSourceInfo {
  * Check if source is a local path
  */
 function isLocalPath(source: string): boolean {
-  return (
-    source.startsWith('/') ||
-    source.startsWith('./') ||
-    source.startsWith('../') ||
-    source.startsWith('~/')
-  );
+  // Windows drive letter: C:\ or C:/
+  if (/^[A-Za-z]:[/\\]/.test(source)) return true;
+
+  // Windows UNC path: \\server\share
+  if (source.startsWith('\\\\')) return true;
+
+  // Unix absolute path
+  if (source.startsWith('/')) return true;
+
+  // Relative paths: ./ ../ .\ ..\
+  if (/^\.\.?[/\\]/.test(source)) return true;
+
+  // Home directory: ~ or ~/path
+  if (source === '~' || source.startsWith('~/')) return true;
+
+  return false;
 }
 
 /**
