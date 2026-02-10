@@ -1,9 +1,25 @@
+import matter from 'gray-matter';
+
 /**
  * Extract field from YAML frontmatter
+ * Uses gray-matter to properly parse multiline YAML descriptions (using > or | syntax)
  */
 export function extractYamlField(content: string, field: string): string {
-  const match = content.match(new RegExp(`^${field}:\\s*(.+?)$`, 'm'));
-  return match ? match[1].trim() : '';
+  try {
+    const result = matter(content);
+    const value = result.data[field];
+    
+    // Handle different value types
+    if (value === undefined || value === null) {
+      return '';
+    }
+    
+    // Convert to string and trim
+    return String(value).trim();
+  } catch {
+    // Fallback to empty string if parsing fails
+    return '';
+  }
 }
 
 /**
