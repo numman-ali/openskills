@@ -38,4 +38,33 @@ describe('skill-metadata', () => {
     writeFileSync(join(tempDir, SKILL_METADATA_FILE), '{not-json');
     expect(readSkillMetadata(tempDir)).toBeNull();
   });
+
+  it('normalizes Windows backslashes to forward slashes in subpath', () => {
+    const payload = {
+      source: 'owner/repo',
+      sourceType: 'git' as const,
+      repoUrl: 'https://github.com/owner/repo',
+      subpath: 'skills\\nested\\skill',
+      installedAt: '2026-01-01T00:00:00.000Z',
+    };
+
+    writeSkillMetadata(tempDir, payload);
+    const read = readSkillMetadata(tempDir);
+
+    expect(read?.subpath).toBe('skills/nested/skill');
+  });
+
+  it('normalizes Windows backslashes to forward slashes in localPath', () => {
+    const payload = {
+      source: '/path/to/skill',
+      sourceType: 'local' as const,
+      localPath: 'C:\\Users\\test\\skills\\my-skill',
+      installedAt: '2026-01-01T00:00:00.000Z',
+    };
+
+    writeSkillMetadata(tempDir, payload);
+    const read = readSkillMetadata(tempDir);
+
+    expect(read?.localPath).toBe('C:/Users/test/skills/my-skill');
+  });
 });
