@@ -1,6 +1,10 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
+function normalizePathSeparators(path: string): string {
+  return path.replace(/\\/g, '/');
+}
+
 export const SKILL_METADATA_FILE = '.openskills.json';
 
 export type SkillSourceType = 'git' | 'github' | 'local';
@@ -30,6 +34,8 @@ export function writeSkillMetadata(skillDir: string, metadata: SkillSourceMetada
   const metadataPath = join(skillDir, SKILL_METADATA_FILE);
   const payload = {
     ...metadata,
+    subpath: metadata.subpath ? normalizePathSeparators(metadata.subpath) : undefined,
+    localPath: metadata.localPath ? normalizePathSeparators(metadata.localPath) : undefined,
     installedAt: metadata.installedAt || new Date().toISOString(),
   };
   writeFileSync(metadataPath, JSON.stringify(payload, null, 2));
