@@ -259,6 +259,10 @@ async function installSingleLocalSkill(
     process.exit(1);
   }
 
+  // Remove existing skill directory before copying (handles overwrite case)
+  if (existsSync(targetPath)) {
+    rmSync(targetPath, { recursive: true, force: true });
+  }
   cpSync(skillDir, targetPath, { recursive: true, dereference: true });
   writeSkillMetadata(targetPath, buildLocalMetadata(sourceInfo, skillDir));
 
@@ -307,6 +311,10 @@ async function installSpecificSkill(
   if (!isPathInside(targetPath, targetDir)) {
     console.error(chalk.red(`Security error: Installation path outside target directory`));
     process.exit(1);
+  }
+  // Remove existing skill directory before copying (handles overwrite case)
+  if (existsSync(targetPath)) {
+    rmSync(targetPath, { recursive: true, force: true });
   }
   cpSync(skillDir, targetPath, { recursive: true, dereference: true });
   writeSkillMetadata(targetPath, buildGitMetadata(sourceInfo, skillSubpath));
@@ -471,6 +479,10 @@ async function installFromRepo(
     if (!isPathInside(info.targetPath, targetDir)) {
       console.error(chalk.red(`Security error: Installation path outside target directory`));
       continue;
+    }
+    // Remove existing skill directory before copying (handles overwrite case)
+    if (existsSync(info.targetPath)) {
+      rmSync(info.targetPath, { recursive: true, force: true });
     }
     cpSync(info.skillDir, info.targetPath, { recursive: true, dereference: true });
     writeSkillMetadata(info.targetPath, buildMetadataFromSource(sourceInfo, info.skillDir, repoDir));
