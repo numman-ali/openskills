@@ -19,6 +19,9 @@ interface InstallSourceInfo {
   localRoot?: string;
 }
 
+const WINDOWS_DRIVE_PATH = /^[a-zA-Z]:[\\/]/;
+const WINDOWS_MSYS_PATH = /^\/([a-zA-Z])([\\/].*)$/;
+
 /**
  * Check if source is a local path
  */
@@ -27,7 +30,9 @@ function isLocalPath(source: string): boolean {
     source.startsWith('/') ||
     source.startsWith('./') ||
     source.startsWith('../') ||
-    source.startsWith('~/')
+    source.startsWith('~/') ||
+    source.startsWith('~\\') ||
+    WINDOWS_DRIVE_PATH.test(source)
   );
 }
 
@@ -59,9 +64,18 @@ function getRepoName(repoUrl: string): string | null {
  * Expand ~ to home directory
  */
 function expandPath(source: string): string {
-  if (source.startsWith('~/')) {
+  if (source.startsWith('~/') || source.startsWith('~\\')) {
     return join(homedir(), source.slice(2));
   }
+
+  if (process.platform === 'win32') {
+    const msysMatch = source.match(WINDOWS_MSYS_PATH);
+    if (msysMatch) {
+      const [, drive, rest] = msysMatch;
+      return resolve(`${drive.toUpperCase()}:${rest}`);
+    }
+  }
+
   return resolve(source);
 }
 
@@ -491,7 +505,7 @@ function buildMetadataFromSource(
     return buildLocalMetadata(sourceInfo, skillDir);
   }
   const subpath = relative(repoDir, skillDir);
-  const normalizedSubpath = subpath === '' ? '' : subpath;
+  const normalizedSubpath = subpath === '' ? '' : subpath.split(sep).join('/');
   return buildGitMetadata(sourceInfo, normalizedSubpath);
 }
 

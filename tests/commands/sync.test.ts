@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'fs';
 import { join, dirname, basename } from 'path';
 import { tmpdir } from 'os';
+import { homedir } from 'os';
 
 // Test the sync utility functions directly
 import {
@@ -179,6 +180,13 @@ describe('sync --output flag logic', () => {
   });
 
   describe('output path validation', () => {
+    const expandOutputPath = (outputPath: string): string => {
+      if (outputPath.startsWith('~/') || outputPath.startsWith('~\\')) {
+        return join(homedir(), outputPath.slice(2));
+      }
+      return outputPath;
+    };
+
     it('should accept .md files', () => {
       const validPaths = [
         'AGENTS.md',
@@ -203,6 +211,13 @@ describe('sync --output flag logic', () => {
       for (const path of invalidPaths) {
         expect(path.endsWith('.md')).toBe(false);
       }
+    });
+
+    it('should expand tilde paths for output destination', () => {
+      expect(expandOutputPath('~/.config/opencode/AGENTS.md'))
+        .toBe(join(homedir(), '.config/opencode/AGENTS.md'));
+      expect(expandOutputPath('~\\.config\\opencode\\AGENTS.md'))
+        .toBe(join(homedir(), '.config\\opencode\\AGENTS.md'));
     });
   });
 

@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { dirname, basename } from 'path';
+import { dirname, basename, resolve, join } from 'path';
+import { homedir } from 'os';
 import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
@@ -12,11 +13,19 @@ export interface SyncOptions {
   output?: string;
 }
 
+function expandOutputPath(outputPath: string): string {
+  if (outputPath.startsWith('~/') || outputPath.startsWith('~\\')) {
+    return resolve(join(homedir(), outputPath.slice(2)));
+  }
+
+  return resolve(outputPath);
+}
+
 /**
  * Sync installed skills to a markdown file
  */
 export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
-  const outputPath = options.output || 'AGENTS.md';
+  const outputPath = expandOutputPath(options.output || 'AGENTS.md');
   const outputName = basename(outputPath);
 
   // Validate output file is markdown
