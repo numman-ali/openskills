@@ -72,4 +72,45 @@ describe('updateSkills', () => {
     const content = readFileSync(join(targetDir, 'SKILL.md'), 'utf-8');
     expect(content).toContain('v1');
   });
+
+  it('updates all installed instances of the same skill name', async () => {
+    const sourceDir = join(tempRoot, 'source-multi');
+    mkdirSync(sourceDir, { recursive: true });
+    writeFileSync(
+      join(sourceDir, 'SKILL.md'),
+      "---\nname: demo\ndescription: v2\n---\n\n# Demo\nv2\n"
+    );
+
+    const projectTarget = join(projectDir, '.claude/skills/demo');
+    const globalTarget = join(process.env.HOME!, '.agent/skills/demo');
+    mkdirSync(projectTarget, { recursive: true });
+    mkdirSync(globalTarget, { recursive: true });
+
+    writeFileSync(
+      join(projectTarget, 'SKILL.md'),
+      "---\nname: demo\ndescription: v1\n---\n\n# Demo\nproject-v1\n"
+    );
+    writeFileSync(
+      join(globalTarget, 'SKILL.md'),
+      "---\nname: demo\ndescription: v1\n---\n\n# Demo\nglobal-v1\n"
+    );
+
+    writeSkillMetadata(projectTarget, {
+      source: './source-multi',
+      sourceType: 'local',
+      localPath: sourceDir,
+      installedAt: '2026-01-01T00:00:00.000Z',
+    });
+    writeSkillMetadata(globalTarget, {
+      source: './source-multi',
+      sourceType: 'local',
+      localPath: sourceDir,
+      installedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    await updateSkills(['demo']);
+
+    expect(readFileSync(join(projectTarget, 'SKILL.md'), 'utf-8')).toContain('v2');
+    expect(readFileSync(join(globalTarget, 'SKILL.md'), 'utf-8')).toContain('v2');
+  });
 });

@@ -13,7 +13,7 @@ import { readSkillMetadata, writeSkillMetadata } from '../utils/skill-metadata.j
  */
 export async function updateSkills(skillNames: string[] | string | undefined): Promise<void> {
   const requested = normalizeSkillNames(skillNames);
-  const skills = findAllSkills();
+  const skills = findAllSkills({ dedupe: false });
 
   if (skills.length === 0) {
     console.log('No skills installed.\n');
