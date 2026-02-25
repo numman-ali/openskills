@@ -27,9 +27,10 @@ function isDirectoryOrSymlinkToDirectory(entry: Dirent, parentDir: string): bool
 /**
  * Find all installed skills across directories
  */
-export function findAllSkills(): Skill[] {
+export function findAllSkills(options: { dedupe?: boolean } = {}): Skill[] {
   const skills: Skill[] = [];
   const seen = new Set<string>();
+  const dedupe = options.dedupe ?? true;
   const dirs = getSearchDirs();
 
   for (const dir of dirs) {
@@ -40,7 +41,7 @@ export function findAllSkills(): Skill[] {
     for (const entry of entries) {
       if (isDirectoryOrSymlinkToDirectory(entry, dir)) {
         // Deduplicate: only add if we haven't seen this skill name yet
-        if (seen.has(entry.name)) continue;
+        if (dedupe && seen.has(entry.name)) continue;
 
         const skillPath = join(dir, entry.name, 'SKILL.md');
         if (existsSync(skillPath)) {
