@@ -10,13 +10,16 @@ import { extractYamlField, hasValidFrontmatter } from '../../src/utils/yaml.js';
 
 describe('install.ts helper functions', () => {
   describe('isLocalPath detection', () => {
+    const windowsDrivePath = /^[a-zA-Z]:[\\/]/;
     // Replicate the logic from isLocalPath()
     const isLocalPath = (source: string): boolean => {
       return (
         source.startsWith('/') ||
         source.startsWith('./') ||
         source.startsWith('../') ||
-        source.startsWith('~/')
+        source.startsWith('~/') ||
+        source.startsWith('~\\') ||
+        windowsDrivePath.test(source)
       );
     };
 
@@ -38,6 +41,12 @@ describe('install.ts helper functions', () => {
     it('should detect home directory paths starting with ~/', () => {
       expect(isLocalPath('~/skills/my-skill')).toBe(true);
       expect(isLocalPath('~/.claude/skills')).toBe(true);
+    });
+
+    it('should detect Windows local path formats', () => {
+      expect(isLocalPath('~\\skills\\my-skill')).toBe(true);
+      expect(isLocalPath('C:/Users/dev/skills/my-skill')).toBe(true);
+      expect(isLocalPath('D:\\Users\\dev\\skills\\my-skill')).toBe(true);
     });
 
     it('should NOT detect GitHub shorthand as local path', () => {
@@ -108,11 +117,21 @@ describe('install.ts helper functions', () => {
   });
 
   describe('expandPath tilde expansion', () => {
+    const windowsMsysPath = /^\/([a-zA-Z])([\\/].*)$/;
     // Replicate the logic from expandPath()
-    const expandPath = (source: string): string => {
-      if (source.startsWith('~/')) {
+    const expandPath = (source: string, platform: NodeJS.Platform = process.platform): string => {
+      if (source.startsWith('~/') || source.startsWith('~\\')) {
         return join(homedir(), source.slice(2));
       }
+
+      if (platform === 'win32') {
+        const msysMatch = source.match(windowsMsysPath);
+        if (msysMatch) {
+          const [, drive, rest] = msysMatch;
+          return resolve(`${drive.toUpperCase()}:${rest}`);
+        }
+      }
+
       return resolve(source);
     };
 
@@ -124,6 +143,17 @@ describe('install.ts helper functions', () => {
     it('should expand ~/.claude/skills correctly', () => {
       const expanded = expandPath('~/.claude/skills');
       expect(expanded).toBe(join(homedir(), '.claude/skills'));
+    });
+
+    it('should expand ~\\ on Windows-style inputs', () => {
+      const expanded = expandPath('~\\skills\\demo');
+      expect(expanded).toBe(join(homedir(), 'skills\\demo'));
+    });
+
+    it('should map /c/... paths on Windows', () => {
+      const expanded = expandPath('/c/Users/dev/skills/demo', 'win32');
+      expect(expanded).toContain('C:');
+      expect(expanded.toLowerCase()).toContain('users');
     });
 
     it('should resolve relative paths', () => {
@@ -241,6 +271,16 @@ describe('install.ts helper functions', () => {
       } finally {
         rmSync(tempDir, { recursive: true, force: true });
       }
+    });
+  });
+
+  describe('metadata subpath normalization', () => {
+    const normalizeSubpath = (subpath: string, pathSep: string): string =>
+      subpath === '' ? '' : subpath.split(pathSep).join('/');
+
+    it('normalizes Windows separators in subpath metadata', () => {
+      expect(normalizeSubpath('plugins\\ui-design\\skills\\accessibility-compliance', '\\'))
+        .toBe('plugins/ui-design/skills/accessibility-compliance');
     });
   });
 });
