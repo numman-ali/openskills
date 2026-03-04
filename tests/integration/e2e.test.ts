@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterEach } from 'vitest';
 import { mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, symlinkSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
@@ -6,7 +6,8 @@ import { execSync } from 'child_process';
 
 const testId = Math.random().toString(36).slice(2);
 const testTempDir = join(tmpdir(), `openskills-e2e-${testId}`);
-const cliPath = join(process.cwd(), 'dist', 'cli.js');
+const repoRoot = process.cwd();
+const cliPath = join(repoRoot, 'dist', 'cli.js');
 
 // Helper to run CLI commands
 function runCli(args: string, cwd?: string): { stdout: string; stderr: string; exitCode: number } {
@@ -46,6 +47,15 @@ Instructions for ${name}.
 }
 
 describe('End-to-end CLI tests', () => {
+  beforeAll(() => {
+    if (!existsSync(cliPath)) {
+      execSync('npm run build', {
+        cwd: repoRoot,
+        stdio: 'pipe',
+      });
+    }
+  });
+
   beforeEach(() => {
     mkdirSync(testTempDir, { recursive: true });
   });

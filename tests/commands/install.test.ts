@@ -289,3 +289,62 @@ describe('GitHub shorthand parsing', () => {
     expect(result).toBeNull();
   });
 });
+
+describe('Git source branch parsing', () => {
+  const parseSourceRef = (source: string, branchOption?: string): { source: string; branch?: string } => {
+    const hashIndex = source.lastIndexOf('#');
+    if (hashIndex === -1) {
+      return { source, branch: branchOption };
+    }
+
+    const parsedSource = source.slice(0, hashIndex).trim();
+    const parsedBranch = source.slice(hashIndex + 1).trim();
+
+    if (!parsedSource) {
+      throw new Error('invalid-source');
+    }
+    if (!parsedBranch) {
+      throw new Error('empty-branch');
+    }
+    if (branchOption) {
+      throw new Error('branch-specified-twice');
+    }
+
+    return { source: parsedSource, branch: parsedBranch };
+  };
+
+  const buildCloneCommand = (repoUrl: string, destination: string, branch?: string): string => {
+    const branchArgs = branch ? ` --branch "${branch}" --single-branch` : '';
+    return `git clone --depth 1${branchArgs} --quiet "${repoUrl}" "${destination}"`;
+  };
+
+  it('should parse branch from source#branch', () => {
+    const result = parseSourceRef('owner/repo#develop');
+    expect(result).toEqual({ source: 'owner/repo', branch: 'develop' });
+  });
+
+  it('should parse branch from --branch when source has no #', () => {
+    const result = parseSourceRef('owner/repo', 'develop');
+    expect(result).toEqual({ source: 'owner/repo', branch: 'develop' });
+  });
+
+  it('should fail if branch is specified both inline and via option', () => {
+    expect(() => parseSourceRef('owner/repo#develop', 'main')).toThrow('branch-specified-twice');
+  });
+
+  it('should fail if source has empty branch marker', () => {
+    expect(() => parseSourceRef('owner/repo#')).toThrow('empty-branch');
+  });
+
+  it('should include --branch flags in clone command when branch is set', () => {
+    expect(buildCloneCommand('git@github.com:owner/repo.git', '/tmp/repo', 'feature')).toBe(
+      'git clone --depth 1 --branch "feature" --single-branch --quiet "git@github.com:owner/repo.git" "/tmp/repo"'
+    );
+  });
+
+  it('should omit --branch flags in clone command when branch is not set', () => {
+    expect(buildCloneCommand('git@github.com:owner/repo.git', '/tmp/repo')).toBe(
+      'git clone --depth 1 --quiet "git@github.com:owner/repo.git" "/tmp/repo"'
+    );
+  });
+});

@@ -8,6 +8,11 @@ import { findAllSkills } from '../utils/skills.js';
 import { normalizeSkillNames } from '../utils/skill-names.js';
 import { readSkillMetadata, writeSkillMetadata } from '../utils/skill-metadata.js';
 
+function buildCloneCommand(repoUrl: string, destination: string, branch?: string): string {
+  const branchArgs = branch ? ` --branch "${branch}" --single-branch` : '';
+  return `git clone --depth 1${branchArgs} --quiet "${repoUrl}" "${destination}"`;
+}
+
 /**
  * Update installed skills from their recorded source metadata.
  */
@@ -94,7 +99,7 @@ export async function updateSkills(skillNames: string[] | string | undefined): P
 
     const spinner = ora(`Updating ${skill.name}...`).start();
     try {
-      execSync(`git clone --depth 1 --quiet "${metadata.repoUrl}" "${tempDir}/repo"`, { stdio: 'pipe' });
+      execSync(buildCloneCommand(metadata.repoUrl, `${tempDir}/repo`, metadata.branch), { stdio: 'pipe' });
       const repoDir = join(tempDir, 'repo');
       const subpath = metadata.subpath && metadata.subpath !== '.' ? metadata.subpath : '';
       const sourceDir = subpath ? join(repoDir, subpath) : repoDir;

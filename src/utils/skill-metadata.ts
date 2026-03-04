@@ -9,6 +9,7 @@ export interface SkillSourceMetadata {
   source: string;
   sourceType: SkillSourceType;
   repoUrl?: string;
+  branch?: string;
   subpath?: string;
   localPath?: string;
   installedAt: string;

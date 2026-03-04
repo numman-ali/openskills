@@ -17,6 +17,7 @@ interface InstallSourceInfo {
   sourceType: SkillSourceType;
   repoUrl?: string;
   localRoot?: string;
+  branch?: string;
 }
 
 /**
@@ -77,10 +78,58 @@ function isPathInside(targetPath: string, targetDir: string): boolean {
   return resolvedTargetPath.startsWith(resolvedTargetDirWithSep);
 }
 
+interface ParsedSourceRef {
+  source: string;
+  branch?: string;
+}
+
+function parseSourceRef(source: string, branchOption?: string): ParsedSourceRef {
+  const hashIndex = source.lastIndexOf('#');
+  if (hashIndex === -1) {
+    return { source, branch: branchOption };
+  }
+
+  const parsedSource = source.slice(0, hashIndex).trim();
+  const parsedBranch = source.slice(hashIndex + 1).trim();
+
+  if (!parsedSource) {
+    console.error(chalk.red('Error: Invalid source format'));
+    console.error('Expected format: <source>#<branch>');
+    process.exit(1);
+  }
+
+  if (!parsedBranch) {
+    console.error(chalk.red('Error: Branch name cannot be empty'));
+    process.exit(1);
+  }
+
+  if (branchOption) {
+    console.error(chalk.red('Error: Branch specified twice'));
+    console.error('Use either --branch <name> or <source>#<branch>, not both');
+    process.exit(1);
+  }
+
+  return { source: parsedSource, branch: parsedBranch };
+}
+
+function buildCloneCommand(repoUrl: string, destination: string, branch?: string): string {
+  const branchArgs = branch ? ` --branch "${branch}" --single-branch` : '';
+  return `git clone --depth 1${branchArgs} --quiet "${repoUrl}" "${destination}"`;
+}
+
 /**
  * Install skill from local path, GitHub, or Git URL
  */
 export async function installSkill(source: string, options: InstallOptions): Promise<void> {
+  const sourceRef = isLocalPath(source) ? { source, branch: options.branch } : parseSourceRef(source, options.branch);
+  source = sourceRef.source;
+  const branch = sourceRef.branch;
+
+  if (isLocalPath(source) && branch) {
+    console.error(chalk.red('Error: --branch is only supported for Git sources'));
+    process.exit(1);
+  }
+
   const folder = options.universal ? '.agent/skills' : '.claude/skills';
   const isProject = !options.global; // Default to project unless --global specified
   const targetDir = isProject
@@ -95,6 +144,9 @@ export async function installSkill(source: string, options: InstallOptions): Pro
   const globalLocation = `~/${folder}`;
 
   console.log(`Installing from: ${chalk.cyan(source)}`);
+  if (branch) {
+    console.log(`Branch: ${chalk.cyan(branch)}`);
+  }
   console.log(`Location: ${location}`);
   if (isProject) {
     console.log(
@@ -114,6 +166,7 @@ export async function installSkill(source: string, options: InstallOptions): Pro
       source,
       sourceType: 'local',
       localRoot: localPath,
+      branch,
     };
     await installFromLocal(localPath, targetDir, options, sourceInfo);
     printPostInstallHints(isProject);
@@ -149,12 +202,13 @@ export async function installSkill(source: string, options: InstallOptions): Pro
     source,
     sourceType: 'git',
     repoUrl,
+    branch,
   };
 
   try {
     const spinner = ora('Cloning repository...').start();
     try {
-      execSync(`git clone --depth 1 --quiet "${repoUrl}" "${tempDir}/repo"`, {
+      execSync(buildCloneCommand(repoUrl, `${tempDir}/repo`, branch), {
         stdio: 'pipe',
       });
       spinner.succeed('Repository cloned');
@@ -500,6 +554,7 @@ function buildGitMetadata(sourceInfo: InstallSourceInfo, subpath: string): Skill
     source: sourceInfo.source,
     sourceType: 'git',
     repoUrl: sourceInfo.repoUrl,
+    branch: sourceInfo.branch,
     subpath,
     installedAt: new Date().toISOString(),
   };

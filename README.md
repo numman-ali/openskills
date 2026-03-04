@@ -150,6 +150,13 @@ npx openskills install ./local-skills/my-skill
 npx openskills install git@github.com:your-org/private-skills.git
 ```
 
+### Install from a Specific Branch or Tag
+
+```bash
+npx openskills install your-org/your-skills --branch develop
+npx openskills install your-org/your-skills#develop
+```
+
 ---
 
 ## 🌍 Universal Mode (Multi-Agent Setups)
@@ -185,6 +192,7 @@ npx openskills remove <name>               # Remove specific skill
 - `--global` — Install globally to `~/.claude/skills` (default: project install)
 - `--universal` — Install to `.agent/skills/` instead of `.claude/skills/`
 - `-y, --yes` — Skip prompts (useful for CI)
+- `-b, --branch <name>` — Install from a Git branch/tag (or use `<source>#<branch>`)
 - `-o, --output <path>` — Output file for sync (default: `AGENTS.md`)
 
 ---
