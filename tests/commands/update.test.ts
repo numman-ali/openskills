@@ -2,8 +2,35 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
+import { execSync } from 'child_process';
 import { updateSkills } from '../../src/commands/update.js';
 import { writeSkillMetadata } from '../../src/utils/skill-metadata.js';
+
+function run(cmd: string, cwd: string): void {
+  execSync(cmd, { cwd, stdio: 'pipe' });
+}
+
+function createBranchRepo(repoDir: string): void {
+  mkdirSync(repoDir, { recursive: true });
+  run('git init', repoDir);
+  run('git config user.email "test@example.com"', repoDir);
+  run('git config user.name "Test User"', repoDir);
+
+  writeFileSync(
+    join(repoDir, 'SKILL.md'),
+    "---\nname: demo\ndescription: main\n---\n\n# Demo\nmain\n"
+  );
+  run('git add SKILL.md', repoDir);
+  run('git commit -m "main"', repoDir);
+  run('git checkout -b feature', repoDir);
+
+  writeFileSync(
+    join(repoDir, 'SKILL.md'),
+    "---\nname: demo\ndescription: feature\n---\n\n# Demo\nfeature\n"
+  );
+  run('git add SKILL.md', repoDir);
+  run('git commit -m "feature"', repoDir);
+}
 
 describe('updateSkills', () => {
   const originalCwd = process.cwd();
@@ -71,5 +98,31 @@ describe('updateSkills', () => {
 
     const content = readFileSync(join(targetDir, 'SKILL.md'), 'utf-8');
     expect(content).toContain('v1');
+  });
+
+  it('updates a git skill from the recorded branch', async () => {
+    const repoDir = join(projectDir, 'source.git');
+    createBranchRepo(repoDir);
+
+    const targetDir = join(projectDir, '.claude/skills/demo');
+    mkdirSync(targetDir, { recursive: true });
+    writeFileSync(
+      join(targetDir, 'SKILL.md'),
+      "---\nname: demo\ndescription: stale\n---\n\n# Demo\nstale\n"
+    );
+
+    writeSkillMetadata(targetDir, {
+      source: 'source.git#feature',
+      sourceType: 'git',
+      repoUrl: 'source.git',
+      branch: 'feature',
+      subpath: '',
+      installedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    await updateSkills([]);
+
+    const updated = readFileSync(join(targetDir, 'SKILL.md'), 'utf-8');
+    expect(updated).toContain('feature');
   });
 });
