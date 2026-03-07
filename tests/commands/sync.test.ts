@@ -53,6 +53,49 @@ describe('sync utilities (agents-md.ts)', () => {
       expect(xml).toContain('<available_skills>');
       expect(xml).toContain('</available_skills>');
     });
+
+    it('should include category when present on a skill', () => {
+      const skills: Skill[] = [
+        {
+          name: 'pdf',
+          description: 'PDF manipulation',
+          location: 'project',
+          path: '/path/to/pdf',
+          category: 'documents',
+        },
+      ];
+
+      const xml = generateSkillsXml(skills);
+
+      expect(xml).toContain('<category>documents</category>');
+    });
+
+    it('should include tags when present on a skill', () => {
+      const skills: Skill[] = [
+        {
+          name: 'pdf',
+          description: 'PDF manipulation',
+          location: 'project',
+          path: '/path/to/pdf',
+          tags: ['pdf', 'ocr', 'merge'],
+        },
+      ];
+
+      const xml = generateSkillsXml(skills);
+
+      expect(xml).toContain('<tags>pdf, ocr, merge</tags>');
+    });
+
+    it('should omit category/tags elements when not present', () => {
+      const skills: Skill[] = [
+        { name: 'pdf', description: 'PDF manipulation', location: 'project', path: '/path' },
+      ];
+
+      const xml = generateSkillsXml(skills);
+
+      expect(xml).not.toContain('<category>');
+      expect(xml).not.toContain('<tags>');
+    });
   });
 
   describe('parseCurrentSkills', () => {

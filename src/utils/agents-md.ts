@@ -22,13 +22,18 @@ export function parseCurrentSkills(content: string): string[] {
  */
 export function generateSkillsXml(skills: Skill[]): string {
   const skillTags = skills
-    .map(
-      (s) => `<skill>
-<name>${s.name}</name>
-<description>${s.description}</description>
-<location>${s.location}</location>
-</skill>`
-    )
+    .map((s) => {
+      const lines = [
+        `<skill>`,
+        `<name>${s.name}</name>`,
+        `<description>${s.description}</description>`,
+        `<location>${s.location}</location>`,
+      ];
+      if (s.category) lines.push(`<category>${s.category}</category>`);
+      if (s.tags && s.tags.length > 0) lines.push(`<tags>${s.tags.join(', ')}</tags>`);
+      lines.push(`</skill>`);
+      return lines.join('\n');
+    })
     .join('\n\n');
 
   return `<skills_system priority="1">
