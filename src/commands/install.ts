@@ -9,6 +9,7 @@ import { ExitPromptError } from '@inquirer/core';
 import { hasValidFrontmatter, extractYamlField } from '../utils/yaml.js';
 import { ANTHROPIC_MARKETPLACE_SKILLS } from '../utils/marketplace-skills.js';
 import { writeSkillMetadata } from '../utils/skill-metadata.js';
+import { readSkillJson, getResolvedSkillEntries } from '../utils/skill-json.js';
 import type { InstallOptions } from '../types.js';
 import type { SkillSourceMetadata, SkillSourceType } from '../utils/skill-metadata.js';
 
@@ -317,6 +318,11 @@ async function installSpecificSkill(
 
 /**
  * Install from repository (with interactive selection unless -y flag)
+ *
+ * Discovery order:
+ * 1. skill.json at repo root (richer metadata, no filesystem scan)
+ * 2. SKILL.md at repo root (single-skill repo)
+ * 3. Recursive SKILL.md scan (legacy fallback)
  */
 async function installFromRepo(
   repoDir: string,
@@ -325,113 +331,130 @@ async function installFromRepo(
   repoName: string | undefined,
   sourceInfo: InstallSourceInfo
 ): Promise<void> {
-  const rootSkillPath = join(repoDir, 'SKILL.md');
   let skillInfos: Array<{
     skillDir: string;
     skillName: string;
     description: string;
     targetPath: string;
     size: number;
+    category?: string;
+    tags?: string[];
   }> = [];
 
-  if (existsSync(rootSkillPath)) {
-    const content = readFileSync(rootSkillPath, 'utf-8');
-    if (!hasValidFrontmatter(content)) {
-      console.error(chalk.red('Error: Invalid SKILL.md (missing YAML frontmatter)'));
+  // --- 1. skill.json discovery ---
+  const skillJson = readSkillJson(repoDir);
+  if (skillJson) {
+    const entries = getResolvedSkillEntries(repoDir, skillJson);
+
+    if (entries.length === 0) {
+      console.error(chalk.red('Error: skill.json found but no skill directories resolved on disk'));
       process.exit(1);
     }
 
-    const frontmatterName = extractYamlField(content, 'name');
-    const skillName = frontmatterName || repoName || basename(repoDir);
-    skillInfos = [
-      {
-        skillDir: repoDir,
-        skillName,
-        description: extractYamlField(content, 'description'),
-        targetPath: join(targetDir, skillName),
-        size: getDirectorySize(repoDir),
-      },
-    ];
-  }
+    skillInfos = entries.map((entry) => ({
+      skillDir: entry.resolvedPath,
+      skillName: entry.name,
+      description: entry.description ?? '',
+      targetPath: join(targetDir, entry.name),
+      size: getDirectorySize(entry.resolvedPath),
+      category: entry.category,
+      tags: entry.tags,
+    }));
 
-  // Find all skills
-  const findSkills = (dir: string): string[] => {
-    const skills: string[] = [];
-    const entries = readdirSync(dir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = join(dir, entry.name);
-      if (entry.isDirectory()) {
-        if (existsSync(join(fullPath, 'SKILL.md'))) {
-          skills.push(fullPath);
-        } else {
-          skills.push(...findSkills(fullPath));
-        }
+    console.log(chalk.dim(`Found ${skillInfos.length} skill(s) via skill.json\n`));
+  } else {
+    // --- 2. Root SKILL.md (single-skill repo) ---
+    const rootSkillPath = join(repoDir, 'SKILL.md');
+    if (existsSync(rootSkillPath)) {
+      const content = readFileSync(rootSkillPath, 'utf-8');
+      if (!hasValidFrontmatter(content)) {
+        console.error(chalk.red('Error: Invalid SKILL.md (missing YAML frontmatter)'));
+        process.exit(1);
       }
-    }
-    return skills;
-  };
 
-  if (skillInfos.length === 0) {
-    const skillDirs = findSkills(repoDir);
-
-    if (skillDirs.length === 0) {
-      console.error(chalk.red('Error: No SKILL.md files found in repository'));
-      process.exit(1);
-    }
-
-    // Build skill info list
-    skillInfos = skillDirs
-      .map((skillDir) => {
-        const skillMdPath = join(skillDir, 'SKILL.md');
-        const content = readFileSync(skillMdPath, 'utf-8');
-
-        if (!hasValidFrontmatter(content)) {
-          return null;
-        }
-
-        const skillName = basename(skillDir);
-        const description = extractYamlField(content, 'description');
-        const targetPath = join(targetDir, skillName);
-
-        // Get size
-        const size = getDirectorySize(skillDir);
-
-        return {
-          skillDir,
+      const frontmatterName = extractYamlField(content, 'name');
+      const skillName = frontmatterName || repoName || basename(repoDir);
+      skillInfos = [
+        {
+          skillDir: repoDir,
           skillName,
-          description,
-          targetPath,
-          size,
-        };
-      })
-      .filter((info) => info !== null) as Array<{
-      skillDir: string;
-      skillName: string;
-      description: string;
-      targetPath: string;
-      size: number;
-    }>;
+          description: extractYamlField(content, 'description'),
+          targetPath: join(targetDir, skillName),
+          size: getDirectorySize(repoDir),
+        },
+      ];
+    }
 
+    // --- 3. Recursive SKILL.md scan (legacy fallback) ---
     if (skillInfos.length === 0) {
-      console.error(chalk.red('Error: No valid SKILL.md files found'));
-      process.exit(1);
+      const findSkills = (dir: string): string[] => {
+        const skills: string[] = [];
+        const entries = readdirSync(dir, { withFileTypes: true });
+
+        for (const entry of entries) {
+          const fullPath = join(dir, entry.name);
+          if (entry.isDirectory()) {
+            if (existsSync(join(fullPath, 'SKILL.md'))) {
+              skills.push(fullPath);
+            } else {
+              skills.push(...findSkills(fullPath));
+            }
+          }
+        }
+        return skills;
+      };
+
+      const skillDirs = findSkills(repoDir);
+
+      if (skillDirs.length === 0) {
+        console.error(chalk.red('Error: No SKILL.md files found in repository'));
+        process.exit(1);
+      }
+
+      // Build skill info list
+      skillInfos = skillDirs
+        .map((skillDir) => {
+          const skillMdPath = join(skillDir, 'SKILL.md');
+          const content = readFileSync(skillMdPath, 'utf-8');
+
+          if (!hasValidFrontmatter(content)) {
+            return null;
+          }
+
+          const skillName = basename(skillDir);
+          const description = extractYamlField(content, 'description');
+          const targetPath = join(targetDir, skillName);
+
+          // Get size
+          const size = getDirectorySize(skillDir);
+
+          return { skillDir, skillName, description, targetPath, size };
+        })
+        .filter((info) => info !== null) as typeof skillInfos;
+
+      if (skillInfos.length === 0) {
+        console.error(chalk.red('Error: No valid SKILL.md files found'));
+        process.exit(1);
+      }
+
+      console.log(chalk.dim(`Found ${skillInfos.length} skill(s)\n`));
     }
   }
-
-  console.log(chalk.dim(`Found ${skillInfos.length} skill(s)\n`));
 
   // Interactive selection (unless -y flag or single skill)
   let skillsToInstall = skillInfos;
 
   if (!options.yes && skillInfos.length > 1) {
     try {
-      const choices = skillInfos.map((info) => ({
-        name: `${chalk.bold(info.skillName.padEnd(25))} ${chalk.dim(formatSize(info.size))}`,
-        value: info.skillName,
-        description: info.description.slice(0, 80),
-        checked: true, // Check all by default
-      }));
+      const choices = skillInfos.map((info) => {
+        const categoryTag = info.category ? chalk.cyan(` [${info.category}]`) : '';
+        return {
+          name: `${chalk.bold(info.skillName.padEnd(25))} ${chalk.dim(formatSize(info.size))}${categoryTag}`,
+          value: info.skillName,
+          description: info.description.slice(0, 80),
+          checked: true, // Check all by default
+        };
+      });
 
       const selected = await checkbox({
         message: 'Select skills to install',
@@ -473,7 +496,13 @@ async function installFromRepo(
       continue;
     }
     cpSync(info.skillDir, info.targetPath, { recursive: true, dereference: true });
-    writeSkillMetadata(info.targetPath, buildMetadataFromSource(sourceInfo, info.skillDir, repoDir));
+    writeSkillMetadata(
+      info.targetPath,
+      buildMetadataFromSource(sourceInfo, info.skillDir, repoDir, {
+        category: info.category,
+        tags: info.tags,
+      })
+    );
 
     console.log(chalk.green(`✅ Installed: ${info.skillName}`));
     installedCount++;
@@ -482,35 +511,52 @@ async function installFromRepo(
   console.log(chalk.green(`\n✅ Installation complete: ${installedCount} skill(s) installed`));
 }
 
+interface SkillJsonExtras {
+  category?: string;
+  tags?: string[];
+  version?: string;
+}
+
 function buildMetadataFromSource(
   sourceInfo: InstallSourceInfo,
   skillDir: string,
-  repoDir: string
+  repoDir: string,
+  extras: SkillJsonExtras = {}
 ): SkillSourceMetadata {
   if (sourceInfo.sourceType === 'local') {
-    return buildLocalMetadata(sourceInfo, skillDir);
+    return buildLocalMetadata(sourceInfo, skillDir, extras);
   }
   const subpath = relative(repoDir, skillDir);
   const normalizedSubpath = subpath === '' ? '' : subpath;
-  return buildGitMetadata(sourceInfo, normalizedSubpath);
+  return buildGitMetadata(sourceInfo, normalizedSubpath, extras);
 }
 
-function buildGitMetadata(sourceInfo: InstallSourceInfo, subpath: string): SkillSourceMetadata {
+function buildGitMetadata(
+  sourceInfo: InstallSourceInfo,
+  subpath: string,
+  extras: SkillJsonExtras = {}
+): SkillSourceMetadata {
   return {
     source: sourceInfo.source,
     sourceType: 'git',
     repoUrl: sourceInfo.repoUrl,
     subpath,
     installedAt: new Date().toISOString(),
+    ...extras,
   };
 }
 
-function buildLocalMetadata(sourceInfo: InstallSourceInfo, skillDir: string): SkillSourceMetadata {
+function buildLocalMetadata(
+  sourceInfo: InstallSourceInfo,
+  skillDir: string,
+  extras: SkillJsonExtras = {}
+): SkillSourceMetadata {
   return {
     source: sourceInfo.source,
     sourceType: 'local',
     localPath: skillDir,
     installedAt: new Date().toISOString(),
+    ...extras,
   };
 }
 

@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, existsSync, statSync, Dirent } from 'fs';
 import { join } from 'path';
 import { getSearchDirs } from './dirs.js';
 import { extractYamlField } from './yaml.js';
+import { readSkillMetadata } from './skill-metadata.js';
 import type { Skill, SkillLocation } from '../types.js';
 
 /**
@@ -47,11 +48,17 @@ export function findAllSkills(): Skill[] {
           const content = readFileSync(skillPath, 'utf-8');
           const isProjectLocal = dir.includes(process.cwd());
 
+          const skillDir = join(dir, entry.name);
+          const meta = readSkillMetadata(skillDir);
+
           skills.push({
             name: entry.name,
             description: extractYamlField(content, 'description'),
             location: isProjectLocal ? 'project' : 'global',
-            path: join(dir, entry.name),
+            path: skillDir,
+            category: meta?.category,
+            tags: meta?.tags,
+            version: meta?.version,
           });
 
           seen.add(entry.name);

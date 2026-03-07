@@ -12,6 +12,10 @@ export interface SkillSourceMetadata {
   subpath?: string;
   localPath?: string;
   installedAt: string;
+  /** Optional metadata sourced from skill.json at install time */
+  category?: string;
+  tags?: string[];
+  version?: string;
 }
 
 export function readSkillMetadata(skillDir: string): SkillSourceMetadata | null {
