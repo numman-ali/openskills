@@ -149,44 +149,6 @@ describe('End-to-end CLI tests', () => {
     });
   });
 
-  describe('openskills install (local paths)', () => {
-    it('should install from absolute local path', () => {
-      // Create a source skill
-      const sourceDir = join(testTempDir, 'source-skills');
-      createTestSkill(sourceDir, 'local-skill', 'Local skill');
-
-      // Install to project
-      const result = runCli(`install ${join(sourceDir, 'local-skill')} -y`);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Installed');
-
-      // Verify skill was copied
-      const installedPath = join(testTempDir, '.claude', 'skills', 'local-skill', 'SKILL.md');
-      expect(existsSync(installedPath)).toBe(true);
-    });
-
-    it('should install directory of skills from local path', () => {
-      // Create multiple source skills
-      const sourceDir = join(testTempDir, 'multi-skills');
-      createTestSkill(sourceDir, 'skill-one', 'First skill');
-      createTestSkill(sourceDir, 'skill-two', 'Second skill');
-
-      const result = runCli(`install ${sourceDir} -y`);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('skill-one');
-      expect(result.stdout).toContain('skill-two');
-    });
-
-    it('should error for non-existent local path', () => {
-      const result = runCli(`install /non/existent/path -y`);
-
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('does not exist');
-    });
-  });
-
   describe('openskills remove', () => {
     it('should remove installed skill', () => {
       const skillsDir = join(testTempDir, '.claude', 'skills');

@@ -8,7 +8,7 @@ import { checkbox, confirm } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
 import { hasValidFrontmatter, extractYamlField } from '../utils/yaml.js';
 import { ANTHROPIC_MARKETPLACE_SKILLS } from '../utils/marketplace-skills.js';
-import { writeSkillMetadata } from '../utils/skill-metadata.js';
+import { writeSkillMetadata, buildCommitUrl } from '../utils/skill-metadata.js';
 import type { InstallOptions } from '../types.js';
 import type { SkillSourceMetadata, SkillSourceType } from '../utils/skill-metadata.js';
 
@@ -17,6 +17,8 @@ interface InstallSourceInfo {
   sourceType: SkillSourceType;
   repoUrl?: string;
   localRoot?: string;
+  commitSha?: string;
+  commitUrl?: string;
 }
 
 /**
@@ -158,6 +160,26 @@ export async function installSkill(source: string, options: InstallOptions): Pro
         stdio: 'pipe',
       });
       spinner.succeed('Repository cloned');
+
+      const commitSha = execSync(`git -C "${tempDir}/repo" rev-parse HEAD`, {
+        encoding: 'utf-8',
+        stdio: 'pipe',
+      }).trim();
+      sourceInfo.commitSha = commitSha;
+      sourceInfo.commitUrl = buildCommitUrl(repoUrl, commitSha);
+      if (!sourceInfo.commitUrl) {
+        // Clone worked — only the clickable-URL builder couldn't recognize
+        // the host. Surface it as a warning, not an error, so the user knows
+        // the install succeeded and the missing field isn't a sign of failure.
+        // We don't echo the raw repoUrl here: a crafted input could trick an
+        // editor's auto-linkifier into rendering attacker-controlled text as
+        // clickable. The repoUrl is already visible above in the spinner log.
+        console.log(
+          chalk.yellow(
+            'Warning: clone succeeded, but the `commitUrl` field was not written to .openskills.json (host not yet supported for clickable URL generation).'
+          )
+        );
+      }
     } catch (error) {
       spinner.fail('Failed to clone repository');
       const err = error as { stderr?: Buffer };
@@ -502,6 +524,8 @@ function buildGitMetadata(sourceInfo: InstallSourceInfo, subpath: string): Skill
     repoUrl: sourceInfo.repoUrl,
     subpath,
     installedAt: new Date().toISOString(),
+    commitSha: sourceInfo.commitSha,
+    commitUrl: sourceInfo.commitUrl,
   };
 }
 
