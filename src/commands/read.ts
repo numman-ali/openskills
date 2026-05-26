@@ -26,8 +26,8 @@ export function readSkill(skillNames: string[] | string): void {
   if (missing.length > 0) {
     console.error(`Error: Skill(s) not found: ${missing.join(', ')}`);
     console.error('\nSearched:');
-    console.error('  .agent/skills/ (project universal)');
-    console.error('  ~/.agent/skills/ (global universal)');
+    console.error('  .agents/skills/ (project universal)');
+    console.error('  ~/.agents/skills/ (global universal)');
     console.error('  .claude/skills/ (project)');
     console.error('  ~/.claude/skills/ (global)');
     console.error('\nInstall skills: npx openskills install owner/repo');

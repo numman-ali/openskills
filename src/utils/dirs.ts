@@ -5,7 +5,7 @@ import { homedir } from 'os';
  * Get skills directory path
  */
 export function getSkillsDir(projectLocal: boolean = false, universal: boolean = false): string {
-  const folder = universal ? '.agent/skills' : '.claude/skills';
+  const folder = universal ? '.agents/skills' : '.claude/skills';
   return projectLocal
     ? join(process.cwd(), folder)
     : join(homedir(), folder);
@@ -17,8 +17,8 @@ export function getSkillsDir(projectLocal: boolean = false, universal: boolean =
  */
 export function getSearchDirs(): string[] {
   return [
-    join(process.cwd(), '.agent/skills'),   // 1. Project universal (.agent)
-    join(homedir(), '.agent/skills'),        // 2. Global universal (.agent)
+    join(process.cwd(), '.agents/skills'),  // 1. Project universal (.agents)
+    join(homedir(), '.agents/skills'),       // 2. Global universal (.agents)
     join(process.cwd(), '.claude/skills'),  // 3. Project claude
     join(homedir(), '.claude/skills'),       // 4. Global claude
   ];
