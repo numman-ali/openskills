@@ -81,7 +81,7 @@ function isPathInside(targetPath: string, targetDir: string): boolean {
  * Install skill from local path, GitHub, or Git URL
  */
 export async function installSkill(source: string, options: InstallOptions): Promise<void> {
-  const folder = options.universal ? '.agent/skills' : '.claude/skills';
+  const folder = options.universal ? '.agents/skills' : '.claude/skills';
   const isProject = !options.global; // Default to project unless --global specified
   const targetDir = isProject
     ? join(process.cwd(), folder)
