@@ -419,7 +419,17 @@ async function installFromRepo(
     }
   }
 
+  const dedupeResult = dedupeSkillInfos(skillInfos, repoDir);
+  skillInfos = dedupeResult.skillInfos;
+
   console.log(chalk.dim(`Found ${skillInfos.length} skill(s)\n`));
+  for (const duplicate of dedupeResult.duplicates) {
+    console.log(chalk.yellow(`⚠️  Duplicate skill '${duplicate.skillName}' found; using ${duplicate.selectedPath}`));
+    console.log(chalk.dim(`   Ignored: ${duplicate.ignoredPaths.join(', ')}`));
+  }
+  if (dedupeResult.duplicates.length > 0) {
+    console.log('');
+  }
 
   // Interactive selection (unless -y flag or single skill)
   let skillsToInstall = skillInfos;
@@ -480,6 +490,80 @@ async function installFromRepo(
   }
 
   console.log(chalk.green(`\n✅ Installation complete: ${installedCount} skill(s) installed`));
+}
+
+function dedupeSkillInfos(
+  skillInfos: Array<{
+    skillDir: string;
+    skillName: string;
+    description: string;
+    targetPath: string;
+    size: number;
+  }>,
+  repoDir: string
+): {
+  skillInfos: Array<{
+    skillDir: string;
+    skillName: string;
+    description: string;
+    targetPath: string;
+    size: number;
+  }>;
+  duplicates: Array<{
+    skillName: string;
+    selectedPath: string;
+    ignoredPaths: string[];
+  }>;
+} {
+  const byName = new Map<string, Array<(typeof skillInfos)[number]>>();
+  for (const info of skillInfos) {
+    const existing = byName.get(info.skillName) || [];
+    existing.push(info);
+    byName.set(info.skillName, existing);
+  }
+
+  const deduped: typeof skillInfos = [];
+  const duplicates: Array<{
+    skillName: string;
+    selectedPath: string;
+    ignoredPaths: string[];
+  }> = [];
+
+  for (const [skillName, infos] of byName.entries()) {
+    const sorted = [...infos].sort((a, b) => {
+      const priorityDelta = skillPathPriority(a.skillDir, repoDir) - skillPathPriority(b.skillDir, repoDir);
+      if (priorityDelta !== 0) return priorityDelta;
+      return relative(repoDir, a.skillDir).localeCompare(relative(repoDir, b.skillDir));
+    });
+    const selected = sorted[0];
+    deduped.push(selected);
+
+    if (sorted.length > 1) {
+      duplicates.push({
+        skillName,
+        selectedPath: normalizeRelativePath(repoDir, selected.skillDir),
+        ignoredPaths: sorted.slice(1).map((info) => normalizeRelativePath(repoDir, info.skillDir)),
+      });
+    }
+  }
+
+  return { skillInfos: deduped, duplicates };
+}
+
+function skillPathPriority(skillDir: string, repoDir: string): number {
+  const rel = normalizeRelativePath(repoDir, skillDir);
+  const parts = rel.split('/');
+
+  if (parts.length === 2 && parts[0] === 'skills') return 0;
+  if (parts.length === 1) return 1;
+  if (parts[0] === 'examples') return 3;
+  if (parts[0] === 'docs' || parts[0] === '.well-known') return 4;
+  return 2;
+}
+
+function normalizeRelativePath(root: string, target: string): string {
+  const rel = relative(root, target);
+  return rel === '' ? '.' : rel.split(sep).join('/');
 }
 
 function buildMetadataFromSource(
