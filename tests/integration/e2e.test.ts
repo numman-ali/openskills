@@ -179,6 +179,27 @@ describe('End-to-end CLI tests', () => {
       expect(result.stdout).toContain('skill-two');
     });
 
+    it('should de-duplicate discovered skills by name and prefer top-level skills directory', () => {
+      const sourceDir = join(testTempDir, 'duplicate-skills');
+      createTestSkill(join(sourceDir, 'skills'), 'context-receipts', 'Canonical skill');
+      createTestSkill(join(sourceDir, 'examples'), 'context-receipts', 'Example mirror');
+      createTestSkill(join(sourceDir, 'docs'), 'context-receipts', 'Docs mirror');
+
+      writeFileSync(join(sourceDir, 'skills', 'context-receipts', 'marker.txt'), 'canonical');
+      writeFileSync(join(sourceDir, 'examples', 'context-receipts', 'marker.txt'), 'example');
+      writeFileSync(join(sourceDir, 'docs', 'context-receipts', 'marker.txt'), 'docs');
+
+      const result = runCli(`install ${sourceDir} -y`);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Found 1 skill(s)');
+      expect(result.stdout).toContain("Duplicate skill 'context-receipts' found");
+      expect(result.stdout).toContain('using skills/context-receipts');
+      expect(result.stdout).toContain('Ignored: examples/context-receipts, docs/context-receipts');
+      expect(result.stdout).not.toContain('Overwriting: context-receipts');
+      expect(readFileSync(join(testTempDir, '.claude', 'skills', 'context-receipts', 'marker.txt'), 'utf-8')).toBe('canonical');
+    });
+
     it('should error for non-existent local path', () => {
       const result = runCli(`install /non/existent/path -y`);
 
