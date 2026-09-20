@@ -126,6 +126,13 @@ Usage notes:
 
 ## 🔧 Install Skills
 
+`install` can be shortened to `i` or `add`:
+
+```bash
+npx openskills i anthropics/skills
+npx openskills add anthropics/skills
+```
+
 ### From Anthropic Marketplace
 
 ```bash
@@ -172,6 +179,8 @@ npx openskills install anthropics/skills --universal
 
 ```bash
 npx openskills install <source> [options]  # Install from GitHub, local path, or private repo
+npx openskills i <source> [options]        # Shorthand for install
+npx openskills add <source> [options]      # Shorthand for install
 npx openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
 npx openskills list                        # Show installed skills
 npx openskills read <name>                 # Load skill (for agents)

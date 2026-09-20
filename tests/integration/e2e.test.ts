@@ -187,6 +187,30 @@ describe('End-to-end CLI tests', () => {
     });
   });
 
+  describe('openskills install aliases', () => {
+    it('should install via i alias', () => {
+      const sourceDir = join(testTempDir, 'source-skills');
+      createTestSkill(sourceDir, 'alias-i-skill', 'Installed via i');
+
+      const result = runCli(`i ${join(sourceDir, 'alias-i-skill')} -y`);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Installed');
+      expect(existsSync(join(testTempDir, '.claude', 'skills', 'alias-i-skill', 'SKILL.md'))).toBe(true);
+    });
+
+    it('should install via add alias', () => {
+      const sourceDir = join(testTempDir, 'source-skills');
+      createTestSkill(sourceDir, 'alias-add-skill', 'Installed via add');
+
+      const result = runCli(`add ${join(sourceDir, 'alias-add-skill')} -y`);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Installed');
+      expect(existsSync(join(testTempDir, '.claude', 'skills', 'alias-add-skill', 'SKILL.md'))).toBe(true);
+    });
+  });
+
   describe('openskills remove', () => {
     it('should remove installed skill', () => {
       const skillsDir = join(testTempDir, '.claude', 'skills');

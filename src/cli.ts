@@ -43,10 +43,12 @@ program
 
 program
   .command('install <source>')
-  .description('Install skill from GitHub or Git URL')
+  .aliases(['i', 'add'])
+  .description('Install a skill from GitHub, a Git URL, or a local path')
   .option('-g, --global', 'Install globally (default: project install)')
   .option('-u, --universal', 'Install to .agent/skills/ (for universal AGENTS.md usage)')
   .option('-y, --yes', 'Skip interactive selection, install all skills found')
+  .addHelpText('after', '\nShorthand: openskills i <source>, openskills add <source>')
   .action(installSkill);
 
 program
