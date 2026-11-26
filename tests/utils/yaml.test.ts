@@ -22,13 +22,23 @@ name: test-skill
     expect(extractYamlField(content, 'missing')).toBe('');
   });
 
-  it('should handle multiline descriptions', () => {
-    const content = `---
-name: test
-description: First line
----`;
+  it.each([
+    ['>-', 'First line second line.'],
+    ['|-', 'First line\nsecond line.'],
+  ])('should handle %s descriptions in CRLF frontmatter', (indicator, expected) => {
+    const content = [
+      '---',
+      'name: test',
+      `description: ${indicator}`,
+      '  First line',
+      '  second line.',
+      'other: value',
+      '---',
+      '',
+      'Markdown body.',
+    ].join('\r\n');
 
-    expect(extractYamlField(content, 'description')).toBe('First line');
+    expect(extractYamlField(content, 'description')).toBe(expected);
   });
 
   // Security tests for non-greedy regex

@@ -230,6 +230,8 @@ my-skill/
 └── assets/
 ```
 
+In `SKILL.md` frontmatter, use `description: >-` for a folded multiline description or `description: |-` to retain its line breaks.
+
 Install your own skill:
 
 ```bash
